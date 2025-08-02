@@ -162,7 +162,7 @@ public class PnlSnapshotOrders extends PnlSnapshot {
 		//		}
 
 		Instrument instrument = Instrument.getInstrument(executionReport.getInstrument());
-		boolean isTaker = isTaker(instrument, executionReport.getPrice(), executionReport.getVerb());
+		boolean isTaker = executionReport.isAggressor();//isTaker(instrument, executionReport.getPrice(), executionReport.getVerb());
 
 		double closeFee = 0.0;
 		if (Configuration.FEES_COMMISSIONS_INCLUDED) {

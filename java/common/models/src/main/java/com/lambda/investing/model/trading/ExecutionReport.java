@@ -24,6 +24,7 @@ public class ExecutionReport {
 	private double price, quantity, lastQuantity, quantityFill;//todo change to bigdecimal or integer
 	private ExecutionReportStatus executionReportStatus;
 	private Verb verb;
+	private boolean isAggressor = false;//for backtesting purposes, to be used in the future
 
 	private long timestampCreation;
 

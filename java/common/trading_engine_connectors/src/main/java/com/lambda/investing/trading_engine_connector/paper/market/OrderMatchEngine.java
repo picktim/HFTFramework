@@ -1,5 +1,6 @@
 package com.lambda.investing.trading_engine_connector.paper.market;
 
+import com.ib.client.Order;
 import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.Configuration;
 import com.lambda.investing.model.market_data.Depth;
@@ -33,12 +34,15 @@ public class OrderMatchEngine extends OrderbookManager {
         private double qty;
         private String algorithm;
         private OrderRequest orderRequest;
+        private long timestamp;
+        private Verb verb;
 
         public FastOrder() {
         }
 
     }
 
+    private static final boolean REJECT_SELF_TRADES = false;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
     private final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
@@ -208,6 +212,8 @@ public class OrderMatchEngine extends OrderbookManager {
                 order.algorithm = MARKET_MAKER_ALGORITHM_INFO;
                 order.price = bids[level];
                 order.qty = bidsQty[level];
+                order.timestamp = depth.getTimestamp();
+                order.verb = Verb.Buy;
 
                 if (TRADE_REACTIVE_NEXT_DEPTH.equals(FilledReactionNextDepthEnum.relative) && lastDepthRefreshed != null) {
                     //difference in qty
@@ -234,6 +240,8 @@ public class OrderMatchEngine extends OrderbookManager {
                 order.algorithm = MARKET_MAKER_ALGORITHM_INFO;
                 order.price = asks[level];
                 order.qty = asksQty[level];
+                order.timestamp = depth.getTimestamp();
+                order.verb = Verb.Sell;
 
                 if (TRADE_REACTIVE_NEXT_DEPTH.equals(FilledReactionNextDepthEnum.relative) && lastDepthRefreshed != null) {
                     //difference in qty
@@ -379,6 +387,7 @@ public class OrderMatchEngine extends OrderbookManager {
                             }
 
                             ExecutionReport executionReport = getExecutionReport(orderSent);
+                            executionReport.setAggressor(false);
                             double qtyFill = Math.min(executionReport.getQuantity() - executionReport.getQuantityFill(), qtyTrade);
 
                             qtyTrade -= qtyFill;
@@ -442,6 +451,8 @@ public class OrderMatchEngine extends OrderbookManager {
         newFastOrder.price = price;
         newFastOrder.qty = qty;
         newFastOrder.algorithm = algorithmInfo;
+        newFastOrder.timestamp = lastDepthRefreshed.getTimestamp();
+        newFastOrder.verb = verb;
         previousOrders.add(newFastOrder);
         side.put(price, previousOrders);
     }
@@ -594,7 +605,7 @@ public class OrderMatchEngine extends OrderbookManager {
                     isSelling = false;
                 }
 
-                if (orderRequest.getOrderType().equals(OrderType.Market)) {
+                if (orderRequest.getOrderType().equals(OrderType.Market) && orderRequest.getPrice() == OrderRequest.NOT_SET_PRICE_VALUE) {
                     if (!isSelling) {
                         orderRequest.setPrice(Double.MAX_VALUE);//will buy from lowest to max
                     } else {
@@ -647,10 +658,13 @@ public class OrderMatchEngine extends OrderbookManager {
                             }
                             if (fastOrder.algorithm.equalsIgnoreCase(orderRequest.getAlgorithmInfo())) {
                                 //cant trade with myself!
-                                ExecutionReport executionReport = generateRejection(orderRequest,
-                                        "can't trade with yourself " + fastOrder.algorithm);
-                                notifyExecutionReport(executionReport);
-                                return false;
+                                if (REJECT_SELF_TRADES) {
+                                    ExecutionReport executionReport = generateRejection(orderRequest,
+                                            "can't trade with yourself " + fastOrder.algorithm);
+                                    notifyExecutionReport(executionReport);
+                                    return false;
+                                }
+                                continue;//avoid this trade but continue with the next one
                             } else {
 
                                 //notifyActive
@@ -687,6 +701,7 @@ public class OrderMatchEngine extends OrderbookManager {
                                             Math.max(otherExecutionReport.getPrice(), orderRequest.getPrice()) :
                                             Math.min(otherExecutionReport.getPrice(), orderRequest.getPrice());
                                     otherExecutionReport.setPrice(priceExecuted);
+                                    otherExecutionReport.setAggressor(false);
 
                                     otherExecutionReport.setExecutionReportStatus(ExecutionReportStatus.PartialFilled);
                                     otherExecutionReport.setQuantityFill(otherExecutionReport.getQuantityFill() + newFill);
@@ -708,6 +723,8 @@ public class OrderMatchEngine extends OrderbookManager {
 
                                 //notifyMe
                                 ExecutionReport orderER = getExecutionReport(orderRequest);
+                                orderER.setAggressor(true);
+
                                 if (orderER.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
                                     continue;
                                 }
@@ -755,6 +772,8 @@ public class OrderMatchEngine extends OrderbookManager {
                     remainFastOrder.algorithm = orderRequest.getAlgorithmInfo();
                     remainFastOrder.price = orderRequest.getPrice();
                     remainFastOrder.qty = qtyOfOrder;
+                    remainFastOrder.timestamp = lastTimestamp;
+                    remainFastOrder.verb = orderRequest.getVerb();
 
                     orders.add(remainFastOrder);
                     sideToAdd.put(orderRequest.getPrice(), orders);
@@ -872,9 +891,16 @@ public class OrderMatchEngine extends OrderbookManager {
     private ExecutionReport createExecutionReport(FastOrder aggressorOrder, FastOrder aggressedOrder, double qtyFill) {
         readLock.lock();
         try {
+            OrderRequest algoOrderRequest = aggressedOrder.orderRequest;
+            boolean isAlgoAggressor = false;
+            if (algoOrderRequest == null) {
+                algoOrderRequest = aggressorOrder.orderRequest;
+                isAlgoAggressor = true;
+            }
 
+            ExecutionReport executionReport = getExecutionReport(algoOrderRequest);
+            executionReport.setAggressor(isAlgoAggressor);
 
-            ExecutionReport executionReport = getExecutionReport(aggressorOrder.orderRequest);
 
             if (executionReport.getExecutionReportStatus()
                     .equals(ExecutionReportStatus.CompletellyFilled)) {
@@ -895,14 +921,12 @@ public class OrderMatchEngine extends OrderbookManager {
                 //ignore partial filled! probably already CF
                 return null;
             }
-            double priceExecuted = aggressorOrder.getPrice();
-
-            //if the order is over market price
-            if (aggressorOrder.orderRequest.getVerb() == Verb.Buy) {
-                priceExecuted = Math.max(aggressorOrder.getPrice(), aggressedOrder.getPrice());
-            }
-            if (aggressorOrder.orderRequest.getVerb() == Verb.Sell) {
-                priceExecuted = Math.min(aggressorOrder.getPrice(), aggressedOrder.getPrice());
+            double priceExecuted = aggressedOrder.getPrice();
+            if (priceExecuted == Double.MAX_VALUE || priceExecuted == Double.MIN_VALUE) {
+                //if market order that is living in the book
+                //use aggressor order price
+                logger.warn("[{}] {} Market order {} as aggressed {}@{} executed with aggressor {}@{} DEPTH_BidVolume:{} DEPTH_AskVolume:{}", new Date(lastTimestamp), this.instrumentPk, aggressedOrder.getVerb(), aggressedOrder.getQty(), aggressedOrder.getPrice(), aggressorOrder.getQty(), aggressorOrder.getPrice(), lastDepthRefreshed.getBidVolume(), lastDepthRefreshed.getAskVolume());
+                priceExecuted = aggressorOrder.getPrice();
             }
 
             executionReport.setPrice(priceExecuted);
@@ -935,9 +959,13 @@ public class OrderMatchEngine extends OrderbookManager {
                     if (askOrder.qty <= 0) continue;
 
                     // Skip self-trades
+
                     if (bidOrder.algorithm.equalsIgnoreCase(askOrder.algorithm)) {
-                        logger.error("Trade between same algorithm: bid {}@{} and ask {}@{}",
-                                bidOrder.algorithm, bidOrder.price, askOrder.algorithm, askOrder.price);
+                        if (REJECT_SELF_TRADES) {
+                            logger.error("Trade between same algorithm: bid {}@{} and ask {}@{}",
+                                    bidOrder.algorithm, bidOrder.price, askOrder.algorithm, askOrder.price);
+                        }
+                        //if reject just dont trade the error
                         continue;
                     }
 
@@ -959,11 +987,16 @@ public class OrderMatchEngine extends OrderbookManager {
 
                     // Create execution report
                     ExecutionReport executionReport = null;
-                    if (!bidOrder.algorithm.equalsIgnoreCase(MARKET_MAKER_ALGORITHM_INFO)) {
-                        executionReport = createExecutionReport(bidOrder, askOrder, qtyFill);
-                    } else if (!askOrder.algorithm.equalsIgnoreCase(MARKET_MAKER_ALGORITHM_INFO)) {
-                        executionReport = createExecutionReport(askOrder, bidOrder, qtyFill);
-                    }
+                    // Determine which order is the aggressor
+                    FastOrder aggressorOrder = bidOrder.getTimestamp() < askOrder.getTimestamp() ? askOrder : bidOrder;
+                    FastOrder aggressedOrder = bidOrder.getTimestamp() < askOrder.getTimestamp() ? bidOrder : askOrder;
+                    executionReport = createExecutionReport(aggressorOrder, aggressedOrder, qtyFill);
+//
+//                    if (!bidOrder.algorithm.equalsIgnoreCase(MARKET_MAKER_ALGORITHM_INFO)) {
+//                        executionReport = createExecutionReport(bidOrder, askOrder, qtyFill);
+//                    } else if (!askOrder.algorithm.equalsIgnoreCase(MARKET_MAKER_ALGORITHM_INFO)) {
+//                        executionReport = createExecutionReport(askOrder, bidOrder, qtyFill);
+//                    }
 
                     if (executionReport != null) {
                         executionReportMap.put(executionReport.getClientOrderId(), executionReport);
@@ -999,7 +1032,7 @@ public class OrderMatchEngine extends OrderbookManager {
             NavigableMap<Double, List<FastOrder>> askSide = getSide(Verb.Sell);
             if (bidSide == null || askSide == null || bidSide.isEmpty() || askSide.isEmpty()) {
                 //avoid errors
-                logger.warn("{} no orders to check match", new Date(lastTimestamp));
+                logger.warn("[{}] {} no orders in orderbook to check match", new Date(lastTimestamp), instrumentPk);
                 return;
             }
 

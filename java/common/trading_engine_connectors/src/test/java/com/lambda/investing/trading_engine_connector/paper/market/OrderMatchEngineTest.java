@@ -7,6 +7,7 @@ import com.lambda.investing.model.trading.*;
 import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -148,6 +149,7 @@ import static org.mockito.Mockito.doAnswer;
 		orderRequest.setClientOrderId(UUID.randomUUID().toString());
 		orderRequest.setAlgorithmInfo(algoId);
 		orderRequest.setOrderRequestAction(OrderRequestAction.Send);
+		orderRequest.setTimestampCreation(System.currentTimeMillis());
 		return orderRequest;
 
 	}
@@ -161,6 +163,7 @@ import static org.mockito.Mockito.doAnswer;
 		orderRequest.setVerb(verb);
 		orderRequest.setPrice(price);
 		orderRequest.setQuantity(quantity);
+		orderRequest.setTimestampCreation(System.currentTimeMillis());
 		return orderRequest;
 	}
 
@@ -169,6 +172,7 @@ import static org.mockito.Mockito.doAnswer;
 		orderRequest.setOrderRequestAction(OrderRequestAction.Cancel);
 		orderRequest.setOrigClientOrderId(orderRequestOrig.getClientOrderId());
 		orderRequest.setClientOrderId(UUID.randomUUID().toString());
+		orderRequest.setTimestampCreation(System.currentTimeMillis());
 		return orderRequest;
 	}
 
@@ -377,6 +381,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(lastExecutionReportListen.getQuantity() - lastExecutionReportListen.getQuantityFill(),
 				lastDepthListen.getBestAskQty(), 0.0001);
 		Assert.assertEquals(lastTradeListen.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		//this trade crossing with the order at 90
 		lastTradeListen = null;
@@ -392,6 +397,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(lastExecutionReportListen.getQuantity() - lastExecutionReportListen.getQuantityFill(),
 				lastDepthListen.getBestAskQty(), 0.0001);
 		Assert.assertEquals(lastTradeListen.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		//this trade crossing with the order at 90
 		lastTradeListen = null;
@@ -408,6 +414,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(0.0, lastExecutionReportListen.getQuantity() - lastExecutionReportListen.getQuantityFill(),
 				0.0001);
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 	}
 
@@ -467,6 +474,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		trade = createTrade(85.0, 1.0, Verb.Sell);
 		orderMatchEngine.refreshFillMarketTrade(trade);
@@ -474,6 +482,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
 		Assert.assertEquals(2, lastExecutionReportListen.getQuantityFill(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		trade = createTrade(85.0, 1.0, Verb.Sell);
 		orderMatchEngine.refreshFillMarketTrade(trade);
@@ -526,6 +535,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
+		Assert.assertEquals(false, lastExecutionReportListen.isAggressor());
 
 		trade = createTrade(95.0, 1.0, Verb.Buy);
 		orderMatchEngine.refreshFillMarketTrade(trade);
@@ -533,6 +543,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
 		Assert.assertEquals(2, lastExecutionReportListen.getQuantityFill(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		trade = createTrade(95.0, 1.0, Verb.Buy);
 		orderMatchEngine.refreshFillMarketTrade(trade);
@@ -541,6 +552,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
 		Assert.assertEquals(3, lastExecutionReportListen.getQuantityFill(), 0.0001);
+		Assert.assertFalse(lastExecutionReportListen.isAggressor());
 
 		Assert.assertEquals(depth.getBestBid(), lastDepthListen.getBestBid(), 0.0001);
 		Assert.assertEquals(depth.getBestBidQty(), lastDepthListen.getBestBidQty(), 0.0001);
@@ -605,7 +617,9 @@ import static org.mockito.Mockito.doAnswer;
 
 	}
 
-	@Test public void refreshAlgoAndFilledWithDepthBuy() {
+
+	@Test
+	public void refreshAlgoAndFilledWithDepthBuy() throws InterruptedException {
 		lastDepthListen = null;
 		Depth depth = createDepth(85, 95, 5, 5);
 		orderMatchEngine.refreshMarketMakerDepth(depth);
@@ -614,7 +628,7 @@ import static org.mockito.Mockito.doAnswer;
 
 		OrderRequest orderRequest = createOrderRequest(86, 3, Verb.Buy);
 		orderMatchEngine.orderRequest(orderRequest);
-
+		Thread.sleep(100);//wait for ER to be processed
 		depth = createDepth(80, 85, 5, 3);
 		lastDepthListen = null;
 		lastExecutionReportListen = null;
@@ -627,6 +641,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
+		Assert.assertEquals(false, lastExecutionReportListen.isAggressor());
 
 		//check depth
 		Assert.assertEquals(depth.getBestBid(), lastDepthListen.getBestBid(), 0.0001);
@@ -660,6 +675,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
+		Assert.assertEquals(false, lastExecutionReportListen.isAggressor());
 
 		//check depth
 		Assert.assertEquals(depth.getBestAsk(), lastDepthListen.getBestAsk(), 0.0001);
@@ -683,9 +699,10 @@ import static org.mockito.Mockito.doAnswer;
 
 		//check ER
 		Assert.assertEquals(ExecutionReportStatus.PartialFilled, lastExecutionReportListen.getExecutionReportStatus());
-		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
+		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);//market maker
 		Assert.assertEquals(2, lastExecutionReportListen.getQuantityFill(), 0.0001);
 		Assert.assertEquals(1, lastExecutionReportListen.getLastQuantity(), 0.0001);
+		Assert.assertEquals(false, lastExecutionReportListen.isAggressor());
 
 		//check depth
 		Assert.assertEquals(orderRequest.getPrice(), lastDepthListen.getBestBid(), 0.0001);
@@ -718,6 +735,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(4, lastExecutionReportListen.getQuantityFill(), 0.0001);
 		Assert.assertEquals(2, lastExecutionReportListen.getLastQuantity(), 0.0001);
+		Assert.assertEquals(false, lastExecutionReportListen.isAggressor());
 
 		//check depth
 		Assert.assertEquals(orderRequest.getPrice(), lastDepthListen.getBestAsk(), 0.0001);
@@ -932,6 +950,7 @@ import static org.mockito.Mockito.doAnswer;
 
 		Assert.assertEquals(4, lastExecutionReportListen.getQuantityFill(), 0.0001);
 		Assert.assertEquals(2, lastExecutionReportListen.getLastQuantity(), 0.0001);
+		Assert.assertEquals(true, lastExecutionReportListen.isAggressor());
 
 		//check depth
 		Assert.assertEquals(Double.MAX_VALUE, lastDepthListen.getBestAsk(), 0.0001);
