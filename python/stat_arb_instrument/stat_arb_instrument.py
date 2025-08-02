@@ -595,7 +595,7 @@ class StatArbInstrument:
         return fig
 
     def __init__(self, main_instrument: str, list_instruments: list,
-                 regression_price_type: str = RegressionPriceType.close_prices):
+                 regression_price_type: str = RegressionPriceType.returns):
         self.main_instrument = main_instrument
         self.synthetic_instruments = list_instruments
         if self.main_instrument in self.synthetic_instruments:

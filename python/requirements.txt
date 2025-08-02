@@ -81,3 +81,4 @@ transformers>=4.46.3
 #crewai visualization
 agentops>=0.4.16
 python-dotenv
+PyPDF2>=3.0.1
