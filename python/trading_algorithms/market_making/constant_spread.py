@@ -56,13 +56,13 @@ class ConstantSpread(Algorithm):
         return parameters
 
     def train(
-        self,
-        start_date: datetime.datetime,
-        end_date: datetime,
-        instrument_pk: str,
-        iterations: int,
-        algos_per_iteration: int,
-        simultaneous_algos: int = 1,
+            self,
+            start_date: datetime.datetime,
+            end_date: datetime,
+            instrument_pk: str,
+            iterations: int,
+            algos_per_iteration: int,
+            simultaneous_algos: int = 1,
     ) -> list:
         # makes no sense
 
@@ -115,16 +115,16 @@ class ConstantSpread(Algorithm):
         return output_list
 
     def parameter_tuning(
-        self,
-        start_date: datetime.datetime,
-        end_date: datetime,
-        instrument_pk: str,
-        parameters_min: dict,
-        parameters_max: dict,
-        max_simultaneous: int,
-        generations: int,
-        ga_configuration: GAConfiguration,
-        parameters_base: dict = DEFAULT_PARAMETERS,
+            self,
+            start_date: datetime.datetime,
+            end_date: datetime,
+            instrument_pk: str,
+            parameters_min: dict,
+            parameters_max: dict,
+            max_simultaneous: int,
+            generations: int,
+            ga_configuration: GAConfiguration,
+            parameters_base: dict = DEFAULT_PARAMETERS,
     ) -> (dict, pd.DataFrame):
 
         return super().parameter_tuning(

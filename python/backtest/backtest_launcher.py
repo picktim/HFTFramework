@@ -375,13 +375,13 @@ class BacktestLauncherController:
             df['historicalRealizedPnl'] = df['historicalRealizedPnl'].cumsum()
             df['historicalTotalPnl'] = df['historicalUnrealizedPnl'] + df['historicalRealizedPnl']
             df['netInvestment'] = 0
-            df['netPosition'] = df.loc[df['main_instrument'] == True, 'netPosition'].ffill()
 
-            df['bidPrice'] = df.loc[df['main_instrument'] == True, 'bidPrice'].ffill()
-            df['askPrice'] = df.loc[df['main_instrument'] == True, 'askPrice'].ffill()
-            df['midPrice'] = df.loc[df['main_instrument'] == True, 'midPrice'].ffill()
-            df['price'] = df.loc[df['main_instrument'] == True, 'price'].ffill()
-            df['quantity'] = df.loc[df['main_instrument'] == True, 'quantity'].ffill()
+            df['netPosition'] = df['netPosition'].where(df['main_instrument'] == True).ffill()
+            df['bidPrice'] = df['bidPrice'].where(df['main_instrument'] == True).ffill()
+            df['askPrice'] = df['askPrice'].where(df['main_instrument'] == True).ffill()
+            df['midPrice'] = df['midPrice'].where(df['main_instrument'] == True).ffill()
+            df['price'] = df['price'].where(df['main_instrument'] == True).ffill()
+            df['quantity'] = df['quantity'].where(df['main_instrument'] == True).ffill()
 
             for instrument_pk in instrument_pks:
                 df.loc[:, f'netPosition_{instrument_pk}'] = df[f'netPosition_{instrument_pk}'].ffill()

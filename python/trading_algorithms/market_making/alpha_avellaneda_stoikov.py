@@ -232,7 +232,7 @@ class AlphaAvellanedaStoikov(RLAlgorithm):
                 color=color_mean,
                 lw=lw - 0.1,
                 alpha=alpha,
-            )
+                )
             ax.set_ylabel(AvellanedaStoikovParameters.risk_aversion)
             ax.grid(axis='y', ls='--', alpha=0.7)
 
@@ -252,7 +252,7 @@ class AlphaAvellanedaStoikov(RLAlgorithm):
                     color=color_mean,
                     lw=lw - 0.1,
                     alpha=alpha,
-                )
+                    )
                 ax.set_ylabel(AvellanedaStoikovParameters.k_default)
                 ax.grid(axis='y', ls='--', alpha=0.7)
 
@@ -272,7 +272,7 @@ class AlphaAvellanedaStoikov(RLAlgorithm):
                     color=color_mean,
                     lw=lw - 0.1,
                     alpha=alpha,
-                )
+                    )
                 ax.set_ylabel(AvellanedaStoikovParameters.a_default)
                 ax.grid(axis='y', ls='--', alpha=0.7)
 
@@ -295,7 +295,7 @@ class AlphaAvellanedaStoikov(RLAlgorithm):
                     color=color_mean,
                     lw=lw - 0.1,
                     alpha=alpha,
-                )
+                    )
 
                 ax.set_ylabel(AvellanedaStoikovParameters.midprice_period_window)
                 ax.grid(axis='y', ls='--', alpha=0.7)

@@ -429,6 +429,8 @@ class CompareTradingAlgorithms:
                 )
                 continue
 
+            backtest_df = backtest_df.copy()
+
             final_metrics = CompareTradingAlgorithms.get_final_metrics(
                 backtest_df, equity_column_score_enum=metrics_equity_column_score_enum
             )

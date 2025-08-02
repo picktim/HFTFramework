@@ -4,6 +4,7 @@ import pandas as pd
 from scipy.stats import mannwhitneyu, kruskal
 
 from configuration import LAMBDA_OUTPUT_PATH
+from trading_algorithms.algorithm import AlgorithmParameters
 from trading_algorithms.score_enum import ScoreEnum
 import numpy as np
 import matplotlib.pyplot as plt
@@ -84,6 +85,11 @@ class CompareStatisticallyTradingAlgorithms:
             all_columns[algorithm_info] = scores
         if len(all_columns) > 0:
             dates = list(set(dates))
+            # any None Date set it to min date
+            ref_date = next((d for d in dates if d is not None), dates[0])
+            dates = [d if d is not None else ref_date for d in dates]
+            dates = list(set(dates))
+
             dates.sort()
             output_df = pd.DataFrame.from_dict(all_columns)
             output_df['date'] = dates
@@ -341,9 +347,9 @@ class CompareStatisticallyTradingAlgorithms:
 
 ###
 def main():
-    start_date = datetime(2022, 1, 15, 11)
-    end_date = datetime(2022, 1, 15, 12)
-    instrument_pk = 'btcusdt_binance'
+    start_date = datetime(2025, 7, 15, 11)
+    end_date = datetime(2025, 7, 15, 12)
+    instrument_pk = 'btceur_kraken'
     from trading_algorithms.market_making.avellaneda_stoikov import AvellanedaStoikov
     from trading_algorithms.market_making.avellaneda_stoikov import (
         AvellanedaStoikovParameters,
@@ -363,23 +369,28 @@ def main():
         ConstantSpreadParameters,
     )
     from trading_algorithms.market_making.alpha_avellaneda_stoikov import AlphaAvellanedaStoikov
+    synthetic_instrument_file = rf"StatArb_crypto.json"
+
     alpha_avellaneda_stoikov = AlphaAvellanedaStoikov(
         algorithm_info='AlphaAvellanedaStoikovTest1',
-
+        parameters={AlgorithmParameters.synthetic_instrument_file: synthetic_instrument_file}
     )
     constant_spread2 = ConstantSpread(
         algorithm_info='ConstantSpreadTest1',
-        parameters={ConstantSpreadParameters.level: 0},
+        parameters={ConstantSpreadParameters.level: 0,
+                    AlgorithmParameters.synthetic_instrument_file: synthetic_instrument_file},
     )
     constant_spread = ConstantSpread(
         algorithm_info='ConstantSpreadTest2',
-        parameters={ConstantSpreadParameters.level: 1},
+        parameters={ConstantSpreadParameters.level: 1,
+                    AlgorithmParameters.synthetic_instrument_file: synthetic_instrument_file},
+
     )
 
     algorithms_list = [
         alpha_avellaneda_stoikov,
         # avellaneda_stoikov,
-        # constant_spread,
+        constant_spread,
         # constant_spread2,
     ]
     from trading_algorithms.benchmark_manager.compare_trading_algorithms import (
@@ -400,7 +411,8 @@ def main():
     compare_trading1_results = compare_trading1.get_results(
         equity_column_score_enum=ScoreEnum.total_pnl
     )
-    # compare_trading1.plot_equity_curve(plot_equity_column_score_enum=ScoreEnum.total_pnl)
+    (equity_df, fig) = compare_trading1.plot_equity_curve(plot_equity_column_score_enum=ScoreEnum.total_pnl)
+    plt.show()
 
     compare_trading2 = CompareTradingAlgorithms.get_instance(
         algorithms_list=algorithms_list,
@@ -413,6 +425,9 @@ def main():
     compare_trading2_results = compare_trading2.get_results(
         equity_column_score_enum=ScoreEnum.total_pnl
     )
+
+    (equity_df2, fig2) = compare_trading2.plot_equity_curve(plot_equity_column_score_enum=ScoreEnum.total_pnl)
+    plt.show()
 
     compare_trading_statistically = CompareStatisticallyTradingAlgorithms()
     compare_trading_statistically.add_results_compare(compare_trading1_results)

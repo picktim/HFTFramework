@@ -759,9 +759,9 @@ class Algorithm:
         Algorithm.DELAY_MS = delay_ms
         Algorithm.FEES_COMMISSIONS_INCLUDED = fees_commissions_included
         backtest_result = algorithm.test(start_date=start_date, end_date=end_date,
-                                                        instrument_pk=instrument_pk,
-                                                        algorithm_number=algorithm_number,
-                                                        clean_experience=clean_experience)
+                                         instrument_pk=instrument_pk,
+                                         algorithm_number=algorithm_number,
+                                         clean_experience=clean_experience)
         output_dict[str(start_date.date())] = backtest_result
 
         return start_date.date(), backtest_result
@@ -814,7 +814,7 @@ class Algorithm:
             return output_dict
 
 
-    def send_backtest_results_email(self, backtest_results: dict, plot_open=False, email:str=""):
+    def send_backtest_results_email(self, backtest_results: dict, plot_open=False, email: str = "javifalces@gmail.com"):
         from utils.email_util import EmailConnector
 
         msg = ""
