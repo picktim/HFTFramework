@@ -2,6 +2,7 @@ package com.lambda.investing.model.market_data;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.lambda.investing.ArrayUtils;
+import com.lambda.investing.model.CSVable;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.trading.Verb;
 import lombok.Getter;
@@ -9,9 +10,8 @@ import lombok.Setter;
 
 import java.util.*;
 
-import static com.lambda.investing.ArrayUtils.ArrayReverse;
-import static com.lambda.investing.ArrayUtils.RemoveLevelAndShiftToLeft;
-import static com.lambda.investing.model.Util.*;
+import static com.lambda.investing.model.Util.getDatePythonUTC;
+import static com.lambda.investing.model.Util.toJsonString;
 
 @Getter
 @Setter

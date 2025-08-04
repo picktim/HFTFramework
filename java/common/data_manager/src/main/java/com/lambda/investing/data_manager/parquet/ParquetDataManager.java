@@ -1,8 +1,8 @@
 package com.lambda.investing.data_manager.parquet;
 
 import com.lambda.investing.data_manager.DataManager;
-import com.lambda.investing.model.asset.Instrument;
-import com.lambda.investing.model.market_data.*;
+import com.lambda.investing.model.CSVable;
+import lombok.Setter;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.reflect.ReflectData;
@@ -11,9 +11,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.avro.AvroParquetWriter;
-import org.apache.parquet.hadoop.ParquetReader;
 
 import static com.lambda.investing.data_manager.FileDataUtils.TIMESTAMP_COL;
 import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
@@ -29,10 +27,11 @@ import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
-import tech.tablesaw.api.Row;
-import tech.tablesaw.api.Table;
 
 public abstract class ParquetDataManager implements DataManager {
+
+    @Setter
+    protected String timestampCol = TIMESTAMP_COL;
 
     protected static CompressionCodecName PARQUET_COMPRESSION = CompressionCodecName.SNAPPY;
 
@@ -132,7 +131,7 @@ public abstract class ParquetDataManager implements DataManager {
      * @param <T>
      * @throws Exception
      */
-    public abstract <T extends CSVable> Table getData(String filepath, Class<T> objectType)
+    public abstract <T extends CSVable> tech.tablesaw.api.Table getData(String filepath, Class<T> objectType)
             throws Exception;
 
 

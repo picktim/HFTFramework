@@ -1,34 +1,19 @@
 package com.lambda.investing.data_manager.parquet;
 
-import com.lambda.investing.data_manager.DataManager;
+import com.lambda.investing.model.CSVable;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.*;
-import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.apache.avro.reflect.ReflectData;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.parquet.avro.AvroParquetReader;
-import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.parquet.hadoop.ParquetReader;
 
 import static com.lambda.investing.data_manager.FileDataUtils.TIMESTAMP_COL;
-import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.parquet.hadoop.ParquetWriter;
-import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import tech.tablesaw.api.Table;
 
 public class AvroParquetDataManager extends ParquetDataManager {
@@ -105,7 +90,7 @@ public class AvroParquetDataManager extends ParquetDataManager {
     }
 
     @Override
-    public <T extends CSVable> Table getData(String filepath, Class<T> objectType)
+    public <T extends CSVable> tech.tablesaw.api.Table getData(String filepath, Class<T> objectType)
             throws Exception {
 
         //Read Parquet

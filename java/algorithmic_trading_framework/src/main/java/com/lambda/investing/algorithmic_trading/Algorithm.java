@@ -6,15 +6,19 @@ import com.formdev.flatlaf.FlatLaf;
 import com.lambda.investing.Configuration;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleFromTickUpdater;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleListener;
+import com.lambda.investing.algorithmic_trading.data.CandleData;
 import com.lambda.investing.algorithmic_trading.gui.main.MainMenuGUI;
 import com.lambda.investing.algorithmic_trading.hedging.HedgeManager;
 import com.lambda.investing.algorithmic_trading.hedging.NoHedgeManager;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.SingleInstrumentRLAlgorithm;
 import com.lambda.investing.connector.ThreadUtils;
+import com.lambda.investing.data_manager.DataManager;
+import com.lambda.investing.data_manager.parquet.TableSawParquetDataManager;
 import com.lambda.investing.market_data_connector.MarketDataListener;
 import com.lambda.investing.market_data_connector.Statistics;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
+import com.lambda.investing.model.candle.CandleType;
 import com.lambda.investing.model.exception.LambdaTradingException;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
@@ -30,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartTheme;
 
+
 import javax.swing.*;
 import java.io.File;
 import java.text.DateFormat;
@@ -40,11 +45,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.lambda.investing.Configuration.RANDOM_GENERATOR;
-import static com.lambda.investing.Configuration.SET_RANDOM_SEED;
+import static com.lambda.investing.Configuration.*;
 import static com.lambda.investing.model.Util.fromJsonString;
-import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_PORTFOLIO_INFO;
-import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
+import static com.lambda.investing.model.portfolio.Portfolio.*;
 import static org.jfree.chart.ChartFactory.getChartTheme;
 
 public abstract class Algorithm extends AlgorithmParameters implements MarketDataListener, ExecutionReportListener, CandleListener {
@@ -69,7 +72,6 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected static String BASE_PATH_OUTPUT = Configuration.OUTPUT_PATH;
     protected static Integer FIRST_HOUR_DEFAULT = -1;
     protected static Integer LAST_HOUR_DEFAULT = 25;
-    protected static DateFormat DAY_STR_DATE_FORMAT = new SimpleDateFormat("yyyymmdd");
 
     private static final String SEND_STATS = "->";
     private static final String RECEIVE_STATS = "<-";
@@ -164,7 +166,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected TimeServiceIfc timeService;
     protected AlgorithmState algorithmState = AlgorithmState.NOT_INITIALIZED;
     protected String summaryResultsAppend = null;
-
+    private CandleData candleData;
     public boolean isReady() {
         return getAlgorithmState().equals(AlgorithmState.STARTED);
     }
@@ -257,6 +259,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     public void constructorForAbstract(AlgorithmConnectorConfiguration algorithmConnectorConfiguration,
                                        String algorithmInfo, Map<String, Object> parameters) {
 
+        candleData = new CandleData();
         executionReportManager = new ExecutionReportManager();
         candleFromTickUpdater = new CandleFromTickUpdater();
         candleFromTickUpdater.register(this);
@@ -1064,7 +1067,10 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
         //updating the OrderRequestMap before sending
         Instrument instrumentOrder = instrumentManager.getInstrument();
-        orderRequest.setPrice(instrumentOrder.roundPrice(orderRequest.getPrice()));
+        if(orderRequest.getPrice() != OrderRequest.NOT_SET_PRICE_VALUE) {
+            //round price
+            orderRequest.setPrice(instrumentOrder.roundPrice(orderRequest.getPrice()));
+        }
 
         Map<String, OrderRequest> instrumentSendOrders = instrumentManager.getAllRequestOrders();
         //		if(pendingToRemoveClientOrderId.contains(orderRequest.getClientOrderId())){
@@ -1146,7 +1152,8 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             }
 
             try {
-                candleFromTickUpdater.onDepthUpdate(depth);
+                portfolioManager.updateDepth(depth);//update before remove me
+                candleFromTickUpdater.onDepthUpdate(depth);//can be some logic , better to update portfolio first -> taker logic
             } catch (IndexOutOfBoundsException e) {
                 //no one of the sides
             }
@@ -1156,6 +1163,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             if (!isBacktest) {
                 timeService.setCurrentTimestamp(new Date().getTime());
             }
+
 
             //check depth
         } catch (Exception e) {
@@ -1171,9 +1179,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             return false;
         }
 
-
         //update cache
-        portfolioManager.updateDepth(depth);
         algorithmNotifier.notifyObserversOnUpdateDepth(depth);//to stateManager - to state
 
         if (!checkOperationalTime()) {
@@ -1485,7 +1491,15 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         output.setOrderRequestAction(OrderRequestAction.Send);
         output.setClientOrderId(newClientOrderId);
         output.setQuantity(quantity);
-        //		Depth lastDepth = getLastDepth(instrument);
+        Depth lastDepth = getLastDepth(instrument);
+        double worstPrice = verb == Verb.Buy ? lastDepth.getWorstAsk() : lastDepth.getWorstBid();
+        double maxVolume = verb == Verb.Buy ? lastDepth.getAskVolume() : lastDepth.getBidVolume();
+        if (quantity > maxVolume) {
+            logger.error("[{}] Market order requested quantity {} > max volume {} for {} => set worst price {}", getCurrentTime(), quantity, maxVolume, instrument.getPrimaryKey(), worstPrice);
+            output.setPrice(worstPrice);
+        }else{
+            output.setPrice(OrderRequest.NOT_SET_PRICE_VALUE);
+        }
         //		if (verb.equals(Verb.Sell)){
         //			output.setPrice(lastDepth.getBestBid()-lastDepth.getSpread());
         //		}
@@ -1496,6 +1510,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         output.setTimestampCreation(getCurrentTimestamp());
         output.setOrderType(OrderType.Market);//limit for quoting
         output.setMarketOrderType(MarketOrderType.FAS);//default FAS
+
         return output;
     }
 
@@ -1557,7 +1572,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     }
 
     public String getCurrentDayStr() {
-        return DAY_STR_DATE_FORMAT.format(getCurrentTime());
+        return Configuration.getDateFormat(getCurrentTime());
     }
 
     public long getCurrentTimestamp() {
@@ -1648,5 +1663,14 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         }
         logger.warn("unknown onInfoUpdate header {} -> return false", header);
         return false;
+    }
+
+    public Map<String, List<Candle>> downloadCandles(Date startDate, Date endDate, Set<Instrument> instruments, CandleType candleType, int secondsCandles) {
+        Set<String> instrumentPks = new HashSet<>();
+        for (Instrument instrument : instruments) {
+            instrumentPks.add(instrument.getPrimaryKey());
+        }
+        return candleData.downloadCandles(startDate, endDate, instrumentPks, candleType, secondsCandles);
+
     }
 }

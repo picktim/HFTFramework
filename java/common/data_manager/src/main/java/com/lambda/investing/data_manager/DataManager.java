@@ -1,6 +1,6 @@
 package com.lambda.investing.data_manager;
 
-import com.lambda.investing.model.market_data.CSVable;
+import com.lambda.investing.model.CSVable;
 import tech.tablesaw.api.Table;
 
 import java.util.List;

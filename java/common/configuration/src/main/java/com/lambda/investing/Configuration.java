@@ -4,7 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 public class Configuration {
@@ -162,6 +164,13 @@ public class Configuration {
         }
 
     }
+
+    protected static DateFormat DAY_STR_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
+    public static String getDateFormat(Date date) {
+        return DAY_STR_DATE_FORMAT.format(date);
+    }
+
 
     public static String print() {
         //print all public fields of this class as json

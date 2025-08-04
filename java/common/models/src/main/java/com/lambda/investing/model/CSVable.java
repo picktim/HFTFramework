@@ -1,6 +1,10 @@
-package com.lambda.investing.model.market_data;
+package com.lambda.investing.model;
 
 import com.lambda.investing.model.asset.Instrument;
+import com.lambda.investing.model.market_data.Depth;
+import com.lambda.investing.model.market_data.DepthParquet;
+import com.lambda.investing.model.market_data.Trade;
+import com.lambda.investing.model.market_data.TradeParquet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,7 +12,7 @@ import java.io.Serializable;
 
 public abstract class CSVable implements Serializable {
 
-	static Logger logger = LogManager.getLogger(CSVable.class);
+	public static Logger logger = LogManager.getLogger(CSVable.class);
 
 	public abstract String toCSV(boolean withHeader);
 
