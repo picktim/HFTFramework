@@ -2,16 +2,12 @@ package com.lambda.investing.data_manager.csv;
 
 import com.lambda.investing.data_manager.DataManager;
 import com.lambda.investing.data_manager.FileDataUtils;
-import com.lambda.investing.model.market_data.CSVable;
+import com.lambda.investing.model.CSVable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.Table;
-import tech.tablesaw.io.Destination;
-import tech.tablesaw.io.csv.CsvWriter;
 
-import javax.security.sasl.SaslServer;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
