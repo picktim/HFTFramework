@@ -90,7 +90,7 @@ public class AvroParquetDataManager extends ParquetDataManager {
     }
 
     @Override
-    public <T extends CSVable> tech.tablesaw.api.Table getData(String filepath, Class<T> objectType)
+    public <T extends CSVable> Table getData(String filepath, Class<T> objectType)
             throws Exception {
 
         //Read Parquet

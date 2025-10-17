@@ -4,6 +4,7 @@ import com.lambda.investing.Configuration;
 import com.lambda.investing.algorithmic_trading.Algorithm;
 import com.lambda.investing.algorithmic_trading.InstrumentManager;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.TrainType;
+import com.lambda.investing.algorithmic_trading.utils.AppUtils;
 import com.lambda.investing.backtest_engine.BacktestConfiguration;
 import com.lambda.investing.backtest_engine.ordinary.OrdinaryBacktest;
 import com.lambda.investing.gym.DummyRlAgent;
@@ -49,32 +50,6 @@ public class App {
 
 
 
-    private static void logProperties(Logger logger) {
-        logger.info("");
-
-        logger.info("");
-        logger.info("JVM arguments: " + ManagementFactory.getRuntimeMXBean().getInputArguments());
-
-        logger.info("");
-
-        logger.info("System environment:");
-        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            logger.info(entry.getKey() + " -> " + entry.getValue());
-        }
-
-        logger.info("");
-        logger.info("System properties: ");
-        String lastElem;
-        String elem;
-        List<String> listPropertyValue;
-        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-            elem = entry.getKey().toString();
-            listPropertyValue = Arrays.asList(elem.split("\\."));
-            lastElem = listPropertyValue.get(listPropertyValue.size() - 1);
-            logger.info(entry.getKey() + " -> " + entry.getValue());
-        }
-        logger.info("");
-    }
 
     private static void setInputConfigurationDefaultValues(String jsonString, InputConfiguration inputConfiguration, Logger logger) {
 
@@ -116,7 +91,6 @@ public class App {
     protected App(String[] args) throws IOException {
 
         try {
-
             boolean checkFile = true;
             if (args.length == 0) {
                 System.out.println("EXAMPLE json!");

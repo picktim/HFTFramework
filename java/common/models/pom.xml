@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>models</artifactId>
     <parent>
         <artifactId>parent_pom</artifactId>
-        <groupId>com.lambda.investing</groupId>
-        <version>0.1.1-SNAPSHOT</version>
+        <groupId>io.github.javifalces</groupId>
+        <version>1.0.6-SNAPSHOT</version>
         <relativePath>../../parent_pom/pom.xml</relativePath>
     </parent>
 
@@ -96,9 +94,9 @@
                                     <generateDirectory>${project.basedir}/src/main/java</generateDirectory>
                                     <plugins>
                                         <!--<plugin>-->
-                                        <!--<groupId>org.jvnet.jaxb2_commons</groupId>-->
-                                        <!--<artifactId>jaxb2-basics</artifactId>-->
-                                        <!--<version>${jaxb2.version}</version>-->
+                                            <!--<groupId>org.jvnet.jaxb2_commons</groupId>-->
+                                            <!--<artifactId>jaxb2-basics</artifactId>-->
+                                            <!--<version>${jaxb2.version}</version>-->
                                         <!--</plugin>-->
                                         <plugin>
                                             <groupId>org.jvnet.jaxb2_commons</groupId>
@@ -108,9 +106,9 @@
 
 
                                         <!--<plugin>-->
-                                        <!--<groupId>org.jvnet.jaxb2_commons</groupId>-->
-                                        <!--<artifactId>jaxb2-basics-annotate</artifactId>-->
-                                        <!--<version>${jaxb2.version}</version>-->
+                                            <!--<groupId>org.jvnet.jaxb2_commons</groupId>-->
+                                            <!--<artifactId>jaxb2-basics-annotate</artifactId>-->
+                                            <!--<version>${jaxb2.version}</version>-->
                                         <!--</plugin>-->
                                     </plugins>
                                 </configuration>

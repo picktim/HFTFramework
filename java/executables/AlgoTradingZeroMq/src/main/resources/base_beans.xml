@@ -6,6 +6,7 @@
 
     <import resource="classpath:all_instruments.xml"></import>
 
+
     <bean
             class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>

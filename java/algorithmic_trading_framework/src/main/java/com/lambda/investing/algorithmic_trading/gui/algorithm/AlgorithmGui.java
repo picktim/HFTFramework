@@ -1,12 +1,13 @@
 package com.lambda.investing.algorithmic_trading.gui.algorithm;
 
-import com.lambda.investing.algorithmic_trading.PnlSnapshot;
-import com.lambda.investing.algorithmic_trading.PortfolioSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PnlSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
 import com.lambda.investing.model.trading.ExecutionReport;
 import com.lambda.investing.model.trading.OrderRequest;
 
+import javax.swing.*;
 import java.util.Map;
 
 public interface AlgorithmGui {
@@ -27,4 +28,7 @@ public interface AlgorithmGui {
     void updateExecutionReport(ExecutionReport executionReport);
 
     void updateCustomColumn(long timestamp, String instrumentPk, String key, Double value);
+
+    JPanel getPanel();
+
 }

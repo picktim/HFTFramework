@@ -44,7 +44,7 @@ import java.util.UUID;
 	@Override public String toString() {
 		if (orderRequestAction.equals(OrderRequestAction.Send) && quantity > 0) {
 			String output = String
-					.format("Send %s %s ->%s [%s]%.4f@%f", instrument, algorithmInfo, verb, clientOrderId, quantity,
+					.format("Send %s %s %s ->%s [%s]%.4f@%f", orderType.toString(), instrument, algorithmInfo, verb, clientOrderId, quantity,
 							price);
 			return output;
 		} else if (orderRequestAction.equals(OrderRequestAction.Modify) && quantity > 0) {

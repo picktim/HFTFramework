@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.lambda.investing</groupId>
+    <groupId>io.github.javifalces</groupId>
     <artifactId>parent_parent_pom</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+
+
+    <profiles>
+        <profile>
+            <id>allow-checksum-warnings</id>
+            <properties>
+                <maven.artifact.checksumPolicy>warn</maven.artifact.checksumPolicy>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
 
     <modules>
         <module>parent_pom</module>
@@ -16,7 +29,64 @@
         <module>backtest_engine</module>
         <module>executables</module>
         <module>trading_algorithms</module>
+<!--        <module>private_trading_algorithms</module>-->
     </modules>
+
+    <!-- Releases with GitHub Actions and Maven Release Plugin https://medium.com/p/0a6fce46a2d7  -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <checkModificationExcludes>
+                        <checkModificationExclude>pom.xml</checkModificationExclude>
+                    </checkModificationExcludes>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>se.bjurr.gitchangelog</groupId>
+                <artifactId>git-changelog-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <executions>
+                    <execution>
+                        <id>GenerateGitChangelog</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>git-changelog</goal>
+                        </goals>
+                        <configuration>
+                            <templateFile>changelog.mustache</templateFile>
+                            <readableTagName>-([^-]+?)$</readableTagName>
+                            <file>CHANGELOG.md</file>
+                            <!--                            <mediaWiki>false</mediaWiki>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>https://maven.pkg.github.com/${github.repository}</url>
+        </repository>
+    </distributionManagement>
+    <scm>
+        <developerConnection>
+            scm:git:git@github.com:javifalces/HFTFramework.git
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
 
 </project>

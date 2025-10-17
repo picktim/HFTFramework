@@ -64,9 +64,9 @@ public class DisruptorConnectorPublisherProvider implements ConnectorPublisher, 
      * https://www.baeldung.com/lmax-disruptor-concurrency
      * https://github.com/trevorbernard/disruptor-examples/tree/master/src/main/java/com/trevorbernard/disruptor/examples
      *
-     *
      * @param name    name of the threadpool
      * @param threads number of threads that publish to register ConnectorListeners
+     * @param sizeRing size of ring
      */
     public DisruptorConnectorPublisherProvider(String name, int threads, int sizeRing) {
         listenerManager = new ConcurrentHashMap<>();

@@ -2,6 +2,9 @@ package com.lambda.investing.model.candle;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.lambda.investing.model.CSVable;
+import com.lambda.investing.model.asset.Instrument;
+import com.lambda.investing.model.market_data.Depth;
+import com.lambda.investing.model.market_data.TradeParquet;
 import lombok.Getter;
 import lombok.Setter;
 

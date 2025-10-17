@@ -1,7 +1,7 @@
 package com.lambda.investing.algorithmic_trading.reinforcement_learning.state;
 
 import com.lambda.investing.TimeSeriesQueue;
-import com.lambda.investing.algorithmic_trading.PortfolioSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.ScoreEnum;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.time.ZoneId;
 import java.util.*;
+
 
 import static com.lambda.investing.algorithmic_trading.reinforcement_learning.MatrixRoundUtils.*;
 

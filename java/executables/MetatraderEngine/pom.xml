@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>executables</artifactId>
-        <groupId>com.lambda.investing</groupId>
-        <version>0.1.1-SNAPSHOT</version>
+        <groupId>io.github.javifalces</groupId>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,21 +12,18 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.lambda.investing</groupId>
+            <groupId>io.github.javifalces</groupId>
             <artifactId>trading_engine_connectors</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lambda.investing</groupId>
+            <groupId>io.github.javifalces</groupId>
             <artifactId>market_data_connectors</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lambda.investing</groupId>
+            <groupId>io.github.javifalces</groupId>
             <artifactId>broker_connector_instances</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
 
@@ -36,6 +31,7 @@
 
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <!--Preparing one jar -->
             <plugin>
@@ -52,7 +48,6 @@
                 </executions>
 
                 <configuration>
-                    <finalName>${project.artifactId}</finalName>
                     <mainClass>com.lambda.investing.App</mainClass>
                 </configuration>
             </plugin>

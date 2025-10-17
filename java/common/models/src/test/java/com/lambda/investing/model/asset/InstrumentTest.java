@@ -62,6 +62,20 @@ class InstrumentTest {
     }
 
     @Test
+    void round() {
+        double value = 0.0000064210;
+        assertEquals(0.0, Instrument.round(value, 1));
+        assertEquals(0.00, Instrument.round(value, 2));
+        assertEquals(0.000, Instrument.round(value, 3));
+        assertEquals(0.0000, Instrument.round(value, 4));
+        assertEquals(0.00001, Instrument.round(value, 5));
+        assertEquals(0.000006, Instrument.round(value, 6));
+        assertEquals(0.0000064, Instrument.round(value, 7));
+        assertEquals(0.00000642, Instrument.round(value, 8));
+        assertEquals(0.000006421, Instrument.round(value, 9));
+        assertEquals(0.000006421, Instrument.round(value, 10));
+    }
+    @Test
     void roundPrice() {
         assertEquals(1.064210, instrument.roundPrice(1.0642101));
         assertEquals(1.064210, instrument.roundPrice(1.0642095));

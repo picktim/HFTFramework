@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>parent_pom</artifactId>
-        <groupId>com.lambda.investing</groupId>
-        <version>0.1.1-SNAPSHOT</version>
+        <groupId>io.github.javifalces</groupId>
+        <version>1.0.6-SNAPSHOT</version>
         <relativePath>../../parent_pom/pom.xml</relativePath>
     </parent>
 
@@ -14,22 +12,20 @@
     <artifactId>broker_connector_instances</artifactId>
     <properties>
         <com.squareup.retrofit2.version>2.5.0</com.squareup.retrofit2.version>
-        <xchange.version>5.2.0</xchange.version>
+        <xchange.version>5.2.2</xchange.version>
     </properties>
 
 
     <dependencies>
         <dependency>
-            <groupId>com.lambda.investing</groupId>
+            <groupId>io.github.javifalces</groupId>
             <artifactId>models</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <!--Metatrader zeromq-->
         <dependency>
-            <groupId>com.lambda.investing</groupId>
+            <groupId>io.github.javifalces</groupId>
             <artifactId>connectors</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
 
@@ -77,6 +73,7 @@
             <artifactId>xchange-stream-coinbasepro</artifactId>
             <version>${xchange.version}</version>
         </dependency>
+
         <!--        kraken-->
         <dependency>
             <groupId>org.knowm.xchange</groupId>

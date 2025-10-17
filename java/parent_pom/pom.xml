@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.lambda.investing</groupId>
+    <groupId>io.github.javifalces</groupId>
     <artifactId>parent_pom</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <name>Parent Maven POM</name>
     <description>Parent POM used by all custom Lambda components</description>
     <organization>
-        <name>LambdaInvesting</name>
-        <url>http://www.lambdainvesting.com</url>
+        <name>Javier Falces</name>
+        <url>javifalces@gmail.com</url>
     </organization>
+
 
     <repositories>
         <!-- JAVA GUI        -->
@@ -26,8 +23,8 @@
             <id>jetbrains.3rdparty</id>
             <url>https://cache-redirector.jetbrains.com/intellij-dependencies</url>
         </repository>
-
     </repositories>
+
 
     <properties>
         <!-- common properties -->
@@ -56,12 +53,14 @@
         <log4j2.version>2.18.0</log4j2.version>
         <slf4j.version>2.0.0-alpha7</slf4j.version>
         <spring.version>5.2.22.RELEASE</spring.version>
+        <spring.plugin.version>3.0.0</spring.plugin.version>
         <junit4.version>4.13.1</junit4.version>
         <junit.version>5.9.2</junit.version>
         <gson.version>2.11.0</gson.version>
         <fastjson.version>2.0.51</fastjson.version>
         <commons-lang.version>3.11</commons-lang.version>
 
+        <antrun.version>3.0.0</antrun.version>
         <checkstyle.version>6.10.1</checkstyle.version>
         <pmd.plugin.version>3.9.0</pmd.plugin.version>
         <pmd.configuration.version>1.1.0</pmd.configuration.version>
@@ -77,11 +76,86 @@
         <maven.profiler.version>3.13</maven.profiler.version>
         <openhft.affinity.version>3.23.3</openhft.affinity.version>
         <openhft.chroniclequeue.version>5.27ea3</openhft.chroniclequeue.version>
+
     </properties>
 
 
     <dependencyManagement>
         <dependencies>
+            <!--  my own          -->
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>algorithmic_trading_framework</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>backtest_engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>market_data_connectors</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>trading_engine_connectors</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>configuration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>models</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>broker_connector_instances</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>trading_algorithms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>private_trading_algorithms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>data_manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>connectors</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.javifalces</groupId>
+                <artifactId>machine_learning</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--       -->
+
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
@@ -233,6 +307,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-core</artifactId>
+                <version>${spring.plugin.version}</version>
             </dependency>
 
             <dependency>
@@ -483,6 +563,13 @@
                 <version>7.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>7.11.0</version>
+            </dependency>
+
+
             <!-- chronicle openHFT -->
             <dependency>
                 <groupId>net.openhft</groupId>
@@ -632,9 +719,20 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${antrun.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${springboot-maven-build.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.4</version>
                 </plugin>
 
 
@@ -799,6 +897,11 @@
                     <!--</execution>-->
                     <!--</executions>-->
                 </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.9.0</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -820,8 +923,10 @@
             </plugins>
         </pluginManagement>
 
+
         <plugins>
-            <plugin>
+
+        <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
 
@@ -849,6 +954,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -886,9 +994,18 @@
             <!--</configuration>-->
             <!--</plugin>-->
 
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>
+
 
 
 </project>

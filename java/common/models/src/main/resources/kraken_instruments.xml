@@ -89,7 +89,7 @@
         <property name="symbol" value="shibeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.0000001"></property>
+        <property name="priceTick" value="0.00000001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -128,7 +128,7 @@
         <property name="symbol" value="bonkeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.000000001"></property>
+        <property name="priceTick" value="0.0000001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -168,7 +168,7 @@
         <property name="symbol" value="adaeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.000001"></property>
+        <property name="priceTick" value="0.0001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -180,7 +180,7 @@
         <property name="symbol" value="doteur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.0001"></property>
+        <property name="priceTick" value="0.01"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -220,7 +220,7 @@
         <property name="symbol" value="neareur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.001"></property>
+        <property name="priceTick" value="0.01"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -233,7 +233,7 @@
         <property name="symbol" value="rendereur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.001"></property>
+        <property name="priceTick" value="0.01"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -246,7 +246,7 @@
         <property name="symbol" value="icpeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.001"></property>
+        <property name="priceTick" value="0.01"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -260,7 +260,7 @@
         <property name="symbol" value="imxeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.001"></property>
+        <property name="priceTick" value="0.0001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -273,7 +273,7 @@
         <property name="symbol" value="flokieur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.0000001"></property>
+        <property name="priceTick" value="0.00000001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -286,7 +286,7 @@
         <property name="symbol" value="beameur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.00001"></property>
+        <property name="priceTick" value="0.000001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -299,7 +299,46 @@
         <property name="symbol" value="galaeur"></property>
         <property name="market" value="kraken"></property>
         <property name="currency" value="EUR"></property>
-        <property name="priceTick" value="0.0001"></property>
+        <property name="priceTick" value="0.00001"></property>
+        <property name="quantityTick" value="0.00001"></property>
+
+        <!--        <property name="makerFeePct" value="0.25"></property>-->
+        <!--        <property name="takerFeePct" value="0.40"></property>-->
+        <property name="makerFeePct" value="0.0"></property>
+        <property name="takerFeePct" value="0.10"></property>
+    </bean>
+
+    <bean id="nmreur_kraken" class="com.lambda.investing.model.asset.Instrument" init-method="addMap">
+        <property name="symbol" value="nmreur"></property>
+        <property name="market" value="kraken"></property>
+        <property name="currency" value="EUR"></property>
+        <property name="priceTick" value="0.01"></property>
+        <property name="quantityTick" value="0.00000001"></property>
+
+        <!--        <property name="makerFeePct" value="0.25"></property>-->
+        <!--        <property name="takerFeePct" value="0.40"></property>-->
+        <property name="makerFeePct" value="0.0"></property>
+        <property name="takerFeePct" value="0.10"></property>
+    </bean>
+
+    <bean id="anoneur_kraken" class="com.lambda.investing.model.asset.Instrument" init-method="addMap">
+        <property name="symbol" value="anoneur"></property>
+        <property name="market" value="kraken"></property>
+        <property name="currency" value="EUR"></property>
+        <property name="priceTick" value="0.01"></property>
+        <property name="quantityTick" value="0.00000001"></property>
+
+        <!--        <property name="makerFeePct" value="0.25"></property>-->
+        <!--        <property name="takerFeePct" value="0.40"></property>-->
+        <property name="makerFeePct" value="0.0"></property>
+        <property name="takerFeePct" value="0.10"></property>
+    </bean>
+
+    <bean id="trumpeur_kraken" class="com.lambda.investing.model.asset.Instrument" init-method="addMap">
+        <property name="symbol" value="trumpeur"></property>
+        <property name="market" value="kraken"></property>
+        <property name="currency" value="EUR"></property>
+        <property name="priceTick" value="0.001"></property>
         <property name="quantityTick" value="0.00001"></property>
 
         <!--        <property name="makerFeePct" value="0.25"></property>-->
@@ -339,6 +378,11 @@
         <ref bean="flokieur_kraken"/>
         <ref bean="galaeur_kraken"/>
         <ref bean="beameur_kraken"/>
+
+        <!-- others        -->
+        <ref bean="nmreur_kraken"/>
+        <ref bean="anoneur_kraken"/>
+        <ref bean="trumpeur_kraken"/>
 
 
     </util:list>

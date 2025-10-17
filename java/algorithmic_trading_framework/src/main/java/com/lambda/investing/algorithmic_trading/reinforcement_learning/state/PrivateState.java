@@ -1,6 +1,6 @@
 package com.lambda.investing.algorithmic_trading.reinforcement_learning.state;
 
-import com.lambda.investing.algorithmic_trading.PortfolioSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.MatrixRoundUtils;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.ScoreEnum;
 import com.lambda.investing.model.candle.Candle;

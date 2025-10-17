@@ -2,7 +2,7 @@ package com.lambda.investing.algorithmic_trading.reinforcement_learning.state;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.lambda.investing.algorithmic_trading.PortfolioSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
 import com.lambda.investing.data_manager.csv.CSVDataManager;
 import com.lambda.investing.model.candle.Candle;
 import com.lambda.investing.model.market_data.Depth;

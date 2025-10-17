@@ -24,15 +24,13 @@ package com.lambda.investing.algorithmic_trading.reinforcement_learning.q_learn;
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
-import com.lambda.investing.algorithmic_trading.FileUtils;
+import com.lambda.investing.algorithmic_trading.utils.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**

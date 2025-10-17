@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
-import com.lambda.investing.algorithmic_trading.IterationsPeriodTime;
+import com.lambda.investing.algorithmic_trading.reinforcement_learning.IterationsPeriodTime;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.MemoryReplayModel;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.TrainNNUtils;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.action.AbstractAction;

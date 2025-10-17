@@ -6,6 +6,7 @@ import com.lambda.investing.algorithmic_trading.Algorithm;
 import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
 import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.algorithmic_trading.SingleInstrumentAlgorithm;
+import com.lambda.investing.algorithmic_trading.utils.AppUtils;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
 import com.lambda.investing.live_trading_engine.LiveTrading;
 import com.lambda.investing.market_data_connector.ZeroMqMarketDataConnector;
@@ -180,7 +181,7 @@ public class App {
 
 
     protected void configureMarketDataConnectorInstrumentFilter(ApplicationContext ac,
-                                                                ZeroMqTradingConfiguration zeroMqTradingConfiguration) {
+                                                                ZeroMqTradingConfiguration zeroMqTradingConfiguration) throws Exception {
         ZeroMqMarketDataConnector marketDataConnector = ac.getBean(ZeroMqMarketDataConnector.class);
         //set instrument?
         String[] instrumentPkArr = zeroMqTradingConfiguration.getInstrumentPks();
@@ -196,6 +197,12 @@ public class App {
             algorithm = algorithmConfiguration.getAlgorithm(algorithmConnectorConfiguration);
             ALGORITHM = algorithm;
         }
+
+        if (algorithm == null) {
+            logger.error("Algorithm not configured " + algorithmConfiguration.getAlgorithmName());
+            throw new Exception("Algorithm not configured " + algorithmConfiguration.getAlgorithmName());
+        }
+
         for (Instrument instrument : algorithm.getHedgeManager().getInstrumentsHedgeList()) {
             String instrumentPk = instrument.getPrimaryKey();
             if (!instrumentList.contains(instrumentPk)) {
@@ -332,6 +339,7 @@ public class App {
     }
 
     protected App(String[] args) throws IOException {
+        AppUtils.LogLibraryVersions();
         ZeroMqTradingConfiguration zeroMqTradingConfiguration = null;
         try {
             args = argsFileToString(args);
@@ -373,7 +381,7 @@ public class App {
                     zeroMqTradingEngine.getPort()));
 
         } catch (Exception e) {
-            logger.error("error in backtest ", e);
+            logger.error("error in algoTrading ", e);
             e.printStackTrace();
             System.exit(-1);
         }

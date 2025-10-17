@@ -9,12 +9,12 @@ import com.lambda.investing.model.time.Period;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import static com.lambda.investing.algorithmic_trading.candle_manager.CandleFromTickUpdater.*;
 

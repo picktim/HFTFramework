@@ -3,6 +3,7 @@ package com.lambda.investing.algorithmic_trading.data;
 import com.lambda.investing.Configuration;
 import com.lambda.investing.data_manager.DataManager;
 import com.lambda.investing.data_manager.parquet.TableSawParquetDataManager;
+import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
 import com.lambda.investing.model.candle.CandleType;
 import tech.tablesaw.api.Row;

@@ -1,14 +1,12 @@
 package com.lambda.investing.algorithmic_trading.market_making.constant_spread;
 
 
+import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
 import com.lambda.investing.algorithmic_trading.market_making.MarketMakingAlgorithm;
 import com.lambda.investing.model.exception.LambdaTradingException;
 import com.lambda.investing.model.market_data.Depth;
-import com.lambda.investing.model.trading.ExecutionReport;
-import com.lambda.investing.model.trading.OrderRequest;
-import com.lambda.investing.model.trading.QuoteRequest;
-import com.lambda.investing.model.trading.QuoteRequestAction;
+import com.lambda.investing.model.trading.*;
 import org.apache.commons.math3.util.Precision;
 
 import java.util.Map;
@@ -43,6 +41,7 @@ public class ConstantSpreadAlgorithm extends MarketMakingAlgorithm {
         this.quantity = getParameterDouble(parameters, "quantity");
         this.quantityBuy = quantity;
         this.quantitySell = quantity;
+        this.allowedPriceTickImproveBest = getParameterIntOrDefault(parameters, "allowedPriceTickImproveBest", Integer.MAX_VALUE);
         this.quantityLimit = getParameterDoubleOrDefault(parameters, "quantityLimit", "quantity_limit", -1);
         this.minQuantityFollow = getParameterDoubleOrDefault(parameters, "minQuantityFollow", 0.0);
     }
@@ -131,6 +130,10 @@ public class ConstantSpreadAlgorithm extends MarketMakingAlgorithm {
             } else {
                 lastValidMid = midPrice;
             }
+
+            askPrice = boundPrice(Verb.Sell, askPrice, depth);
+            bidPrice = boundPrice(Verb.Buy, bidPrice, depth);
+
 
             askPrice = Precision.round(askPrice, instrument.getNumberDecimalsPrice());
 

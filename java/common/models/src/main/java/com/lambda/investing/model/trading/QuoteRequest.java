@@ -43,7 +43,7 @@ import java.util.Objects;
 			return "QuoteRequest Off " + instrument;
 		else {
 			String output = String
-					.format("QuoteRequest on %s %s ->bid %.4f@%.3f    ask %.4f@%.3f ", instrument, algorithmInfo,
+					.format("QuoteRequest on %s %s ->bid %.4f@%.6f    ask %.4f@%.6f ", instrument, algorithmInfo,
 							bidQuantity, bidPrice, askQuantity, askPrice);
 			return output;
 

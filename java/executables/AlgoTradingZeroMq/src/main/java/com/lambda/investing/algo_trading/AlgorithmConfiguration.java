@@ -2,13 +2,14 @@ package com.lambda.investing.algo_trading;
 
 import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
 
-import com.lambda.investing.algorithmic_trading.AlgorithmCreationUtils;
-import com.lambda.investing.algorithmic_trading.AlgorithmUtils;
+import com.lambda.investing.algorithmic_trading.provider.AlgorithmCreationUtils;
+import com.lambda.investing.algorithmic_trading.utils.AlgorithmUtils;
 import lombok.Getter;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class AlgorithmConfiguration {
 	public com.lambda.investing.algorithmic_trading.Algorithm getAlgorithm(
 			AlgorithmConnectorConfiguration algorithmConnectorConfiguration) {
 		Map<String, Object> parametersAsString = AlgorithmUtils.getParameters(parameters);
-		return AlgorithmCreationUtils.getAlgorithm(algorithmConnectorConfiguration, algorithmName, parametersAsString);
+		return AlgorithmCreationUtils.getInstance().getAlgorithm(algorithmConnectorConfiguration, algorithmName, parametersAsString);
 	}
 
 

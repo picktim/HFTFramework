@@ -3,8 +3,8 @@ package com.lambda.investing.algorithmic_trading.reinforcement_learning.state;
 import com.google.common.primitives.Doubles;
 import com.lambda.investing.Configuration;
 import com.lambda.investing.TimeSeriesQueue;
-import com.lambda.investing.algorithmic_trading.PortfolioSnapshot;
-import com.lambda.investing.algorithmic_trading.TimeService;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
+import com.lambda.investing.algorithmic_trading.time_service.TimeService;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.ScoreEnum;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
@@ -12,12 +12,9 @@ import com.lambda.investing.model.candle.CandleType;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
 import org.apache.commons.lang3.ArrayUtils;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.lambda.investing.algorithmic_trading.technical_indicators.Calculator.*;
+import static com.lambda.investing.algorithmic_trading.utils.TechnicalIndicatorsUtils.*;
 
 public class DiscreteTAState extends AbstractState {
 

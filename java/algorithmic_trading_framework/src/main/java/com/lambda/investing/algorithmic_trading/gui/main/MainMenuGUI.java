@@ -4,8 +4,9 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.lambda.investing.algorithmic_trading.*;
 import com.lambda.investing.algorithmic_trading.gui.algorithm.AlgorithmGui;
-import com.lambda.investing.algorithmic_trading.gui.algorithm.arbitrage.statistical_arbitrage.StatisticalArbitrageAlgorithmGui;
-import com.lambda.investing.algorithmic_trading.gui.algorithm.market_making.MarketMakingAlgorithmGui;
+import com.lambda.investing.algorithmic_trading.gui.algorithm.default_gui.DefaultAlgorithmGui;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PnlSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
 import com.lambda.investing.model.trading.ExecutionReport;
@@ -65,22 +66,16 @@ public class MainMenuGUI extends JFrame implements AlgorithmObserver {
 
             for (Algorithm algorithm : algorithmsList) {
 
-                switch (algorithm.getAlgorithmType()) {
-                    case MarketMaking:
-
-                        MarketMakingAlgorithmGui marketMakingAlgorithmGui = new MarketMakingAlgorithmGui(theme, ((SingleInstrumentAlgorithm) algorithm).getInstrument());
-                        depthTabs.add(algorithm.getAlgorithmInfo(), marketMakingAlgorithmGui.getPanel());
-                        algorithmsMap.put(algorithm.getAlgorithmInfo(), marketMakingAlgorithmGui);
-                        break;
-                    case Arbitrage:
-                        StatisticalArbitrageAlgorithmGui statisticalArbitrageAlgorithmGui = new StatisticalArbitrageAlgorithmGui(theme);
-                        depthTabs.add(algorithm.getAlgorithmInfo(), statisticalArbitrageAlgorithmGui.getPanel());
-                        algorithmsMap.put(algorithm.getAlgorithmInfo(), statisticalArbitrageAlgorithmGui);
-                        break;
-                    default:
-                        System.err.println("Algorithm type not supported: " + algorithm.getAlgorithmType());
-                        break;
+                AlgorithmGui algorithmGui = algorithm.getAlgorithmGui(theme);
+                if (algorithmGui != null) {
+                    depthTabs.add(algorithm.getAlgorithmInfo(), algorithmGui.getPanel());
+                    algorithmsMap.put(algorithm.getAlgorithmInfo(), algorithmGui);
+                } else {
+                    DefaultAlgorithmGui defaultAlgorithmGui = new DefaultAlgorithmGui(((SingleInstrumentAlgorithm) algorithm).getInstrument(), theme);
+                    depthTabs.add(algorithm.getAlgorithmInfo(), defaultAlgorithmGui.getPanel());
+                    algorithmsMap.put(algorithm.getAlgorithmInfo(), defaultAlgorithmGui);
                 }
+
                 algorithm.register(this);
             }
             this.pack();

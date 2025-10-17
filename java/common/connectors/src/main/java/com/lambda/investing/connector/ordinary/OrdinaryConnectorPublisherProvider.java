@@ -32,7 +32,7 @@ public class OrdinaryConnectorPublisherProvider implements ConnectorPublisher, C
 
 	/**
 	 * @param name            name of the threadpool
-	 * @param publishThreads  number of publishThreads that publish to register ConnectorListeners <1 is going to cached
+	 * @param publishThreads  number of publishThreads that publish to register ConnectorListeners lower than 1 is going to cached
 	 * @param publishPriority publishPriority of the thread pool
 	 */
 	public OrdinaryConnectorPublisherProvider(String name, int publishThreads, Integer publishPriority) {

@@ -10,8 +10,7 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-import static com.lambda.investing.model.Util.getDatePythonUTC;
-import static com.lambda.investing.model.Util.toJsonString;
+import static com.lambda.investing.model.Util.*;
 
 @Getter
 @Setter

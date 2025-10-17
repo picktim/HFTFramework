@@ -1,11 +1,16 @@
 package com.lambda.investing.algorithmic_trading.gui.algorithm;
 
+import com.lambda.investing.ArrayUtils;
+import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.trading.ExecutionReport;
+import com.lambda.investing.model.trading.ExecutionReportStatus;
 import com.lambda.investing.model.trading.Verb;
 import lombok.Getter;
 
 import javax.swing.table.AbstractTableModel;
+
+import java.util.List;
 
 import static com.lambda.investing.ArrayUtils.ArrayReverse;
 import static com.lambda.investing.model.trading.ExecutionReport.liveStatus;
@@ -38,6 +43,7 @@ public class DepthTableModel extends AbstractTableModel {
     private double lastQuoteBid = -1;
     private double lastQuoteAskVol = -1;
     private double lastQuoteAsk = -1;
+    private Instrument instrument;
 
     private final Object depthLock = new Object();
 
@@ -46,6 +52,22 @@ public class DepthTableModel extends AbstractTableModel {
         this.askLength = askLength;
         this.bidLength = bidLength;
         fireTableDataChanged();
+    }
+
+    private void roundPrices(double[] prices) {
+        if (instrument != null) {
+            for (int i = 0; i < prices.length; i++) {
+                prices[i] = instrument.roundPrice(prices[i]);
+            }
+        }
+    }
+
+    private void roundQuantities(double[] quantities) {
+        if (instrument != null) {
+            for (int i = 0; i < quantities.length; i++) {
+                quantities[i] = instrument.roundQty(quantities[i]);
+            }
+        }
     }
 
     private void extendBidSide(Depth depth) {
@@ -79,6 +101,10 @@ public class DepthTableModel extends AbstractTableModel {
 
     public void updateDepth(Depth depth) {
         synchronized (depthLock) {
+            if (instrument == null) {
+                instrument = Instrument.getInstrument(depth.getInstrument());
+            }
+
             double[][] data = new double[depth.getAskLevels() > depth.getBidLevels() ? depth.getAskLevels() * 2 + 1 : depth.getBidLevels() * 2 + 1][TOTAL_COLUMNS];//last row if to mark quoted row
             int bidsLength = depth.getBidLevels();
             int asksLength = depth.getAskLevels();
@@ -109,6 +135,9 @@ public class DepthTableModel extends AbstractTableModel {
         double worstAsk = depth.getWorstAsk();
         double[] asks = ArrayReverse(depth.getAsks().clone());
         double[] askVols = ArrayReverse(depth.getAsksQuantities().clone());
+
+        roundPrices(asks);
+        roundQuantities(askVols);
 
 
         int levelToSetAskQuoting = -1;
@@ -170,6 +199,10 @@ public class DepthTableModel extends AbstractTableModel {
         double worstBid = depth.getWorstBid();
         double[] bids = depth.getBids();
         double[] bidVols = depth.getBidsQuantities();
+
+        roundPrices(bids);
+        roundQuantities(bidVols);
+
         firstBidRow = depth.getAsks().length;
 
         int levelToSetBidQuoting = -1;
@@ -227,23 +260,25 @@ public class DepthTableModel extends AbstractTableModel {
 
     public void updateExecutionReport(ExecutionReport executionReport) {
         //in reality is updated next depth -> happens inmediatelly
-        if (liveStatus.contains(executionReport.getExecutionReportStatus())) {
-            if (executionReport.getVerb() == Verb.Buy) {
-                lastQuoteBidVol = executionReport.getQuantity() / VOLUME_FACTOR;
-                lastQuoteBid = executionReport.getPrice();
-            } else {
-                lastQuoteAskVol = executionReport.getQuantity() / VOLUME_FACTOR;
-                lastQuoteAsk = executionReport.getPrice();
+        synchronized (depthLock) {
+            if (liveStatus.contains(executionReport.getExecutionReportStatus())) {
+                if (executionReport.getVerb() == Verb.Buy) {
+                    lastQuoteBidVol = executionReport.getQuantity() / VOLUME_FACTOR;
+                    lastQuoteBid = executionReport.getPrice();
+                } else {
+                    lastQuoteAskVol = executionReport.getQuantity() / VOLUME_FACTOR;
+                    lastQuoteAsk = executionReport.getPrice();
+                }
             }
-        }
 
-        if (removedStatus.contains(executionReport.getExecutionReportStatus())) {
-            if (executionReport.getVerb() == Verb.Buy) {
-                lastQuoteBidVol = -1;
-                lastQuoteBid = -1;
-            } else {
-                lastQuoteAskVol = -1;
-                lastQuoteAsk = -1;
+            if (removedStatus.contains(executionReport.getExecutionReportStatus())) {
+                if (executionReport.getVerb() == Verb.Buy) {
+                    lastQuoteBidVol = -1;
+                    lastQuoteBid = -1;
+                } else {
+                    lastQuoteAskVol = -1;
+                    lastQuoteAsk = -1;
+                }
             }
         }
     }

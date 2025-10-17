@@ -6,17 +6,12 @@ import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.exception.LambdaTradingException;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
-import com.lambda.investing.model.trading.ExecutionReport;
-import com.lambda.investing.model.trading.OrderRequest;
-import com.lambda.investing.model.trading.Verb;
+import com.lambda.investing.model.trading.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LinearRegressionHedgeManager implements HedgeManager {

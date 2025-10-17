@@ -119,6 +119,17 @@ public class UtilsTest {
         instrument2.setQuantityTick(0.01);
         instrument2.addMap();
 
+        Instrument instrument3 = new Instrument();
+        instrument3.setPrimaryKey("btceur_kraken");
+        instrument3.setSymbol("btceur");
+        instrument3.setMarket("kraken");
+        instrument3.setCurrency(Currency.EUR);
+        instrument3.setPriceTick(0.01);
+        instrument3.setQuantityTick(0.00001);
+        instrument3.setMakerFeePct(0.0);
+        instrument3.setTakerFeePct(0.1);
+        instrument3.addMap();
+
     }
 
     public static class BacktestLauncher {

@@ -1,15 +1,12 @@
 package com.lambda.investing.algorithmic_trading.market_making.reinforcement_learning;
 
 import com.lambda.investing.ArrayUtils;
-import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
+import com.lambda.investing.algorithmic_trading.*;
 import com.lambda.investing.algorithmic_trading.hedging.NoHedgeManager;
 import com.lambda.investing.algorithmic_trading.market_making.MarketMakingAlgorithm;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.ScoreEnum;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.SingleInstrumentRLAlgorithm;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.state.DiscreteTAState;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.state.MarketState;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.state.MultiMarketState;
-import com.lambda.investing.algorithmic_trading.reinforcement_learning.state.StateManager;
+import com.lambda.investing.algorithmic_trading.reinforcement_learning.*;
+
+import com.lambda.investing.algorithmic_trading.reinforcement_learning.state.*;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
 import com.lambda.investing.model.candle.CandleType;

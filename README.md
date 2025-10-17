@@ -49,7 +49,9 @@ associated risks.**
 
 ![Ui](fig/UI.jpg?raw=true "UI")
 [LLM Documentation](java/docs/Index.md)
+
 ### 1. Create algorithm and backtest
+
 [ALGORITHM_DOCUMENTATION.md](java/docs/ALGORITHM_DOCUMENTATION.md)
 [BACKTEST_DOCUMENTATION.md](java/docs/BACKTEST_DOCUMENTATION.md)
 [MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md](java/docs/MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md)
@@ -63,11 +65,13 @@ These instructions pertain to the execution of pre-existing algorithms.
 
 To develop a new algorithm, one must create a new class that extends
 from [Algorithm.java](java/algorithmic_trading_framework/src/main/java/com/lambda/investing/algorithmic_trading/Algorithm.java)
-and incorporate it into the algorithm builder method getAlgorithm
-in [AlgorithmCreationTools](java/trading_algorithms/src/main/java/com/lambda/investing/algorithmic_trading/AlgorithmCreationUtils.java).
+and incorporate it into the trading algorithms provider method getAlgorithm
+in [TradingAlgorithmsProvider.java](java/trading_algorithms/src/main/java/com/lambda/investing/algorithmic_trading/provider/TradingAlgorithmsProvider.java)
 
 1. Execute the compilation and packaging process for the [Backtest](java/executables/Backtest) module, which will result
-   in the generation of a JAR file. The target location for this file is java/executables/Backtest/target/Backtest.jar.
+   in the generation of a JAR file. The target location for this file is
+   java/executables/Backtest/target/Backtest.jar.If you want to include your own algorithms you can create your own
+   private_trading_algorithms module
 2. Establish a reference to the aforementioned path in the environment variable denoted as **LAMBDA_JAR_PATH**.
 3. Ensure the data folder is prepared and contains the necessary Parquet files for the backtest. An [example data](data)
    set is provided for reference.
@@ -90,7 +94,9 @@ in [AlgorithmCreationTools](java/trading_algorithms/src/main/java/com/lambda/inv
 
 1. Execute the compilation and packaging process for the [AlgoTradingZeroMq](java/executables/AlgoTradingZeroMq) module,
    which will result in the generation of a JAR file. The target location for this file is
-   java/executables/AlgoTradingZeroMq/target/AlgoTradingZeroMq.jar.
+   java/executables/AlgoTradingZeroMq/target/AlgoTradingZeroMq.jar. If you want to include your own algorithms you can
+   create your own
+   private_trading_algorithms module
 2. Establish a reference to the aforementioned path in the environment variable denoted as **LAMBDA_ZEROMQ_JAR_PATH**.
 3. Execute the compilation and packaging process for the [Market Engine](#3-market-engine)
 3. Launch the market engine ,configure market data engine and trading engine ports in
@@ -118,7 +124,7 @@ in [AlgorithmCreationTools](java/trading_algorithms/src/main/java/com/lambda/inv
 
 This engines are though to be used in live trading and are going to be the connection with the market.
 They are going to be configured in
-the [AlgorithmConnectorConfiguration](java/trading_algorithms/src/main/java/com/lambda/investing/algorithmic_trading/AlgorithmConnectorConfiguration.java)
+the [AlgorithmConnectorConfiguration.java](java/algorithmic_trading_framework/src/main/java/com/lambda/investing/algorithmic_trading/AlgorithmConnectorConfiguration.java)
 and are in charge of translate market messages into the format our framework can understand and send orders to the
 market.
 
@@ -198,8 +204,9 @@ metatrader.pull.port=32768
 * ...and so on
 
 ## TODO
-
-* Reduce/study live latency
+* Live Trading testing
+* Paper trading with live connector
+* Reduce/Measure live latency
     * [Chronicle](https://github.com/OpenHFT)
     * [LMAX Disruptor](https://lmax-exchange.github.io/disruptor/)
     * [Aeron](https://github.com/real-logic/aeron)
@@ -212,7 +219,6 @@ metatrader.pull.port=32768
 * ....
 
 ### [Java documentation reference](/java/docs/Index.md)
-
 
 ### Reference
 

@@ -17,13 +17,13 @@ public class ThreadPoolExecutorChannels extends ThreadPoolExecutor {
 
 	/***
 	 No handle RejectedExecutionException
-	 * @param name
-	 * @param corePoolSize
-	 * @param maximumPoolSize
-	 * @param keepAliveTime
-	 * @param unit
-	 * @param workQueue
-	 * @param factory
+	 * @param name name
+	 * @param corePoolSize corePoolSize
+	 * @param maximumPoolSize maximumPoolSize
+	 * @param keepAliveTime keepAliveTime
+	 * @param unit unit
+	 * @param workQueue workQueue
+	 * @param factory factory
 	 * @param useThrottling if true is going to process last item of the queue per channel/if false is normal FIFO
 	 */
 	public ThreadPoolExecutorChannels(String name

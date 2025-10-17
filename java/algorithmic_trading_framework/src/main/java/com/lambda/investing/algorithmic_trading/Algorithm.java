@@ -7,13 +7,18 @@ import com.lambda.investing.Configuration;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleFromTickUpdater;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleListener;
 import com.lambda.investing.algorithmic_trading.data.CandleData;
+import com.lambda.investing.algorithmic_trading.gui.algorithm.AlgorithmGui;
 import com.lambda.investing.algorithmic_trading.gui.main.MainMenuGUI;
 import com.lambda.investing.algorithmic_trading.hedging.HedgeManager;
 import com.lambda.investing.algorithmic_trading.hedging.NoHedgeManager;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PnlSnapshot;
+import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioManager;
+import com.lambda.investing.algorithmic_trading.quoting.QuoteManager;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.SingleInstrumentRLAlgorithm;
+import com.lambda.investing.algorithmic_trading.time_service.BacktestTimeService;
+import com.lambda.investing.algorithmic_trading.time_service.TimeServiceIfc;
+import com.lambda.investing.algorithmic_trading.utils.AlgorithmUtils;
 import com.lambda.investing.connector.ThreadUtils;
-import com.lambda.investing.data_manager.DataManager;
-import com.lambda.investing.data_manager.parquet.TableSawParquetDataManager;
 import com.lambda.investing.market_data_connector.MarketDataListener;
 import com.lambda.investing.market_data_connector.Statistics;
 import com.lambda.investing.model.asset.Instrument;
@@ -37,8 +42,6 @@ import org.jfree.chart.ChartTheme;
 
 import javax.swing.*;
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,6 +92,8 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected boolean verbose = true;
 
     protected AlgorithmConnectorConfiguration algorithmConnectorConfiguration; //must be private because send orders must pass from here except for Portfolio
+
+    @Getter
     protected String algorithmInfo;
 
     protected final Object lockLatchPosition = new Object();
@@ -107,9 +112,6 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected HedgeManager hedgeManager = new NoHedgeManager();
 
     protected ExecutionReportManager executionReportManager;
-
-    @Getter
-    protected AlgorithmType algorithmType = AlgorithmType.MarketMaking;
 
     public QuoteManager getQuoteManager(String instrumentPk) {
 
@@ -153,7 +155,9 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected PortfolioManager portfolioManager;
     protected AlgorithmNotifier algorithmNotifier;
 
+    @Getter
     protected boolean isBacktest = false;
+
     protected boolean uiStarted = false;
     protected ChartTheme theme;
 
@@ -162,7 +166,9 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected boolean saveBacktestOutputTrades = true;
 
     protected boolean printSummaryBacktest = true;
+    @Getter
     protected boolean isPaper = false;
+
     protected TimeServiceIfc timeService;
     protected AlgorithmState algorithmState = AlgorithmState.NOT_INITIALIZED;
     protected String summaryResultsAppend = null;
@@ -208,6 +214,11 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     public static final Object EXECUTION_REPORT_LOCK = new Object();
     protected Set<Instrument> instruments = new HashSet<>();
 
+
+    public AlgorithmGui getAlgorithmGui(ChartTheme theme) {
+        return null;
+    }
+
     public Algorithm(AlgorithmConnectorConfiguration algorithmConnectorConfiguration, String algorithmInfo,
                      Map<String, Object> parameters) {
         constructorForAbstract(algorithmConnectorConfiguration, algorithmInfo, parameters);
@@ -217,6 +228,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     public Algorithm(String algorithmInfo, Map<String, Object> parameters) {
         constructorForAbstract(null, algorithmInfo, parameters);
     }
+
 
     public void setHedgeManager(HedgeManager hedgeManager) {
         this.hedgeManager = hedgeManager;
@@ -567,7 +579,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
     //trading
 
-    protected String generateClientOrderId() {
+    public String generateClientOrderId() {
         byte[] dataInput = new byte[10];
         RANDOM_GENERATOR.nextBytes(dataInput);
         return UUID.nameUUIDFromBytes(dataInput).toString();
@@ -1067,7 +1079,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
         //updating the OrderRequestMap before sending
         Instrument instrumentOrder = instrumentManager.getInstrument();
-        if(orderRequest.getPrice() != OrderRequest.NOT_SET_PRICE_VALUE) {
+        if (orderRequest.getPrice() != OrderRequest.NOT_SET_PRICE_VALUE) {
             //round price
             orderRequest.setPrice(instrumentOrder.roundPrice(orderRequest.getPrice()));
         }
@@ -1341,6 +1353,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         double realizedFees = 0.0;
         double unrealizedFees = 0.0;
         int totalTrades = 0;
+        int totalAggTrades = 0;
         Set<Instrument> instruments = getInstruments();
 
         for (Instrument instrument : instruments) {
@@ -1364,6 +1377,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 realizedFees += pnlSnapshot.realizedFees;
                 unrealizedFees += pnlSnapshot.unrealizedFees;
                 totalTrades += pnlSnapshot.getNumberOfTrades().get();
+                totalAggTrades += pnlSnapshot.getNumberOfAggressorTrades().get();
             } else {
                 logger.warn("pnlSnapshot is null for {}", instrument.getPrimaryKey());
                 System.out.println("pnlSnapshot is null for " + instrument.getPrimaryKey());
@@ -1373,8 +1387,8 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             String header = Configuration.formatLog("\n********\nTOTAL: {} instruments\n********", instruments.size());
 
             String body = String
-                    .format("\ttrades:%d  totalPnl:%.3f totalFees:%.3f\n\trealizedPnl:%.3f  realizedFees:%.3f \n\tunrealizedPnl:%.3f  unrealizedFees:%.3f ",
-                            totalTrades, totalPnl,
+                    .format("\ttrades:%d (agg:%d)  totalPnl:%.3f totalFees:%.3f\n\trealizedPnl:%.3f  realizedFees:%.3f \n\tunrealizedPnl:%.3f  unrealizedFees:%.3f ",
+                            totalTrades, totalAggTrades, totalPnl,
                             totalFees, realizedPnl, realizedFees,
                             unrealizedPnl, unrealizedFees);
 
@@ -1497,7 +1511,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         if (quantity > maxVolume) {
             logger.error("[{}] Market order requested quantity {} > max volume {} for {} => set worst price {}", getCurrentTime(), quantity, maxVolume, instrument.getPrimaryKey(), worstPrice);
             output.setPrice(worstPrice);
-        }else{
+        } else {
             output.setPrice(OrderRequest.NOT_SET_PRICE_VALUE);
         }
         //		if (verb.equals(Verb.Sell)){
@@ -1555,8 +1569,8 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 continue;
             }
             String output = String
-                    .format("\r %s  trades:%d  position:%.3f totalPnl:%.3f realizedPnl:%.3f unrealizedPnl:%.3f  ",
-                            instrumentPk, pnlSnapshot.numberOfTrades.get(), pnlSnapshot.netPosition,
+                    .format("\r %s  trades:%d (agg:%d) position:%.3f totalPnl:%.3f realizedPnl:%.3f unrealizedPnl:%.3f  ",
+                            instrumentPk, pnlSnapshot.numberOfTrades.get(), pnlSnapshot.getNumberOfAggressorTrades().get(), pnlSnapshot.netPosition,
                             pnlSnapshot.totalPnl, pnlSnapshot.realizedPnl, pnlSnapshot.unrealizedPnl);
             if (isBacktest) {
                 System.out.print(output);

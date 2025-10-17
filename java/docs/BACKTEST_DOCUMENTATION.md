@@ -150,6 +150,7 @@ java -jar backtest.jar path/to/config.json
 2. Implement required methods like `onDepthUpdate`, `onTradeUpdate`
 3. Define algorithm parameters
 4. Create configuration JSON with algorithm name and parameters
+5. Add it to TradingAlgorithmsProvider.java
 
 ### Analyzing Results
 

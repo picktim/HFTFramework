@@ -1,8 +1,7 @@
 package com.lambda.investing.backtest;
 
-import com.lambda.investing.Configuration;
-import com.lambda.investing.algorithmic_trading.AlgorithmCreationUtils;
-import com.lambda.investing.algorithmic_trading.AlgorithmUtils;
+import com.lambda.investing.algorithmic_trading.provider.AlgorithmCreationUtils;
+import com.lambda.investing.algorithmic_trading.utils.AlgorithmUtils;
 import com.lambda.investing.algorithmic_trading.SingleInstrumentAlgorithm;
 import com.lambda.investing.algorithmic_trading.factor_investing.AbstractFactorInvestingAlgorithm;
 import com.lambda.investing.backtest_engine.BacktestConfiguration;
@@ -133,6 +132,10 @@ public class InputConfiguration implements Cloneable {
 
         public BacktestConfiguration getBacktestConfiguration(
                 com.lambda.investing.algorithmic_trading.Algorithm algorithm) throws Exception {
+
+            if (algorithm == null) {
+                throw new Exception("Algorithm not found");
+            }
             List<Instrument> instrumentList = getInstrumentList(algorithm);
 
             algorithm.setPlotStopHistorical(false);
@@ -176,7 +179,6 @@ public class InputConfiguration implements Cloneable {
     @Getter
     @Setter
     private class Algorithm {
-
         private String algorithmName;
         private Map<String, Object> parameters;
 
@@ -186,7 +188,7 @@ public class InputConfiguration implements Cloneable {
          * @return
          */
         public com.lambda.investing.algorithmic_trading.Algorithm getAlgorithm() {
-            return AlgorithmCreationUtils.getAlgorithm(null, algorithmName, AlgorithmUtils.getParameters(parameters));
+            return AlgorithmCreationUtils.getInstance().getAlgorithm(null, algorithmName, AlgorithmUtils.getParameters(parameters));
         }
 
         public Algorithm() {

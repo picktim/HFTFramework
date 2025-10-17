@@ -87,10 +87,10 @@ public class ZeroMqConfiguration implements ConnectorConfiguration {
 	/**
 	 * For creation of a list of topics of the instrument
 	 *
-	 * @param host
-	 * @param port
-	 * @param instrument
-	 * @return
+	 * @param host host
+	 * @param port port
+	 * @param instrument instrument
+	 * @return list
 	 */
 	public static List<ZeroMqConfiguration> getMarketDataZeroMqConfiguration(String host, int port, Instrument instrument) {
 		List<ZeroMqConfiguration> output = new ArrayList<>();

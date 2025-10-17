@@ -2,11 +2,9 @@ package com.lambda.investing.algorithmic_trading.market_making.avellaneda_stoiko
 
 import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.TimeSeriesQueue;
-import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
-import com.lambda.investing.algorithmic_trading.AlgorithmState;
-import com.lambda.investing.algorithmic_trading.InstrumentManager;
-import com.lambda.investing.algorithmic_trading.TimeseriesUtils;
+import com.lambda.investing.algorithmic_trading.*;
 import com.lambda.investing.algorithmic_trading.market_making.MarketMakingAlgorithm;
+import com.lambda.investing.algorithmic_trading.utils.TimeseriesUtils;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.exception.LambdaTradingException;
 import com.lambda.investing.model.market_data.Depth;
@@ -140,6 +138,7 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
 
         this.quantityBuy = quantity;
         this.quantitySell = quantity;
+        this.allowedPriceTickImproveBest = getParameterIntOrDefault(parameters, "allowedPriceTickImproveBest", Integer.MAX_VALUE);
 
         this.skew = getParameterDoubleOrDefault(parameters, "skew", 0.0);
         this.calculateTt = getParameterIntOrDefault(parameters, "calculateTt", 0) == 1;
@@ -401,6 +400,21 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
         }
     }
 
+    private double calculateFirstTermAvellaneda(double T_t) {
+        return 0.5 * (riskAversion * varianceMidPrice * T_t);
+    }
+
+    private double calculateSecondTermAvellaneda(double kValue) {
+        if (kValue == 0.0) {
+            return 0.0;
+        }
+        //alridge -> negative log is a sum
+        //			double spreadBid_ = (1 / riskAversion) * Math.log(1 + (riskAversion * kBuy));
+        //alridge -> negative log
+        //			double spreadAsk_ = (1 / riskAversion) * Math.log(1 + (riskAversion * kSell));
+        return (1 / riskAversion) * Math.log(1 + (riskAversion / kValue));
+    }
+
     public double[] calculateSpreadAvellaneda() {
         Double varianceMidPrice = getVarianceMidPrice();
         if (varianceMidPrice == null || !Double.isFinite(varianceMidPrice)) {
@@ -410,7 +424,7 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
 
         double[] ks = calculateK();
         if (ks == null) {
-            return null;
+            ks = new double[]{0.0, 0.0, 0.0};
         }
 
         double kTotal = ks[0];
@@ -420,27 +434,16 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
         double spreadBid = 0.0;
         double spreadAsk = 0.0;
         //
+        double firstTerm = calculateFirstTermAvellaneda(T_t);
         if (!SYMMETRIC_SPREAD_RESERVE) {
-
-            double spreadBid_ = 0.5 * (riskAversion * varianceMidPrice * T_t) + (1 / riskAversion) * Math
-                    .log(1 + (riskAversion / kBuy));
-
-            //alridge -> negative log is a sum
-            //			double spreadBid_ = (1 / riskAversion) * Math.log(1 + (riskAversion * kBuy));
+            double spreadBid_ = firstTerm + calculateSecondTermAvellaneda(kBuy);
             spreadBid = spreadBid_ * spreadMultiplier;
 
-            double spreadAsk_ = 0.5 * (riskAversion * varianceMidPrice * T_t) + (1 / riskAversion) * Math
-                    .log(1 + (riskAversion / kSell));
-
-            //alridge -> negative log
-            //			double spreadAsk_ = (1 / riskAversion) * Math.log(1 + (riskAversion * kSell));
+            double spreadAsk_ = firstTerm + calculateSecondTermAvellaneda(kSell);
             spreadAsk = spreadAsk_ * spreadMultiplier;
 
         } else {
-            double spreadBid_ = 0.5 * (riskAversion * varianceMidPrice * T_t) + (1 / riskAversion) * Math
-                    .log(1 + (riskAversion / kTotal));
-            //alridge -> negative log
-            //			double spreadBid_ = (1 / riskAversion) * Math.log(1 - (riskAversion * kTotal));
+            double spreadBid_ = firstTerm + calculateSecondTermAvellaneda(kTotal);
             spreadBid = Math.abs(spreadBid_ * spreadMultiplier);
             spreadAsk = spreadBid;
         }
@@ -489,9 +492,9 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
 
     protected double getPositionScaled() {
         double position = (getPosition(this.instrument) - targetPosition);
-//        double tickMultiplierScale = this.instrument.getQuantityTick();
-//        return position / tickMultiplierScale;
-        return position;
+        double tickMultiplierScale = this.instrument.getQuantityTick();
+        return position / tickMultiplierScale;
+//        return position;
     }
 
     public double getFirstTermSpreadGueantTapia(double k) {
@@ -633,12 +636,15 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
                 logger.warn("wrong calculation quoting non finite prices-> ask:{}  bid:{}  reservePrice:{} spreadBid:{} spreadAsk:{} mid:{} skew:{}", askPrice, bidPrice, reservePrice, spreadBid, spreadAsk, depth.getMidPrice(), skew);
                 return false;
             }
-
+            askPrice = boundPrice(Verb.Sell, askPrice, depth);
+            bidPrice = boundPrice(Verb.Buy, bidPrice, depth);
             //Check not crossing the mid price!
             if (CONTROL_NOT_CROSS_MIDPRICE) {
                 askPrice = Math.max(askPrice, depth.getMidPrice());
                 bidPrice = Math.min(bidPrice, depth.getMidPrice());
             }
+
+
             if (CONTROL_MAX_SPREAD_TICKS_DEV) {
                 //			Check worst price
                 double maxAskPrice = depth.getMidPrice() + MAX_TICKS_MIDPRICE_PRICE_DEV * instrument.getPriceTick();

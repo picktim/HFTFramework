@@ -9,82 +9,84 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Getter @Setter
+@Getter
+@Setter
 //@ToString
 public class ExecutionReport {
 
-	public static List<ExecutionReportStatus> tradeStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.PartialFilled});
-	public static List<ExecutionReportStatus> liveStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.Active, ExecutionReportStatus.PartialFilled});
-	public static List<ExecutionReportStatus> removedStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.Cancelled});
+    public static List<ExecutionReportStatus> tradeStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.PartialFilled});
+    public static List<ExecutionReportStatus> liveStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.Active, ExecutionReportStatus.PartialFilled});
+    public static List<ExecutionReportStatus> removedStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.Cancelled});
 
 
-	private String algorithmInfo, freeText;
-	private String instrument;
-	private String clientOrderId, origClientOrderId, rejectReason;
-	private double price, quantity, lastQuantity, quantityFill;//todo change to bigdecimal or integer
-	private ExecutionReportStatus executionReportStatus;
-	private Verb verb;
-	private boolean isAggressor = false;//for backtesting purposes, to be used in the future
+    private String algorithmInfo, freeText;
+    private String instrument;
+    private String clientOrderId, origClientOrderId, rejectReason;
+    private double price, quantity, lastQuantity, quantityFill;//todo change to bigdecimal or integer
+    private ExecutionReportStatus executionReportStatus;
+    private Verb verb;
+    private boolean isAggressor = false;//for backtesting purposes, to be used in the future
 
-	private long timestampCreation;
+    private long timestampCreation;
 
-	public ExecutionReport() {
-		//for fastJson construction
-	}
+    public ExecutionReport() {
+        //for fastJson construction
+    }
 
-	/**
-	 * Generates new Execution report from orderRequestPattern
-	 *
-	 * @param orderRequest
-	 */
-	public ExecutionReport(OrderRequest orderRequest) {
-		this.algorithmInfo = orderRequest.getAlgorithmInfo();
-		this.instrument = orderRequest.getInstrument();
-		this.clientOrderId = orderRequest.getClientOrderId();
-		this.origClientOrderId = orderRequest.getOrigClientOrderId();
-		//		this.rejectReason=
-		this.freeText = orderRequest.getFreeText();
+    /**
+     * Generates new Execution report from orderRequestPattern
+     *
+     * @param orderRequest
+     */
+    public ExecutionReport(OrderRequest orderRequest) {
+        this.algorithmInfo = orderRequest.getAlgorithmInfo();
+        this.instrument = orderRequest.getInstrument();
+        this.clientOrderId = orderRequest.getClientOrderId();
+        this.origClientOrderId = orderRequest.getOrigClientOrderId();
+        //		this.rejectReason=
+        this.freeText = orderRequest.getFreeText();
 
-		this.quantity = orderRequest.getQuantity();
-		this.price = orderRequest.getPrice();
-		this.timestampCreation = System.currentTimeMillis();//has to be updated
-		this.verb = orderRequest.getVerb();
-	}
+        this.quantity = orderRequest.getQuantity();
+        this.price = orderRequest.getPrice();
+        this.timestampCreation = System.currentTimeMillis();//has to be updated
+        this.verb = orderRequest.getVerb();
+    }
 
-	public void updateTimestampCreation(long timestampCreation) {
-		this.timestampCreation = Math.max(timestampCreation, this.timestampCreation);
-	}
+    public void updateTimestampCreation(long timestampCreation) {
+        this.timestampCreation = Math.max(timestampCreation, this.timestampCreation);
+    }
 
-	public String toJsonString() {
-		return Util.toJsonString(this);
-	}
+    public String toJsonString() {
+        return Util.toJsonString(this);
+    }
 
-	@Override public String toString() {
-		if (executionReportStatus.equals(ExecutionReportStatus.CancelRejected) || executionReportStatus
-				.equals(ExecutionReportStatus.Rejected)) {
-			return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", rejectReason='"
-					+ rejectReason + '\'' + ", instrument='" + instrument + '\'' + ", price=" + price + ", quantity="
-					+ quantity + ", lastQuantity=" + lastQuantity + ", quantityFill=" + quantityFill + '\''
-					+ ", freeText='" + freeText + '\'' + ", algorithmInfo='" + algorithmInfo + '\''
-					+ ", clientOrderId='" + clientOrderId + '\'' + ", origClientOrderId='" + origClientOrderId + '\''
-					+ ", verb=" + verb + ", timestampCreation=" + timestampCreation + '}';
+    @Override
+    public String toString() {
+        if (executionReportStatus.equals(ExecutionReportStatus.CancelRejected) || executionReportStatus
+                .equals(ExecutionReportStatus.Rejected)) {
+            return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", rejectReason='"
+                    + rejectReason + '\'' + ", instrument='" + instrument + '\'' + ", price=" + price + ", quantity="
+                    + quantity + ", lastQuantity=" + lastQuantity + ", quantityFill=" + quantityFill + '\''
+                    + ", algorithmInfo='" + algorithmInfo + '\''
+                    + ", clientOrderId='" + clientOrderId + '\'' + ", origClientOrderId='" + origClientOrderId + '\''
+                    + ", verb=" + verb + ", timestampCreation=" + timestampCreation + ", freeText='" + freeText + '}';
 
-		}
-		if (executionReportStatus.equals(ExecutionReportStatus.PartialFilled) || executionReportStatus
-				.equals(ExecutionReportStatus.CompletellyFilled)) {
-			return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", instrument='"
-					+ instrument + '\'' + ", verb=" + verb + '\'' + ", price=" + price + ", quantity=" + quantity
-					+ ", lastQuantity=" + lastQuantity + ", quantityFill=" + quantityFill + '\'' + ", freeText='"
-					+ freeText + '\'' + ", algorithmInfo='" + algorithmInfo + '\'' + ", clientOrderId='" + clientOrderId
-					+ '\'' + ", origClientOrderId='" + origClientOrderId + '\'' + ", rejectReason='" + rejectReason
-					+ '\'' + ", timestampCreation=" + timestampCreation + '}';
+        }
+        if (executionReportStatus.equals(ExecutionReportStatus.PartialFilled) || executionReportStatus
+                .equals(ExecutionReportStatus.CompletellyFilled)) {
+            return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", instrument='"
+                    + instrument + '\'' + ", verb=" + verb + '\'' + ", price=" + price + ", quantity=" + quantity
+                    + ", lastQuantity=" + lastQuantity + ", quantityFill=" + quantityFill + '\''
+                    + ", algorithmInfo='" + algorithmInfo + '\'' + ", clientOrderId='" + clientOrderId
+                    + '\'' + ", origClientOrderId='" + origClientOrderId + '\'' + ", rejectReason='" + rejectReason
+                    + '\'' + ", timestampCreation=" + timestampCreation + ", isAggressor=" + isAggressor + ", freeText='" + freeText + '}';
 
-		}
-		return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", instrument='"
-				+ instrument + '\'' + ", price=" + price + ", quantity=" + quantity + ", lastQuantity=" + lastQuantity
-				+ ", quantityFill=" + quantityFill + '\'' + ", freeText='" + freeText + '\'' + ", algorithmInfo='"
-				+ algorithmInfo + '\'' + ", clientOrderId='" + clientOrderId + '\'' + ", origClientOrderId='"
-				+ origClientOrderId + '\'' + ", rejectReason='" + rejectReason + '\'' + ", verb=" + verb
-				+ ", timestampCreation=" + timestampCreation + '}';
-	}
+        }
+        return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", instrument='"
+                + instrument + '\'' + ", price=" + price + ", quantity=" + quantity + ", lastQuantity=" + lastQuantity
+                + ", quantityFill=" + quantityFill + '\'' + ", algorithmInfo='"
+                + algorithmInfo + '\'' + ", clientOrderId='" + clientOrderId + '\'' + ", origClientOrderId='"
+                + origClientOrderId + '\'' + ", rejectReason='" + rejectReason + '\'' + ", verb=" + verb
+                + ", timestampCreation=" + timestampCreation + ", freeText='" + freeText + '}';
+    }
 }

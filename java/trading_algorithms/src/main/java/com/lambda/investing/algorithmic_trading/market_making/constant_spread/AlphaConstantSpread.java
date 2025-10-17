@@ -5,6 +5,7 @@ import com.google.common.primitives.Ints;
 import com.lambda.investing.algorithmic_trading.AlgorithmConnectorConfiguration;
 import com.lambda.investing.algorithmic_trading.LogLevels;
 import com.lambda.investing.algorithmic_trading.market_making.reinforcement_learning.RLAbstractMarketMaking;
+import com.lambda.investing.algorithmic_trading.reinforcement_learning.action.AvellanedaAction;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.action.ConstantSpreadAction;
 import org.apache.logging.log4j.LogManager;
 

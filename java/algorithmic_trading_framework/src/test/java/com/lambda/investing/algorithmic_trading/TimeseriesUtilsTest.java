@@ -1,6 +1,6 @@
 package com.lambda.investing.algorithmic_trading;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.lambda.investing.algorithmic_trading.utils.TimeseriesUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
