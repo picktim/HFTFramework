@@ -1,0 +1,82 @@
+name: Java Versioning/Deploy
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: "-Xmx8048m"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ACCOUNT_GITHUB_TOKEN }}
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'temurin'
+          cache: 'maven'
+          check-latest: false
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+      - name: Generate Changelog
+        working-directory: ./java
+        run: mvn se.bjurr.gitchangelog:git-changelog-maven-plugin:2.1.0:git-changelog
+      - name: Commit Changelog
+        working-directory: ./java
+        run: |
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog for version"
+          git push origin master
+      - name: Setup Maven settings.xml
+        uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: |
+            [{
+              "id": "central",
+              "username": "${{ secrets.OSSRH_USERNAME }}",
+              "password": "${{ secrets.OSSRH_TOKEN }}"
+            }
+            ]
+      - name: Prepare Release
+        working-directory: ./java
+        run: |
+          set -e
+          mvn release:prepare \
+          -DtagNameFormat=v@{project.version} \
+          -Darguments="-DskipTests -Dmaven.javadoc.skip=true"
+      - name: Perform Release
+        working-directory: ./java
+        env:
+          MAVEN_OPTS: "-Xmx8096m"
+        run: mvn release:perform -e -X -Darguments="-DskipTests -Dmaven.javadoc.skip=true"
+      - name: Push changes
+        run: |
+          set -e
+          git push origin master
+          git push origin --tags
+
+      - name: Send Email if failed
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_FROM }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: (market_making_fw) Java build-deploy-version
+          body: |
+            The Java build-deploy-version failed. ${{ github.sha }} by ${{ github.event.pull_request.user.login }} with message "${{ github.event.pull_request.title }}".
+          from: ${{ secrets.EMAIL_FROM }}
+          to: javifalces@gmail.com
+
+
+      - name: PrintIfSucceeded
+        if: success()
+        run: echo "Success new version deployed"

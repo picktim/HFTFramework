@@ -6,7 +6,7 @@
 
 This repository is home to a High-Frequency Trading (HFT) framework, developed using Java and Python, primarily for
 [research applications](#reference). The framework is engineered to interface with live markets through the use of
-[Connectors](java/trading_algorithms/src/main/java/com/lambda/investing/connector) , which can be integrated within the
+[connectors](java/common/connectors), which can be integrated within the
 same process or remotely via the ZeroMQ networking library.
 
 A significant feature of this framework is its ability to perform backtesting at the L2 tick data level,
