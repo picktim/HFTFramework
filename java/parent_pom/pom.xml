@@ -76,7 +76,7 @@
         <maven.profiler.version>3.13</maven.profiler.version>
         <openhft.affinity.version>3.23.3</openhft.affinity.version>
         <openhft.chroniclequeue.version>5.27ea3</openhft.chroniclequeue.version>
-
+        <maven.artifact.checksumPolicy>warn</maven.artifact.checksumPolicy>
     </properties>
 
 

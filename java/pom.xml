@@ -7,21 +7,6 @@
     <version>1.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-
-
-    <profiles>
-        <profile>
-            <id>allow-checksum-warnings</id>
-            <properties>
-                <maven.artifact.checksumPolicy>warn</maven.artifact.checksumPolicy>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-    </profiles>
-
-
     <modules>
         <module>parent_pom</module>
         <module>common</module>
