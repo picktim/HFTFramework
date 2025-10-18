@@ -149,11 +149,7 @@
 
     <profiles>
         <profile>
-            <id>cpu</id>
-        </profile>
-
-        <profile>
-            <id>gpu</id>
+            <id>gpu-machine_learning</id>
             <!-- Nvidia GPU Cuda must be installed! -->
             <!--
                 CUDA v11.2+ installed and configured https://developer.nvidia.com/cuda-downloads

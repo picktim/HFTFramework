@@ -113,11 +113,9 @@
         <profile>
             <id>private-trading-algorithms</id>
             <activation>
-                <property>
-                    <name>include.private_trading_algorithms</name>
-                    <value>true</value>
-                </property>
+                <activeByDefault>false</activeByDefault>
             </activation>
+
             <dependencies>
                 <dependency>
                     <groupId>io.github.javifalces</groupId>
