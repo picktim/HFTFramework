@@ -11,7 +11,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-    
+      - name: Clean cache
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Checkout code
         uses: actions/checkout@v3.5.2        
         
