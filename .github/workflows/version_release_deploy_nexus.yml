@@ -50,33 +50,14 @@ jobs:
           set -e
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-DskipTests -Dmaven.javadoc.skip=true"
+          -Darguments="-DskipTests=true -Dmaven.javadoc.skip=true"
       - name: Perform Release
         working-directory: ./java
         env:
           MAVEN_OPTS: "-Xmx8096m"
-        run: mvn release:perform -e -X -Darguments="-DskipTests -Dmaven.javadoc.skip=true"
+        run: mvn release:perform -DskipTests=true -Dmaven.javadoc.skip=true
       - name: Push changes
         run: |
           set -e
           git push origin master
           git push origin --tags
-
-      - name: Send Email if failed
-        if: failure()
-        uses: dawidd6/action-send-mail@v3.7.2
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_FROM }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: (market_making_fw) Java build-deploy-version
-          body: |
-            The Java build-deploy-version failed. ${{ github.sha }} by ${{ github.event.pull_request.user.login }} with message "${{ github.event.pull_request.title }}".
-          from: ${{ secrets.EMAIL_FROM }}
-          to: javifalces@gmail.com
-
-
-      - name: PrintIfSucceeded
-        if: success()
-        run: echo "Success new version deployed"
