@@ -19,6 +19,7 @@ jobs:
           server-password: ${{ secrets.OSSRH_TOKEN }}
 
       - name: Deploy with Maven
+        working-directory: ./java
         run: mvn --batch-mode clean deploy -P release -DskipTests=true
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
