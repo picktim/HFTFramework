@@ -1,5 +1,7 @@
 package com.lambda.investing.market_data_connector;
 
+import com.lambda.investing.LatencyStatistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorPublisher;
 import com.lambda.investing.connector.zero_mq.ZeroMqPublisher;
@@ -25,6 +27,7 @@ public abstract class AbstractMarketDataConnectorPublisher implements MarketData
     private boolean isZeroMq = false;
     protected String outputPath;
     private List<MarketDataConnectorPublisherListener> listenerList;
+
 
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;

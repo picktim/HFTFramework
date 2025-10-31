@@ -26,6 +26,17 @@
 
         </RollingFile>
 
+        <RollingFile name="fileStatistics"
+                     fileName="${sys:log.path}/${sys:log.appName:-MetatraderEngine}_${timestamp}_statistics.log"
+                     filePattern="${sys:log.path}/${sys:log.appName:-MetatraderEngine}_${timestamp}_statistics.log.%d{yyMMdd_HHmmss}">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n"/>
+
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${sys:log.fileSize}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${numFiles}"/>
+        </RollingFile>
+
     </appenders>
 
     <loggers>
@@ -37,6 +48,9 @@
             <appender-ref ref="file"/>
         </root>
 
+        <AsyncLogger name="com.lambda.investing.LatencyStatistics" level="info">
+            <AppenderRef ref="fileStatistics"/>
+        </AsyncLogger>
 
     </loggers>
 </configuration>

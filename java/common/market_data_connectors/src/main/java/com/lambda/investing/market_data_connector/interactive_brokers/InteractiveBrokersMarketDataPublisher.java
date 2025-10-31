@@ -5,7 +5,7 @@ import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorPublisher;
 import com.lambda.investing.interactive_brokers.InteractiveBrokersBrokerConnector;
 import com.lambda.investing.market_data_connector.AbstractMarketDataConnectorPublisher;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;

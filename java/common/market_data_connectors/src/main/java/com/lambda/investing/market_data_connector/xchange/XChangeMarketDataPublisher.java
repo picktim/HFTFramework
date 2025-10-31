@@ -1,10 +1,13 @@
 package com.lambda.investing.market_data_connector.xchange;
 
+import com.lambda.investing.Configuration;
+import com.lambda.investing.LatencyStatistics;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorPublisher;
+import com.lambda.investing.connector.ThreadUtils;
 import com.lambda.investing.market_data_connector.AbstractMarketDataConnectorPublisher;
 import com.lambda.investing.market_data_connector.MarketDataConfiguration;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
@@ -27,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPublisher implements Runnable {
 
 	private static boolean CHECK_SEND_TIMESTAMP = false;//send all to persist it!
+	private static long CHECK_LATENCY_MS = 500;
 	private static int MIN_VALID_DEPTH = 2;
 	private static int MAX_DEPTH = Depth.MAX_DEPTH;
 	protected Logger logger = LogManager.getLogger(XChangeMarketDataPublisher.class);
@@ -45,6 +49,7 @@ public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPubli
 	protected List<Disposable> subscriptionTrades = new ArrayList<>();
 	protected List<Disposable> subscriptionDepths = new ArrayList<>();
 	protected StreamingExchange webSocketClient;
+	protected LatencyStatistics latencyStatistics;
 
 	public XChangeMarketDataPublisher(ConnectorConfiguration connectorConfiguration,
 			ConnectorPublisher connectorPublisher, MarketDataConfiguration marketDataConfiguration,
@@ -55,6 +60,8 @@ public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPubli
 		symbolToInstrument = new ConcurrentHashMap<>();
 		lastDepthSent = new ConcurrentHashMap<>();
 		lastTradeSent = new ConcurrentHashMap<>();
+		latencyStatistics = new LatencyStatistics("XChangeMarketDataPublisherLatency", 60 * 1000);
+
 		setBrokerConnector();
 	}
 
@@ -68,6 +75,7 @@ public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPubli
 		lastDepthSent = new ConcurrentHashMap<>();
 		lastTradeSent = new ConcurrentHashMap<>();
 		statistics = new Statistics("XChangeMarketDataPublisher", 60000);//useful to see if we are receiving data
+		latencyStatistics = new LatencyStatistics("XChangeMarketDataPublisherLatency", 60 * 1000);
 		setBrokerConnector();
 
 
@@ -113,6 +121,8 @@ public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPubli
 			if (CHECK_SEND_TIMESTAMP && currentDate.getTime() < lastTradeSentTimestamp) {
 				return;
 			}
+			long latency = new Date().getTime() - currentDate.getTime();
+			latencyStatistics.addLatencyStatistics("trade." + instrument.getPrimaryKey(), latency);
 
 			Trade tradeToNotify = Trade.getInstance();
 			tradeToNotify.setInstrument(instrument.getPrimaryKey());
@@ -145,6 +155,9 @@ public class XChangeMarketDataPublisher extends AbstractMarketDataConnectorPubli
 			if (currentDate == null) {
 				return;
 			}
+
+			long latency = new Date().getTime() - currentDate.getTime();
+			latencyStatistics.addLatencyStatistics("depth." + instrument.getPrimaryKey(), latency);
 
 			if (CHECK_SEND_TIMESTAMP && currentDate.getTime() < lastDepthSentTimestamp) {
 				return;

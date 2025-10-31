@@ -8,7 +8,7 @@ import com.lambda.investing.data_manager.DataManager;
 import com.lambda.investing.data_manager.csv.CSVDataManager;
 import com.lambda.investing.data_manager.FileDataUtils;
 import com.lambda.investing.data_manager.parquet.TableSawParquetDataManager;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.model.CSVable;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.*;

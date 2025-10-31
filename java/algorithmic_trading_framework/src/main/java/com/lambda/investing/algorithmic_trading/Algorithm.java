@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.lambda.investing.Configuration;
+import com.lambda.investing.LatencyStatistics;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleFromTickUpdater;
 import com.lambda.investing.algorithmic_trading.candle_manager.CandleListener;
 import com.lambda.investing.algorithmic_trading.data.CandleData;
@@ -20,7 +21,7 @@ import com.lambda.investing.algorithmic_trading.time_service.TimeServiceIfc;
 import com.lambda.investing.algorithmic_trading.utils.AlgorithmUtils;
 import com.lambda.investing.connector.ThreadUtils;
 import com.lambda.investing.market_data_connector.MarketDataListener;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.candle.Candle;
 import com.lambda.investing.model.candle.CandleType;
@@ -61,6 +62,8 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     protected static int DEFAULT_QUEUE_HISTORICAL_ORDER_REQUEST = 20;
     protected static int DEFAULT_QUEUE_HISTORICAL_TRADES = 5;
     protected static long WARN_LATENCY_ORDER_REQUEST_MS = 500;
+    protected static long WARN_LATENCY_MARKET_DATA_MS = 500;
+
     protected Queue<String> cfTradesProcessed;
 
     protected Queue<ExecutionReport> erTradesProcessed;
@@ -300,6 +303,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             this.statistics = new Statistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
             this.latencyStatistics = new LatencyStatistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
             this.slippageStatistics = new SlippageStatistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
+
         }
         this.algorithmInfo = algorithmInfo;
         this.parameters = parameters;
@@ -682,6 +686,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     public QuoteRequest createQuoteRequest(Instrument instrument) {
         QuoteRequest quoteRequest = new QuoteRequest();
         quoteRequest.setReferenceTimestamp(getLastDepth(instrument).getTimestamp());
+//        quoteRequest.setReferenceTimestamp(getCurrentTime().getTime());
         quoteRequest.setAlgorithmInfo(algorithmInfo);
         quoteRequest.setInstrument(instrument);
         return quoteRequest;
@@ -987,10 +992,18 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
         if (orderRequest.getReferenceTimestamp() != 0) {
             long latencyMs = getCurrentTime().getTime() - orderRequest.getReferenceTimestamp();
+            if (latencyStatistics != null) {
+                try {
+                    latencyStatistics.addLatencyStatistics("orderRequest." + algorithmInfo, latencyMs);
+                } catch (Exception e) {
+                    logger.error("error starting latency statistics", e);
+                }
+            }
+
             if (latencyMs > WARN_LATENCY_ORDER_REQUEST_MS) {
-                logger.warn("OrderRequest {} with latency {} ms > {} from depth reference", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS);
+                logger.warn("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, new Date(orderRequest.getReferenceTimestamp()), getCurrentTime());
                 if (!isBacktest) {
-                    System.err.println(Configuration.formatLog("OrderRequest {} with latency {} ms > {} from depth reference", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS));
+                    System.err.println(Configuration.formatLog("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, new Date(orderRequest.getReferenceTimestamp()), getCurrentTime()));
                 }
             }
         }
@@ -1156,10 +1169,10 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
     @Override
     public boolean onDepthUpdate(Depth depth) {
-        long timestamp = depth.getTimestamp();
+        long depthTimestamp = depth.getTimestamp();
         try {
             if (depthTimestampAlreadyProccess(depth)) {
-                //avoid self updates from orderbook with same timestamp
+                //avoid self updates from orderbook with same depthTimestamp
                 return false;
             }
 
@@ -1169,12 +1182,31 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             } catch (IndexOutOfBoundsException e) {
                 //no one of the sides
             }
-            if (timestamp != 0 && isBacktest) {
-                timeService.setCurrentTimestamp(timestamp);
+            if (depthTimestamp != 0 && isBacktest) {
+                timeService.setCurrentTimestamp(depthTimestamp);
             }
             if (!isBacktest) {
                 timeService.setCurrentTimestamp(new Date().getTime());
             }
+            long currentTime = getCurrentTimestamp();
+            long latencyMs = currentTime - depthTimestamp;
+            if (latencyStatistics != null) {
+                try {
+                    latencyStatistics.addLatencyStatistics("depth." + depth.getInstrument() + "." + algorithmInfo, latencyMs);
+                } catch (Exception e) {
+                    logger.error("error starting latency statistics", e);
+                }
+            }
+
+            if (latencyMs > WARN_LATENCY_MARKET_DATA_MS) {
+                logger.warn("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, new Date(depthTimestamp), new Date(currentTime));
+                if (!isBacktest) {
+                    System.err.println(Configuration.formatLog("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, new Date(depthTimestamp), new Date(currentTime)));
+                }
+            }
+
+
+
 
 
             //check depth

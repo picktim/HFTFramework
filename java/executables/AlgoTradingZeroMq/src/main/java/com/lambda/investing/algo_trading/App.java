@@ -168,6 +168,11 @@ public class App {
             for (String instrumentPk : instrumentList) {
                 try {
                     Instrument instrument = Instrument.getInstrument(instrumentPk);
+                    if (instrument == null) {
+                        System.err.println("Instrument " + instrumentPk + " not found to configurePaperTrading");
+                        logger.warn("Instrument {} not found to configurePaperTrading", instrumentPk);
+                        continue;
+                    }
                     instruments.add(instrument);
                 } catch (Exception e) {
                     logger.error("cant add {} to instrument list paper trading", instrumentPk, e);

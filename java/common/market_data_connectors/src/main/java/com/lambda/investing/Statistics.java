@@ -1,4 +1,4 @@
-package com.lambda.investing.market_data_connector;
+package com.lambda.investing;
 
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;

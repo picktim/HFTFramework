@@ -1,13 +1,10 @@
 package com.lambda.investing.factor_investing_connector;
 
 
-import com.lambda.investing.market_data_connector.AbstractMarketDataProvider;
-import com.lambda.investing.market_data_connector.MarketDataListener;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

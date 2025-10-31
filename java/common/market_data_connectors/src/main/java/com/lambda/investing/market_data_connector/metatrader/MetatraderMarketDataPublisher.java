@@ -3,12 +3,14 @@ package com.lambda.investing.market_data_connector.metatrader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.lambda.investing.LatencyStatistics;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.ConnectorPublisher;
+import com.lambda.investing.connector.ThreadUtils;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
 import com.lambda.investing.market_data_connector.AbstractMarketDataConnectorPublisher;
-import com.lambda.investing.market_data_connector.Statistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.metatrader.MetatraderZeroBrokerConnector;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
@@ -28,7 +30,7 @@ public class MetatraderMarketDataPublisher extends AbstractMarketDataConnectorPu
 
 	private String broker;
 	private boolean depthReceived = false;//if broker doesnt have it
-
+	protected LatencyStatistics latencyStatistics;
 
 	public MetatraderMarketDataPublisher(ConnectorConfiguration connectorConfiguration,
 			ConnectorPublisher connectorPublisher, MetatraderZeroBrokerConnector metatraderZeroBrokerConnector) {
@@ -39,7 +41,7 @@ public class MetatraderMarketDataPublisher extends AbstractMarketDataConnectorPu
 		ZeroMqConfiguration configuration = new ZeroMqConfiguration();
 		configuration.setPort(this.metatraderZeroBrokerConnector.getPortPublisher());
 		statistics = new Statistics("MetatraderMarketDataPublisher", 60000);//useful to see if we are receiving data
-
+		latencyStatistics = new LatencyStatistics("MetatraderMarketDataPublisherLatency", 60 * 1000);
 	}
 
 	public String getBroker() {
@@ -85,6 +87,10 @@ public class MetatraderMarketDataPublisher extends AbstractMarketDataConnectorPu
 		Double timestampD = (Double) jsonReceived.get("Time");
 		long timestamp = timestampD.longValue() * 1000;
 		Date date = new Date(timestamp);
+
+		long latency = new Date().getTime() - timestamp;
+		latencyStatistics.addLatencyStatistics("depth." + primaryKey, latency);
+
 		int maxLevelPermitted = 5;
 		if (type.equalsIgnoreCase("DEPTH")) {
 			//{type:DEPTH,symbol:EURCAD, Time:1613420042,ASK_PRICE_0: 1.53317,ASK_QTY_0: 1000000.0,BID_PRICE_1: 1.53298,BID_QTY_1: 100000.0,}

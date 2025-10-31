@@ -1,12 +1,12 @@
 {
-  "marketDataPort": 666,
-  "tradeEnginePort": 677,
+  "marketDataPort": 6620,
+  "tradeEnginePort": 6621,
   "tradeEngineHost": "localhost",
   "marketDataHost": "localhost",
-  "paperTrading": "False",
+  "paperTrading": "True",
   "demoTrading": "False",
   "instrumentPks": [
-    "btcusdt_kraken"
+    "btceur_kraken"
   ],
   "algorithm": {
     "algorithmName": "ConstantSpread_zeromq_test",

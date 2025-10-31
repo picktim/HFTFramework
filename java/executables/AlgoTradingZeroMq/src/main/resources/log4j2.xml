@@ -15,8 +15,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n"/>
         </Console>
 
-        <RollingFile name="file" fileName="${sys:log.path}/${sys:log.appName:-ZTrading}_${timestamp}.log"
-                     filePattern="${sys:log.path}/${sys:log.appName:-ZTrading}_${timestamp}.log.%d{yyMMdd_HHmmss}">
+        <RollingFile name="file" fileName="${sys:log.path}/${sys:log.appName:-AlgoTradingZeroMQ}_${timestamp}.log"
+                     filePattern="${sys:log.path}/${sys:log.appName:-AlgoTradingZeroMQ}_${timestamp}.log.%d{yyMMdd_HHmmss}">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n"/>
 
             <Policies>
@@ -26,8 +26,8 @@
         </RollingFile>
 
         <RollingFile name="fileStatistics"
-                     fileName="${sys:log.path}/${sys:log.appName:-ZTrading}_${timestamp}_statistics.log"
-                     filePattern="${sys:log.path}/${sys:log.appName:-ZTrading}_${timestamp}_statistics.log.%d{yyMMdd_HHmmss}">
+                     fileName="${sys:log.path}/${sys:log.appName:-AlgoTradingZeroMQ}_${timestamp}_statistics.log"
+                     filePattern="${sys:log.path}/${sys:log.appName:-AlgoTradingZeroMQ}_${timestamp}_statistics.log.%d{yyMMdd_HHmmss}">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} - %m%n"/>
 
             <Policies>
@@ -55,13 +55,13 @@
         </AsyncLogger>
 
         <!--Configure LatencyStatistics logs and Statistics logs into fileStatistics info level-->
-        <AsyncLogger name="com.lambda.investing.trading_engine_connector.LatencyStatistics" level="info">
+        <AsyncLogger name="com.lambda.investing.LatencyStatistics" level="info">
             <AppenderRef ref="fileStatistics"/>
         </AsyncLogger>
         <AsyncLogger name="com.lambda.investing.trading_engine_connector.SlippageStatistics" level="info">
             <AppenderRef ref="fileStatistics"/>
         </AsyncLogger>
-        <AsyncLogger name="com.lambda.investing.market_data_connector.Statistics" level="info">
+        <AsyncLogger name="com.lambda.investing.Statistics" level="info">
             <AppenderRef ref="fileStatistics"/>
         </AsyncLogger>
 

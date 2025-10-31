@@ -1,4 +1,4 @@
-package com.lambda.investing.trading_engine_connector;
+package com.lambda.investing;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LatencyStatistics implements Runnable {
 
@@ -34,6 +32,12 @@ public class LatencyStatistics implements Runnable {
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.start();
         }
+    }
+
+    public void addLatencyStatistics(String key, long latency) {
+        List<Long> slippages = topicToLatency.getOrDefault(key, new ArrayList<>());
+        slippages.add(latency);
+        topicToLatency.put(key, slippages);
     }
 
     public void startKeyStatistics(String topic, String key, long start) {

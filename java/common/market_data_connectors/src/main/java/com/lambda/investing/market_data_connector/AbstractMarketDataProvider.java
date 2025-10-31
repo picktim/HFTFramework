@@ -1,21 +1,14 @@
 package com.lambda.investing.market_data_connector;
 
 
-import com.lambda.investing.connector.zero_mq.ZeroMqPublisher;
-import com.lambda.investing.market_data_connector.ordinary.OrdinaryMarketDataProvider;
-import com.lambda.investing.model.asset.Instrument;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
 import com.lambda.investing.model.messaging.Command;
-import com.lambda.investing.model.trading.ExecutionReport;
-import com.lambda.investing.model.trading.ExecutionReportStatus;
-import org.apache.curator.shaded.com.google.common.collect.EvictingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractMarketDataProvider implements MarketDataProvider {
 
