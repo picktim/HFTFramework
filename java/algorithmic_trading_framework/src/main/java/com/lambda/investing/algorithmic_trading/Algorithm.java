@@ -50,6 +50,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.lambda.investing.Configuration.*;
+import static com.lambda.investing.PrintUtils.PrintDate;
 import static com.lambda.investing.model.Util.fromJsonString;
 import static com.lambda.investing.model.portfolio.Portfolio.*;
 import static org.jfree.chart.ChartFactory.getChartTheme;
@@ -303,7 +304,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             this.statistics = new Statistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
             this.latencyStatistics = new LatencyStatistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
             this.slippageStatistics = new SlippageStatistics(algorithmInfo, STATISTICS_PRINT_SECONDS * 1000);
-
+            setTradingConnectorStatistics();
         }
         this.algorithmInfo = algorithmInfo;
         this.parameters = parameters;
@@ -324,6 +325,26 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 });
         algorithmNotifier = new AlgorithmNotifier(this, Configuration.THREADS_NOTIFY_ALGORITHM_OBSERVERS);
 
+    }
+
+    private void setTradingConnectorStatistics() {
+        boolean marketDataProviderIsAbstract = this.algorithmConnectorConfiguration
+                .getMarketDataProvider() instanceof com.lambda.investing.market_data_connector.AbstractMarketDataProvider;
+        if (marketDataProviderIsAbstract) {
+            com.lambda.investing.market_data_connector.AbstractMarketDataProvider abstractMarketDataProvider = (com.lambda.investing.market_data_connector.AbstractMarketDataProvider) this.algorithmConnectorConfiguration
+                    .getMarketDataProvider();
+            abstractMarketDataProvider.setStatisticsReceived(this.statistics);
+            abstractMarketDataProvider.setLatencyStatistics(this.latencyStatistics);
+        }
+
+        boolean tradeengineProviderIsAbstract = this.algorithmConnectorConfiguration
+                .getTradingEngineConnector() instanceof com.lambda.investing.trading_engine_connector.AbstractTradingEngineConnector;
+        if (tradeengineProviderIsAbstract) {
+            com.lambda.investing.trading_engine_connector.AbstractTradingEngineConnector abstractTradingEngineConnector = (com.lambda.investing.trading_engine_connector.AbstractTradingEngineConnector) this.algorithmConnectorConfiguration
+                    .getTradingEngineConnector();
+            abstractTradingEngineConnector.setStatisticsReceived(this.statistics);
+            abstractTradingEngineConnector.setLatencyStatistics(this.latencyStatistics);
+        }
     }
 
     public void setPlotStopHistorical(boolean plotStopHistorical) {
@@ -1001,9 +1022,11 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             }
 
             if (latencyMs > WARN_LATENCY_ORDER_REQUEST_MS) {
-                logger.warn("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, new Date(orderRequest.getReferenceTimestamp()), getCurrentTime());
+
+                String fromStrMs = new Date(orderRequest.getReferenceTimestamp()).toString();
+                logger.warn("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, PrintDate(new Date(orderRequest.getReferenceTimestamp())), PrintDate(getCurrentTime()));
                 if (!isBacktest) {
-                    System.err.println(Configuration.formatLog("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, new Date(orderRequest.getReferenceTimestamp()), getCurrentTime()));
+                    System.err.println(Configuration.formatLog("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, PrintDate(new Date(orderRequest.getReferenceTimestamp())), PrintDate(getCurrentTime())));
                 }
             }
         }
@@ -1199,9 +1222,9 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             }
 
             if (latencyMs > WARN_LATENCY_MARKET_DATA_MS) {
-                logger.warn("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, new Date(depthTimestamp), new Date(currentTime));
+                logger.warn("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, PrintDate(new Date(depthTimestamp)), PrintDate(new Date(currentTime)));
                 if (!isBacktest) {
-                    System.err.println(Configuration.formatLog("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, new Date(depthTimestamp), new Date(currentTime)));
+                    System.err.println(Configuration.formatLog("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, PrintDate(new Date(depthTimestamp)), PrintDate(new Date(currentTime))));
                 }
             }
 
@@ -1462,6 +1485,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
             if (latencyStatistics != null) {
                 latencyStatistics.stopKeyStatistics(executionReport.getClientOrderId(), executionReport.getTimestampCreation());
+                latencyStatistics.addLatencyStatistics("executionReport." + executionReport.getInstrument() + "." + algorithmInfo, getCurrentTimestamp() - executionReport.getTimestampCreation());
             }
 
             updateAllActiveOrders(executionReport);

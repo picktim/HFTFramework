@@ -203,6 +203,7 @@ public class ZeroMqProvider implements ConnectorProvider {
                 zeroMqConfiguration.setTopic(topic);
                 configuration = zeroMqConfiguration;
             }
+
             listener.onUpdate(configuration, timestamp, typeMessage, message);
 
         }

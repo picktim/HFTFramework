@@ -1,4 +1,7 @@
 package com.lambda.investing.trading_engine_connector;
+
+import com.lambda.investing.LatencyStatistics;
+import com.lambda.investing.Statistics;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.ordinary.OrdinaryConnectorConfiguration;
@@ -33,24 +36,13 @@ import static com.lambda.investing.model.Util.fromJsonString;
 import static com.lambda.investing.model.Util.toJsonString;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
 
-//Think how to add paper trading here!
-public class ZeroMqTradingEngineConnector implements TradingEngineConnector, ConnectorListener {
 
+public class ZeroMqTradingEngineConnector extends AbstractTradingEngineConnector {
 	public static String ALL_ALGORITHMS_SUBSCRIPTION = "*";
-	private String name;
-	protected Logger logger = LogManager.getLogger(ZeroMqTradingEngineConnector.class);
+
 	private ZeroMqConfiguration zeroMqConfigurationExecutionReportListening, zeroMqConfigurationOrderRequest;
 	private ZeroMqProvider zeroMqExecutionReportProvider;
 	private ZeroMqPublisher zeroMqPublisher;
-	private ExecutionReportListener allAlgorithmsExecutionReportListener;
-
-	protected Map<String, Map<ExecutionReportListener, String>> listenersManager;
-
-	private boolean isPaperTrading = false;
-	private PaperTradingEngine paperTradingEngine = null;
-	private List<Instrument> instrumentList = null;//for paper trading only
-	private List<String> cfTradesNotified;
-
 
 	/***
 	 * Trader engine for generic brokers
@@ -63,7 +55,8 @@ public class ZeroMqTradingEngineConnector implements TradingEngineConnector, Con
 	public ZeroMqTradingEngineConnector(String name, int threadsPublish, int threadsListen,
 										ZeroMqConfiguration zeroMqConfigurationExecutionReportListening,
 										ZeroMqConfiguration zeroMqConfigurationOrderRequest) {
-		this.name = name;
+		super(name);
+
 		this.zeroMqConfigurationExecutionReportListening = zeroMqConfigurationExecutionReportListening;
 		//listen the answers here
 		zeroMqExecutionReportProvider = ZeroMqProvider
@@ -84,16 +77,9 @@ public class ZeroMqTradingEngineConnector implements TradingEngineConnector, Con
 		this.zeroMqPublisher
 				.publish(this.zeroMqConfigurationOrderRequest, TypeMessage.command, "*", "starting publishing");
 
-		listenersManager = new ConcurrentHashMap<>();
-		cfTradesNotified = new ArrayList<>();
 		//portfolio file not on the broker side
 		//		portfolio = Portfolio.getPortfolio(Configuration.OUTPUT_PATH + File.separator + name + "_position.json");
 
-	}
-
-	@Override
-	public boolean isBusy() {
-		return false;
 	}
 
 	public void start() {
@@ -111,13 +97,6 @@ public class ZeroMqTradingEngineConnector implements TradingEngineConnector, Con
 		}
 		listenersManager.put(algorithmInfo, insideMap);
 
-	}
-
-	@Override public void deregister(String algorithmInfo, ExecutionReportListener executionReportListener) {
-		Map<ExecutionReportListener, String> insideMap = listenersManager
-				.getOrDefault(algorithmInfo, new ConcurrentHashMap<>());
-		insideMap.remove(executionReportListener);
-		listenersManager.put(algorithmInfo, insideMap);
 	}
 
 	@Override public boolean orderRequest(OrderRequest orderRequest) {
@@ -139,98 +118,6 @@ public class ZeroMqTradingEngineConnector implements TradingEngineConnector, Con
 			this.paperTradingEngine.requestInfo(info);
 		} else {
 			this.zeroMqPublisher.publish(this.zeroMqConfigurationOrderRequest, TypeMessage.info, TypeMessage.info.toString(), info);
-		}
-	}
-
-	@Override
-	public void reset() {
-		this.paperTradingEngine.reset();
-	}
-
-	public void notifyExecutionReport(ExecutionReport executionReport) {
-		boolean isCfTrade = executionReport.getExecutionReportStatus().name()
-				.equalsIgnoreCase(ExecutionReportStatus.CompletellyFilled.name());
-		if (isCfTrade) {
-			logger.info("Cf ER on {}  {}@{} {} ", executionReport.getInstrument(), executionReport.getLastQuantity(),
-					executionReport.getPrice(), executionReport.getClientOrderId());
-		}
-		if (isCfTrade && cfTradesNotified.contains(executionReport.getClientOrderId())) {
-			logger.info("discard update of already notified cf trade {}", executionReport.getClientOrderId());
-			return;
-		}
-		String algorithmInfo = executionReport.getAlgorithmInfo();
-		Map<ExecutionReportListener, String> insideMap = listenersManager
-				.getOrDefault(algorithmInfo, new ConcurrentHashMap<>());
-		if (insideMap.size() > 0) {
-			for (ExecutionReportListener executionReportListener : insideMap.keySet()) {
-				executionReportListener.onExecutionReportUpdate(executionReport);
-			}
-		}
-		if (allAlgorithmsExecutionReportListener != null && !isPaperTrading) {
-			//on paper trading will stack over flow
-			allAlgorithmsExecutionReportListener.onExecutionReportUpdate(executionReport);
-		}
-		if (isCfTrade) {
-			cfTradesNotified.add(executionReport.getClientOrderId());
-		}
-	}
-
-	public void notifyInfo(String header, String message) {
-		String algorithmInfo = header.split("[.]")[0];
-
-		Map<ExecutionReportListener, String> insideMap = listenersManager
-				.getOrDefault(algorithmInfo, new ConcurrentHashMap<>());
-
-		if (algorithmInfo.equals(REQUESTED_POSITION_INFO)) {
-			insideMap = new HashMap<>();
-			for (Map<ExecutionReportListener, String> insideMapIter : listenersManager.values()) {
-				insideMap.putAll(insideMapIter);
-			}
-		}
-
-
-		if (insideMap.size() > 0) {
-			for (ExecutionReportListener executionReportListener : insideMap.keySet()) {
-				executionReportListener.onInfoUpdate(header, message);
-			}
-		}
-	}
-
-	@Override public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-								   TypeMessage typeMessage, String content) {
-		//ER read
-
-		if (typeMessage.equals(TypeMessage.execution_report)) {
-			ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
-			notifyExecutionReport(executionReport);
-		}
-		if (typeMessage.equals(TypeMessage.info)) {
-			String header = REQUESTED_POSITION_INFO;
-			if (configuration instanceof ZeroMqConfiguration) {
-				ZeroMqConfiguration config = (ZeroMqConfiguration) configuration;
-				header = config.getTopic();
-			}
-			notifyInfo(header, content);
-		}
-
-	}
-
-	public boolean isPaperTrading() {
-		return isPaperTrading;
-	}
-
-	private void initPaperTrading() {
-		paperTradingEngine.setInstrumentsList(this.instrumentList);
-		paperTradingEngine.init();
-
-		PaperMarketDataListener paperMarketDataListener = new PaperMarketDataListener();
-		this.paperTradingEngine.getMarketDataProviderIn().register(paperMarketDataListener);
-	}
-
-	public void setInstrumentList(List<Instrument> instrumentList) {
-		this.instrumentList = instrumentList;
-		if (paperTradingEngine != null) {
-			initPaperTrading();
 		}
 	}
 
@@ -274,23 +161,5 @@ public class ZeroMqTradingEngineConnector implements TradingEngineConnector, Con
 
 	}
 
-	private class PaperMarketDataListener implements MarketDataListener {
 
-		@Override public boolean onDepthUpdate(Depth depth) {
-			return true;
-		}
-
-		@Override public boolean onTradeUpdate(Trade trade) {
-			return true;
-		}
-
-		@Override public boolean onCommandUpdate(Command command) {
-			return true;
-		}
-
-		@Override public boolean onInfoUpdate(String header, String message) {
-			notifyInfo(header, message);
-			return true;
-		}
-	}
 }

@@ -1,6 +1,7 @@
 package com.lambda.investing.market_data_connector;
 
 
+import com.lambda.investing.Configuration;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
@@ -115,6 +116,7 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 		if (statisticsReceived != null)
 			statisticsReceived.addStatistics(topicReceived);
 
+
 		if (typeMessage == TypeMessage.depth) {
 			//DEPTH received
 			Depth depth = fromJsonString(content, Depth.class);
@@ -126,7 +128,9 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 			}
 			depth.setLevelsFromData();
 			notifyDepth(depth);
-
+			if (latencyStatistics != null) {
+				latencyStatistics.addLatencyStatistics(typeMessage + ".ZeroMarketDataConnector", timestampReceived - depth.getTimestamp());
+			}
 		}
 
 		if (typeMessage == TypeMessage.trade) {
@@ -139,6 +143,10 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 				}
 			}
 			notifyTrade(trade);
+
+			if (latencyStatistics != null) {
+				latencyStatistics.addLatencyStatistics(typeMessage + ".ZeroMarketDataConnector", timestampReceived - trade.getTimestamp());
+			}
 		}
 
 		if (typeMessage == TypeMessage.command) {

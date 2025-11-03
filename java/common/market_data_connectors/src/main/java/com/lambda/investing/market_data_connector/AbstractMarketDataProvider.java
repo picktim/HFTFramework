@@ -1,6 +1,7 @@
 package com.lambda.investing.market_data_connector;
 
 
+import com.lambda.investing.LatencyStatistics;
 import com.lambda.investing.Statistics;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
@@ -18,7 +19,7 @@ public abstract class AbstractMarketDataProvider implements MarketDataProvider {
     private Map<String, Long> lastTradeSentReceived;
 
     protected Statistics statisticsReceived;//= new Statistics("Data received", 15 * 1000);
-
+    protected LatencyStatistics latencyStatistics;
     protected Logger logger = LogManager.getLogger(AbstractMarketDataProvider.class);
     protected Map<MarketDataListener, String> listenersManager;
 
@@ -35,6 +36,10 @@ public abstract class AbstractMarketDataProvider implements MarketDataProvider {
 
     public void setStatisticsReceived(Statistics statisticsReceived) {
         this.statisticsReceived = statisticsReceived;
+    }
+
+    public void setLatencyStatistics(LatencyStatistics latencyStatistics) {
+        this.latencyStatistics = latencyStatistics;
     }
 
     @Override

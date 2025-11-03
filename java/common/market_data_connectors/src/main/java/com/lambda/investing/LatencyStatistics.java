@@ -96,8 +96,16 @@ public class LatencyStatistics implements Runnable {
                         percentile99 = latency.stream().sorted().skip((long) (latency.size() * 0.99)).findFirst().orElse(0L);
                     }
                     //print average and percentiles
-                    logger.info("\tLatency {}:\tsize:{}\tmean(ms):{}\t50pct:{}\t75pct:{}\t90pct:{}\t95pct:{}\t99pct:{}\tmax:{}", topic, counter, mean,
-                            percentile50, percentile75, percentile90, percentile95, percentile99, maxLatency);
+                    String topicPadded = String.format("%-60s", topic);
+                    logger.info("\tLatency {}:\tsize:{}\tmean(ms):{}\t50pct:{}\t75pct:{}\t90pct:{}\t95pct:{}\t99pct:{}\tmax:{}",
+                            topicPadded, counter,
+                            String.format("%.2f", mean),
+                            String.format("%.2f", percentile50),
+                            String.format("%.2f", percentile75),
+                            String.format("%.2f", percentile90),
+                            String.format("%.2f", percentile95),
+                            String.format("%.2f", percentile99),
+                            String.format("%.2f", maxLatency));
                 }
             }
 

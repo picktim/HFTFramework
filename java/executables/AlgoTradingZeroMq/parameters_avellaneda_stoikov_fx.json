@@ -1,0 +1,28 @@
+{
+  "marketDataPort": 666,
+  "tradeEnginePort": 677,
+  "tradeEngineHost": "localhost",
+  "marketDataHost": "localhost",
+  "paperTrading": "False",
+  "demoTrading": "False",
+  "instrumentPks": [
+    "eurusd_darwinex"
+  ],
+  "algorithm": {
+    "algorithmName": "AvellanedaStoikov_metatrader",
+    "parameters": {
+      "riskAversion": 0.00006,
+      "midpricePeriodSeconds": 3,
+      "midpricePeriodWindow": 60,
+      "changeKPeriodSeconds": 60.0,
+      "quantity": 0.1,
+      "firstHour": 7.0,
+      "lastHour": 19.0,
+      "spreadCalculation": "Avellaneda",
+      "kCalculation": "Pct",
+      "calculateTt": 0,
+      "skew": 0,
+      "ui": 1
+    }
+  }
+}
