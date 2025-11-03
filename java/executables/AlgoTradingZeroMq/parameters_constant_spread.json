@@ -16,7 +16,8 @@
       "seed": 5,
       "quantity": "0.001",
       "firstHour": "7.0",
-      "lastHour": "19.0"
+      "lastHour": "19.0",
+      "ui": 1
     }
   }
 }

@@ -72,43 +72,46 @@ public class LatencyStatistics implements Runnable {
     }
 
 
-    private void printCurrentStatistics() {
+    private synchronized void printCurrentStatistics() {
         if (topicToLatency.size() > 0) {
-            for (Map.Entry<String, List<Long>> entry : topicToLatency.entrySet()) {
-                String topic = entry.getKey();
-                List<Long> latency = entry.getValue();
-                int counter = latency.size();
-                if (counter > 0) {
-                    double mean = latency.stream().mapToLong(a -> a).average().orElse(0.0);
-                    double maxLatency = latency.stream().mapToLong(a -> a).max().orElse(0);
-                    //get percentile 50 75 90 95 99
-                    double percentile50 = 0;
-                    double percentile75 = 0;
-                    double percentile90 = 0;
-                    double percentile95 = 0;
-                    double percentile99 = 0;
+            synchronized (topicToLatency) {
 
-                    if (latency.size() > 0) {
-                        percentile50 = latency.stream().sorted().skip((long) (latency.size() * 0.5)).findFirst().orElse(0L);
-                        percentile75 = latency.stream().sorted().skip((long) (latency.size() * 0.75)).findFirst().orElse(0L);
-                        percentile90 = latency.stream().sorted().skip((long) (latency.size() * 0.9)).findFirst().orElse(0L);
-                        percentile95 = latency.stream().sorted().skip((long) (latency.size() * 0.95)).findFirst().orElse(0L);
-                        percentile99 = latency.stream().sorted().skip((long) (latency.size() * 0.99)).findFirst().orElse(0L);
+
+                for (Map.Entry<String, List<Long>> entry : topicToLatency.entrySet()) {
+                    String topic = entry.getKey();
+                    List<Long> latency = entry.getValue();
+                    int counter = latency.size();
+                    if (counter > 0) {
+                        double mean = latency.stream().mapToLong(a -> a).average().orElse(0.0);
+                        double maxLatency = latency.stream().mapToLong(a -> a).max().orElse(0);
+                        //get percentile 50 75 90 95 99
+                        double percentile50 = 0;
+                        double percentile75 = 0;
+                        double percentile90 = 0;
+                        double percentile95 = 0;
+                        double percentile99 = 0;
+
+                        if (latency.size() > 0) {
+                            percentile50 = latency.stream().sorted().skip((long) (latency.size() * 0.5)).findFirst().orElse(0L);
+                            percentile75 = latency.stream().sorted().skip((long) (latency.size() * 0.75)).findFirst().orElse(0L);
+                            percentile90 = latency.stream().sorted().skip((long) (latency.size() * 0.9)).findFirst().orElse(0L);
+                            percentile95 = latency.stream().sorted().skip((long) (latency.size() * 0.95)).findFirst().orElse(0L);
+                            percentile99 = latency.stream().sorted().skip((long) (latency.size() * 0.99)).findFirst().orElse(0L);
+                        }
+                        //print average and percentiles
+                        String topicPadded = String.format("%-60s", topic);
+                        logger.info("\tLatency {}:\tsize:{}\tmean(ms):{}\t50pct:{}\t75pct:{}\t90pct:{}\t95pct:{}\t99pct:{}\tmax:{}",
+                                topicPadded, counter,
+                                String.format("%.2f", mean),
+                                String.format("%.2f", percentile50),
+                                String.format("%.2f", percentile75),
+                                String.format("%.2f", percentile90),
+                                String.format("%.2f", percentile95),
+                                String.format("%.2f", percentile99),
+                                String.format("%.2f", maxLatency));
                     }
-                    //print average and percentiles
-                    String topicPadded = String.format("%-60s", topic);
-                    logger.info("\tLatency {}:\tsize:{}\tmean(ms):{}\t50pct:{}\t75pct:{}\t90pct:{}\t95pct:{}\t99pct:{}\tmax:{}",
-                            topicPadded, counter,
-                            String.format("%.2f", mean),
-                            String.format("%.2f", percentile50),
-                            String.format("%.2f", percentile75),
-                            String.format("%.2f", percentile90),
-                            String.format("%.2f", percentile95),
-                            String.format("%.2f", percentile99),
-                            String.format("%.2f", maxLatency));
                 }
             }
-
             if (RESET_STATISTICS_PER_UPDATE) {
                 topicToLatency.clear();
                 keyToTopic.clear();
