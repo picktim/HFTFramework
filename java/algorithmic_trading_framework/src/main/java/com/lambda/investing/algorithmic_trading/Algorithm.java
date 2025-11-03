@@ -1026,7 +1026,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 String fromStrMs = new Date(orderRequest.getReferenceTimestamp()).toString();
                 logger.warn("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, PrintDate(new Date(orderRequest.getReferenceTimestamp())), PrintDate(getCurrentTime()));
                 if (!isBacktest) {
-                    System.err.println(Configuration.formatLog("OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, PrintDate(new Date(orderRequest.getReferenceTimestamp())), PrintDate(getCurrentTime())));
+                    System.err.println(Configuration.formatLog("WARNING: OrderRequest {} with latency {} ms > {} from depth reference from {} to {}", orderRequest, latencyMs, WARN_LATENCY_ORDER_REQUEST_MS, PrintDate(new Date(orderRequest.getReferenceTimestamp())), PrintDate(getCurrentTime())));
                 }
             }
         }
@@ -1224,7 +1224,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
             if (latencyMs > WARN_LATENCY_MARKET_DATA_MS) {
                 logger.warn("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, PrintDate(new Date(depthTimestamp)), PrintDate(new Date(currentTime)));
                 if (!isBacktest) {
-                    System.err.println(Configuration.formatLog("Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, PrintDate(new Date(depthTimestamp)), PrintDate(new Date(currentTime))));
+                    System.err.println(Configuration.formatLog("WARNING: Depth {} with latency {} ms > {} from current time from {} to {}", depth.getInstrument(), latencyMs, WARN_LATENCY_MARKET_DATA_MS, PrintDate(new Date(depthTimestamp)), PrintDate(new Date(currentTime))));
                 }
             }
 
