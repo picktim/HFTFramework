@@ -16,6 +16,7 @@ import com.lambda.investing.trading_engine_connector.TradingEngineConnector;
 import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
 
 
+import static com.lambda.investing.model.Util.fromObject;
 import static net.openhft.affinity.AffinityStrategies.*;
 
 import java.util.Map;
@@ -163,7 +164,7 @@ public class OrdinaryTradingEngine implements TradingEngineConnector, ConnectorL
 
     @Override
     public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                         TypeMessage typeMessage, String content) {
+                         TypeMessage typeMessage, Object content) {
         if (this.threadsListeningExecutionReports == 0) {
             _onUpdate(configuration, timestampReceived, typeMessage, content);
         } else {
@@ -192,10 +193,10 @@ public class OrdinaryTradingEngine implements TradingEngineConnector, ConnectorL
         }
     }
 
-    private void _onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, String content) {
+    private void _onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, Object content) {
 
         if (typeMessage.equals(TypeMessage.execution_report)) {
-            ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
+            ExecutionReport executionReport = fromObject(content, ExecutionReport.class);
             notifyExecutionReport(executionReport);
             //			if (allAlgorithmsExecutionReportListener != null) {
             //				allAlgorithmsExecutionReportListener.onExecutionReportUpdate(executionReport);

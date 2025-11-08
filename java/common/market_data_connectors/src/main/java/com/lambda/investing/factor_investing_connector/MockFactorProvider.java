@@ -88,7 +88,7 @@ public class MockFactorProvider extends AbstractFactorProvider implements Market
     }
 
     @Override
-    public boolean onInfoUpdate(String header, String message) {
+    public boolean onInfoUpdate(String header, Object message) {
         return false;
     }
 

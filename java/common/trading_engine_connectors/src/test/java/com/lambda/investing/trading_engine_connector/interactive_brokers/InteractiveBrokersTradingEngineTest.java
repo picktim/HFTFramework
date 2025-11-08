@@ -21,6 +21,7 @@ import java.util.List;
 
 
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Ignore("need to open interactive brokers")
@@ -40,9 +41,9 @@ public class InteractiveBrokersTradingEngineTest {
 
     private class MockExecutionReportListener implements ConnectorListener {
         @Override
-        public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, String content) {
+        public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, Object content) {
             if (typeMessage == TypeMessage.execution_report) {
-                ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
+                ExecutionReport executionReport = fromObject(content, ExecutionReport.class);
                 lastExecutionReport.add(executionReport);
             }
         }

@@ -7,6 +7,7 @@ import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.ConnectorPublisher;
 import com.lambda.investing.model.messaging.TopicUtils;
 import com.lambda.investing.model.messaging.TypeMessage;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zeromq.ZContext;
@@ -14,6 +15,7 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -122,7 +124,7 @@ public class ZeroMqPusher implements ConnectorPublisher {
 
     @Override
     public boolean publish(ConnectorConfiguration connectorConfiguration, TypeMessage typeMessage,
-                           String topic, String message) {
+                           String topic, Serializable message) {
         if (!(connectorConfiguration instanceof ZeroMqConfiguration)) {
             logger.error("configuration is not ZeroMqConfiguration");
             return false;
@@ -157,7 +159,7 @@ public class ZeroMqPusher implements ConnectorPublisher {
 
     }
 
-    private synchronized void send(String message, long timestamp,
+    private synchronized void send(Serializable message, long timestamp,
                                    ZMQ.Socket socket) {
         logger.debug("Sending to zeroMq push :\n {}", message);
         //		return socket.send(message.getBytes(ZMQ.CHARSET));
@@ -165,7 +167,7 @@ public class ZeroMqPusher implements ConnectorPublisher {
         logger.debug("[ZEROMQ]Took {} ms to process message", elapsed);
 
         //		boolean output = ZMsg.newStringMsg(topic, message).send(socket);
-        boolean output = socket.send(message);
+        boolean output = socket.send(SerializationUtils.serialize(message));
 
     }
 
@@ -173,8 +175,12 @@ public class ZeroMqPusher implements ConnectorPublisher {
 
         @Override
         public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                             TypeMessage typeMessage, String content) {
+                             TypeMessage typeMessage, Object content) {
             //listening
+            if (content instanceof byte[]) {
+                content = SerializationUtils.deserialize((byte[]) content);
+            }
+            
             logger.debug("listening to zeroMq push :\n {}", content);
         }
     }

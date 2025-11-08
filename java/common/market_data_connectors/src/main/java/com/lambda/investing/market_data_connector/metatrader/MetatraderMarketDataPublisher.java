@@ -60,10 +60,11 @@ public class MetatraderMarketDataPublisher extends AbstractMarketDataConnectorPu
 
 	//receiving Metatrader messages
 	@Override public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-			TypeMessage typeMessage, String content) {
+								   TypeMessage typeMessage, Object contentRaw) {
 		//
 		assert typeMessage == null;
 		Map<String, Object> jsonReceived = null;
+		String content = (String) contentRaw;
 		try {
 			jsonReceived = GSON_STRING.fromJson(content, new TypeToken<Map<String, Object>>() {
 

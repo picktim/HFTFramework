@@ -6,6 +6,6 @@ public interface ExecutionReportListener {
 
 	boolean onExecutionReportUpdate(ExecutionReport executionReport);
 
-	boolean onInfoUpdate(String header, String message);
+	boolean onInfoUpdate(String header, Object message);
 
 }

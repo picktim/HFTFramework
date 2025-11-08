@@ -314,7 +314,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
 
     @Override
     public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                         TypeMessage typeMessage, String content) {
+                         TypeMessage typeMessage, Object content) {
         //here comes the orderRequest
         logger.debug("onUpdate pull Metatrader  {}", content);
         super.onUpdate(configuration, timestampReceived, typeMessage, content);
@@ -903,8 +903,13 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
     }
 
     public void onUpdateExecutionReport(ConnectorConfiguration configuration, long timestampReceived,
-                                        TypeMessage typeMessage, String content) {
+                                        TypeMessage typeMessage, Object contentRaw) {
 
+        if (!(contentRaw instanceof String)) {
+            logger.error("onUpdateExecutionReport content not String {}", contentRaw);
+            return;
+        }
+        String content = (String) contentRaw;
         MTMessageER mtMessageER = null;
         try {
 //            mtMessageER = fromJsonString(content, MTMessageER.class);//not working very good

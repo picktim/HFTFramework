@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 
 
 @Getter @Setter public class OrdinaryMarketDataProvider extends AbstractMarketDataProvider
@@ -36,19 +37,19 @@ import static com.lambda.investing.model.Util.fromJsonString;
 	}
 
 	@Override public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-			TypeMessage typeMessage, String content) {
+								   TypeMessage typeMessage, Object content) {
 
 		if (typeMessage.equals(TypeMessage.depth)) {
-			Depth depth = Depth.copyFrom(fromJsonString(content, Depth.class));//new copy from pool
+			Depth depth = Depth.copyFrom(fromObject(content, Depth.class));//new copy from pool
 			depth.setLevelsFromData();
 			notifyDepth(depth);
 			depth.delete();//delete from pool
 		} else if (typeMessage.equals(TypeMessage.trade)) {
-			Trade trade = Trade.copyFrom(fromJsonString(content, Trade.class));
+			Trade trade = Trade.copyFrom(fromObject(content, Trade.class));
 			notifyTrade(trade);
 			trade.delete();
 		} else if (typeMessage.equals(TypeMessage.command)) {
-			Command command = fromJsonString(content, Command.class);
+			Command command = fromJsonString((String) content, Command.class);
 			notifyCommand(command);
 			//All is set => start backtest
 		}

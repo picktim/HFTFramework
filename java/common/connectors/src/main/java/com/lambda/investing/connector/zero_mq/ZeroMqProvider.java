@@ -7,6 +7,7 @@ import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.ConnectorProvider;
 import com.lambda.investing.model.messaging.TopicUtils;
 import com.lambda.investing.model.messaging.TypeMessage;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zeromq.ZContext;
@@ -189,7 +190,7 @@ public class ZeroMqProvider implements ConnectorProvider {
 
     }
 
-    protected void onUpdate(TypeMessage typeMessage, String message, String topic, long timestamp) throws IOException {
+    protected void onUpdate(TypeMessage typeMessage, Object message, String topic, long timestamp) throws IOException {
         if (typeMessage != null && typeMessage.equals(TypeMessage.command)) {
             answerRep("OK");
         }
@@ -241,7 +242,7 @@ public class ZeroMqProvider implements ConnectorProvider {
             running.set(true);
         }
 
-        private synchronized void treatMessage(String topic, String message) {
+        private synchronized void treatMessage(String topic, Object message) {
             if (!parsedObjects) {
                 try {
                     onUpdate(null, topic, topic, System.currentTimeMillis());
@@ -282,10 +283,11 @@ public class ZeroMqProvider implements ConnectorProvider {
                         ZMsg zMsg = ZMsg.recvMsg(socketSub);
                         //Read message contents
                         String topic = zMsg.popString();
-                        String message = zMsg.popString();
+                        byte[] message = zMsg.pop().getData();
+                        Object objMessage = SerializationUtils.deserialize(message);
                         try {
 
-                            treatMessage(topic, message);
+                            treatMessage(topic, objMessage);
 
                             //						if (threadsListening != 0) {
                             //							onUpdateExecutorService.submit(new Runnable() {

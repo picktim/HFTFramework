@@ -31,8 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.lambda.investing.model.Util.fromJsonString;
-import static com.lambda.investing.model.Util.fromJsonStringGSON;
+import static com.lambda.investing.model.Util.*;
 
 
 @Ignore("need to open metatrader for testing")
@@ -61,9 +60,9 @@ public class MetatraderTradingEngineTest {
 
         @Override
         public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                             TypeMessage typeMessage, String content) {
+                             TypeMessage typeMessage, Object content) {
             if (typeMessage.equals(TypeMessage.execution_report)) {
-                ExecutionReport executionReport = fromJsonStringGSON(content, ExecutionReport.class);
+                ExecutionReport executionReport = fromObject(content, ExecutionReport.class);
                 onExecutionReportUpdate(executionReport);
             }
         }

@@ -63,7 +63,8 @@ public class MarketMakerMarketDataExecutionReportListener implements MarketDataL
 		return true;
 	}
 
-	@Override public boolean onInfoUpdate(String header, String message) {
+	@Override
+	public boolean onInfoUpdate(String header, Object message) {
 		return false;
 	}
 }

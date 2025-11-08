@@ -13,6 +13,7 @@ import com.lambda.investing.model.messaging.Command;
 import com.lambda.investing.model.messaging.TypeMessage;
 import com.lambda.investing.model.trading.ExecutionReport;
 import lombok.Getter;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.curator.shaded.com.google.common.collect.EvictingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 
 @Getter
 public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implements ConnectorListener {
@@ -108,7 +110,7 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 
 	@Override
 	public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-						 TypeMessage typeMessage, String content) {
+						 TypeMessage typeMessage, Object content) {
 		//
 		ZeroMqConfiguration zeroMqConfigurationReceived = (ZeroMqConfiguration) configuration;
 		String topicReceived = zeroMqConfigurationReceived.getTopic();
@@ -117,9 +119,13 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 			statisticsReceived.addStatistics(topicReceived);
 
 
+		if (content instanceof byte[]) {
+			content = SerializationUtils.deserialize((byte[]) content);
+		}
+
 		if (typeMessage == TypeMessage.depth) {
 			//DEPTH received
-			Depth depth = fromJsonString(content, Depth.class);
+			Depth depth = fromObject(content, Depth.class);
 			if (instrumentPksList != null) {
 				//filtering
 				if (!instrumentPksList.contains(depth.getInstrument())) {
@@ -135,7 +141,7 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 
 		if (typeMessage == TypeMessage.trade) {
 			//TRADE received
-			Trade trade = fromJsonString(content, Trade.class);
+			Trade trade = fromObject(content, Trade.class);
 			if (instrumentPksList != null) {
 				//filtering
 				if (!instrumentPksList.contains(trade.getInstrument())) {
@@ -151,7 +157,7 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 
 		if (typeMessage == TypeMessage.command) {
 			//Command received
-			Command command = fromJsonString(content, Command.class);
+			Command command = fromJsonString((String) content, Command.class);
 			notifyCommand(command);
 		}
 

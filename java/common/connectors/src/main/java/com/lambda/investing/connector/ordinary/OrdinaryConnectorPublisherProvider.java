@@ -7,6 +7,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +86,7 @@ public class OrdinaryConnectorPublisherProvider implements ConnectorPublisher, C
 	}
 
 	private void _notify(ConnectorConfiguration connectorConfiguration, TypeMessage typeMessage, String topic,
-						 String message, Set<ConnectorListener> listenerList) {
+						 Object message, Set<ConnectorListener> listenerList) {
 		boolean output = true;
 		try {
 			for (ConnectorListener listener : listenerList) {
@@ -116,7 +117,7 @@ public class OrdinaryConnectorPublisherProvider implements ConnectorPublisher, C
 	}
 
 	@Override public boolean publish(ConnectorConfiguration connectorConfiguration, TypeMessage typeMessage,
-									 String topic, String message) {
+									 String topic, Serializable message) {
 		Map<ConnectorListener, String> listeners = listenerManager
 				.getOrDefault(connectorConfiguration, new HashMap<>());
 

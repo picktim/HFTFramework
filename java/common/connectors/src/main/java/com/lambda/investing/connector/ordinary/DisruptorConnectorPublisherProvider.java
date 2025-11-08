@@ -16,6 +16,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -196,14 +197,14 @@ public class DisruptorConnectorPublisherProvider implements ConnectorPublisher, 
 
     @Override
     public boolean publish(ConnectorConfiguration connectorConfiguration, TypeMessage typeMessage,
-                           String topic, String message) {
+                           String topic, Serializable message) {
         if (!isStart) {
             start();
         }
         long sequenceId = ringBuffer.next();//if multi , is locked => get the space in the ringBuffer
         DisruptorMessageObject disruptorMessageObject = ringBuffer.get(sequenceId);
         disruptorMessageObject.setConnectorConfiguration(connectorConfiguration);
-        disruptorMessageObject.setMessage(message);
+        disruptorMessageObject.setMessage((String) message);
         disruptorMessageObject.setTopic(topic);
         disruptorMessageObject.setTypeMessage(typeMessage);
         ringBuffer.publish(sequenceId);

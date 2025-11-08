@@ -55,7 +55,7 @@ public class ZeroMqFactorProvider extends AbstractFactorProvider implements Conn
     }
 
     @Override
-    public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, String content) {
+    public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, Object content) {
         ZeroMqConfiguration zeroMqConfigurationReceived = (ZeroMqConfiguration) configuration;
         String topicReceived = zeroMqConfigurationReceived.getTopic();
 
@@ -66,10 +66,16 @@ public class ZeroMqFactorProvider extends AbstractFactorProvider implements Conn
 
         if (statisticsReceived != null)
             statisticsReceived.addStatistics(topicReceived);
+
+        if (!(content instanceof String)) {
+            logger.error("received a not String content on ZeroMqFactorProvider {} -> {}", zeroMqConfiguration.getPort(), content);
+            return;
+        }
+        String contentStr = (String) content;
         //{"btcusdt_binance":-0.25,"ethbtc_binance":0.25,"btceur_binance":-0.25,"ethusdt_binance":0.25}
         //{"ethbtc_binance":0.25,"ethusdt_binance":0.25,"btceur_binance":-0.25,"btcusdt_binance":-0.25}
         ///transform json received into Map<string,double>
-        Map<String, Double> factorsReceived = getFactors(content);
+        Map<String, Double> factorsReceived = getFactors(contentStr);
         if (factorsReceived == null) {
             logger.warn("Received factors {} with nulls-> {}", topicReceived, content);
         }

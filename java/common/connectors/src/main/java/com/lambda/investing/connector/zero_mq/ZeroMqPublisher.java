@@ -5,12 +5,14 @@ import com.lambda.investing.LambdaThreadFactory;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorPublisher;
 import com.lambda.investing.model.messaging.TypeMessage;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,7 +134,7 @@ public class ZeroMqPublisher implements ConnectorPublisher {
     }
 
     @Override public boolean publish(ConnectorConfiguration connectorConfiguration, TypeMessage typeMessage,
-                                     String topic, String message) {
+                                     String topic, Serializable message) {
         if (!(connectorConfiguration instanceof ZeroMqConfiguration)) {
             logger.error("configuration is not ZeroMqConfiguration");
             return false;
@@ -170,7 +172,7 @@ public class ZeroMqPublisher implements ConnectorPublisher {
 
     }
 
-    private synchronized void send(String message, ZeroMqConfiguration configuration, String topic, long timestamp,
+    private synchronized void send(Serializable message, ZeroMqConfiguration configuration, String topic, long timestamp,
                                    ZMQ.Socket socket) {
         if (!counterMessagesSent.containsKey(configuration)) {
             counterMessagesSent.put(configuration, new AtomicInteger(0));
@@ -178,7 +180,8 @@ public class ZeroMqPublisher implements ConnectorPublisher {
         if (!counterMessagesNotSent.containsKey(configuration)) {
             counterMessagesNotSent.put(configuration, new AtomicInteger(0));
         }
-        if ((topic.trim().length() == 0) || (message.trim().length() == 0))
+        boolean messageIsStringEmpty = message instanceof String && ((String) message).trim().length() == 0;
+        if ((topic.trim().length() == 0) || messageIsStringEmpty)
             return;
 
         logger.debug("Sending to zeroMq {} :\n {}", topic, message);
@@ -188,7 +191,8 @@ public class ZeroMqPublisher implements ConnectorPublisher {
 
         //		boolean output = ZMsg.newStringMsg(topic, message).send(socket);
         boolean output = socket.sendMore(topic);
-        output &= socket.send(message);
+        //send message as byteArray
+        output &= socket.send(SerializationUtils.serialize(message));
 
         if (output) {
             AtomicInteger prevCount = counterMessagesSent.get(configuration);

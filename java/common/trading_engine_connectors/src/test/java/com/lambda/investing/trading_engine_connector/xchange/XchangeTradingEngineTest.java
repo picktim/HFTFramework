@@ -104,7 +104,8 @@ import static com.lambda.investing.Configuration.RANDOM_GENERATOR;
 				return true;
 			}
 
-			@Override public boolean onInfoUpdate(String header, String message) {
+			@Override
+			public boolean onInfoUpdate(String header, Object message) {
 				System.out.println("info received " + header);
 				return true;
 			}
@@ -262,7 +263,8 @@ import static com.lambda.investing.Configuration.RANDOM_GENERATOR;
 				return true;
 			}
 
-			@Override public boolean onInfoUpdate(String header, String message) {
+			@Override
+			public boolean onInfoUpdate(String header, Object message) {
 				System.out.println("info received  on tradingEngine" + header);
 				return true;
 			}

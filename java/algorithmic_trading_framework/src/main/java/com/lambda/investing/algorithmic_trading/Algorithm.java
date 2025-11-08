@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.lambda.investing.Configuration.*;
 import static com.lambda.investing.PrintUtils.PrintDate;
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 import static com.lambda.investing.model.portfolio.Portfolio.*;
 import static org.jfree.chart.ChartFactory.getChartTheme;
 
@@ -1716,14 +1717,15 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     }
 
     @Override
-    public boolean onInfoUpdate(String header, String message) {
+    public boolean onInfoUpdate(String header, Object message) {
         if (header.startsWith(REQUESTED_POSITION_INFO)) {
             logger.info("received position from broker {}", message);
-            Map<String, Double> positions = fromJsonString(message, Map.class);
+
+            Map<String, Double> positions = fromJsonString(fromObject(message, String.class), Map.class);
             return onPosition(positions);
         }
         if (header.endsWith(REQUESTED_PORTFOLIO_INFO)) {
-            Portfolio portfolio = fromJsonString(message, Portfolio.class);
+            Portfolio portfolio = fromJsonString(fromObject(message, String.class), Portfolio.class);
             if (isBacktest) {
                 return true;
             }

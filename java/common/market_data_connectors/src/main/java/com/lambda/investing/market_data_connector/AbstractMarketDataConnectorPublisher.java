@@ -189,10 +189,10 @@ public abstract class AbstractMarketDataConnectorPublisher implements MarketData
 
     @Override
     public void notifyDepth(String topic, Depth depth) {
-        String depthJson = depth.toString();
+//        String depthJson = depth.toString();
         topic = topic + "." + TypeMessage.depth.name();
         //		logger.debug("notify DEPTH {}",depth.toString());
-        connectorPublisher.publish(connectorConfiguration, TypeMessage.depth, topic, depthJson);
+        connectorPublisher.publish(connectorConfiguration, TypeMessage.depth, topic, depth);
         if (statistics != null) {
             statistics.addStatistics(topic);
         }
@@ -201,10 +201,10 @@ public abstract class AbstractMarketDataConnectorPublisher implements MarketData
 
     @Override
     public void notifyTrade(String topic, Trade trade) {
-        String tradeJson = trade.toString();
+//        String tradeJson = trade.toString();
         topic = topic + "." + TypeMessage.trade.name();
         //		logger.debug("notify TRADE {}",trade.toString());
-        connectorPublisher.publish(connectorConfiguration, TypeMessage.trade, topic, tradeJson);
+        connectorPublisher.publish(connectorConfiguration, TypeMessage.trade, topic, trade);
         if (statistics != null) {
             statistics.addStatistics(topic);
         }

@@ -30,6 +30,7 @@ import java.util.zip.ZipOutputStream;
 import static com.lambda.investing.Configuration.FILE_CSV_DATE_FORMAT;
 import static com.lambda.investing.data_manager.FileDataUtils.TIMESTAMP_COL;
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /***
@@ -352,15 +353,15 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
 
     @Override
     public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                         TypeMessage typeMessage, String content) {
+                         TypeMessage typeMessage, Object content) {
 
         if (typeMessage.equals(TypeMessage.depth)) {
-            Depth depth = fromJsonString(content, Depth.class);
+            Depth depth = fromObject(content, Depth.class);
             saveDepth(depth);
             statistics.addStatistics(depth.getInstrument() + "" + ".depth");
 
         } else if (typeMessage.equals(TypeMessage.trade)) {
-            Trade trade = fromJsonString(content, Trade.class);
+            Trade trade = fromObject(content, Trade.class);
             saveTrade(trade);
             statistics.addStatistics(trade.getInstrument() + "" + ".trade");
         }

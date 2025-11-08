@@ -29,8 +29,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.lambda.investing.model.Util.fromJsonString;
-import static com.lambda.investing.model.Util.toJsonString;
+import static com.lambda.investing.model.Util.*;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_PORTFOLIO_INFO;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
 
@@ -176,10 +175,12 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 
 	//receiving OrderRequest
 	@Override public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-								   TypeMessage typeMessage, String content) {
+                                   TypeMessage typeMessage, Object content) {
 
 		if (typeMessage.equals(TypeMessage.order_request)) {
-			OrderRequest orderRequest = fromJsonString(content, OrderRequest.class);
+//			OrderRequest orderRequest = fromJsonString(content, OrderRequest.class);
+            OrderRequest orderRequest = fromObject(content, OrderRequest.class);
+
 			if (lastOrderRequestClOrdId.contains(orderRequest.getClientOrderId())) {
 				//
 				logger.warn("order already processed {}-> reject", orderRequest.getClientOrderId());
@@ -202,7 +203,8 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 		}
 
 		if (typeMessage.equals(TypeMessage.execution_report)) {
-			ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
+//			ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
+            ExecutionReport executionReport = fromObject(content, ExecutionReport.class);
 
 			System.out.println(Configuration.formatLog("onUpdate.execution_report  {}", executionReport));
 			logger.info("onUpdate.execution_report  {}", executionReport);
@@ -217,7 +219,7 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 
 		if (typeMessage.equals(TypeMessage.info)) {
 			logger.info("onUpdate.info  {}", content);
-			requestInfo(content);
+            requestInfo(fromObject(content, String.class));
 		}
 
 	}

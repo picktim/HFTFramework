@@ -13,6 +13,6 @@ public interface MarketDataListener {
 
     boolean onCommandUpdate(Command command);
 
-    boolean onInfoUpdate(String header, String message);
+    boolean onInfoUpdate(String header, Object message);
 
 }

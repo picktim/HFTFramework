@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Modifier;
 
 import static com.lambda.investing.model.Util.fromJsonString;
+import static com.lambda.investing.model.Util.fromObject;
 
 public class PaperConnectorOrderRequestListener implements ConnectorListener {
 
@@ -35,10 +36,10 @@ public class PaperConnectorOrderRequestListener implements ConnectorListener {
 	}
 
 	@Override public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-			TypeMessage typeMessage, String content) {
+								   TypeMessage typeMessage, Object content) {
 		if (typeMessage.equals(TypeMessage.order_request)) {
 			try {
-                OrderRequest orderRequestParsed = fromJsonString(content, OrderRequest.class);
+				OrderRequest orderRequestParsed = fromObject(content, OrderRequest.class);
 				this.paperTradingEngineConnector.orderRequest(orderRequestParsed);
 			} catch (Exception ex) {
 				logger.error(

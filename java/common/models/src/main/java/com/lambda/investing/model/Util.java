@@ -67,6 +67,12 @@ public class Util {
 		return JSON.toJSONString(object);
 	}
 
+    public static <T> T fromObject(Object content, Class<T> clazz) {
+        //return object from json string using Gson
+//		return GSON.fromJson(jsonString, clazz);
+        return (T) content;
+    }
+
 	public static <T> T fromJsonString(String jsonString, Class<T> clazz) {
 		//return object from json string using Gson
 //		return GSON.fromJson(jsonString, clazz);

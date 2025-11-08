@@ -33,16 +33,9 @@ import java.util.Locale;
 	protected static Trade lastTrade = null;
 
 	public XChangeMarketDataPublisherTest() {
-
 	}
 
 	public void setUp() throws Exception {
-		//		coinbase.apikey=6r42hmdngoo
-		//coinbase.secretkey=YLguRc5RZ/SuUDMTfV3lgQKsm0hzZaHQWo7JJmcquhtzOH+m8EnDVeMw4BfjIq3ift1IqvwC7gjvZ0XotWJCNA==
-		//kraken.apikey=yuagc5Bvbjx9thMIjcLZz2qtGR8w1k0t0VwmdYgnKCTAFZTkILv8mSbb
-		//kraken.secretkey=Psh4NO5H2u6ELzcB9r4qijfBIeT718M44I9wT3fBIO8nGd7Px/AY9syEJoA5LD1e5XQh7OYsZ6S+ulCI+WHtzA==
-		//binance.apikey=4xCBC1cEehCKph4HGA9DTzi9x3190L606HiH2CYWXMQB53K69mczn4rlqZZiXBKV
-		//binance.secretkey=tvmuJGAVZymGrtR17UiojsXxqseoJHeBVTe0KfpiWX4xH0Y1LorGKL8KV9lfeGnM
 		super.setUp();
 	}
 
@@ -61,7 +54,7 @@ import java.util.Locale;
 		return output;
 	}
 
-	public void testMD(String market, MarketDataConfiguration marketDataConfiguration) {
+	private void testMD(String market, MarketDataConfiguration marketDataConfiguration) {
 		//publisher
 		List<Instrument> instruments = getInstrument(market);
 		Instrument instrument = instruments.get(0);
@@ -102,7 +95,7 @@ import java.util.Locale;
 //			}
 
 			@Override
-			public boolean onInfoUpdate(String header, String message) {
+			public boolean onInfoUpdate(String header, Object message) {
 				System.out.println("info received " + header);
 				return true;
 			}

@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.lambda.investing.model.Util.fromJsonString;
-import static com.lambda.investing.model.Util.toJsonString;
+import static com.lambda.investing.model.Util.*;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
 
 //TODO: Think how to add paper trading here!
@@ -125,7 +124,7 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
 
     }
 
-    public void notifyInfo(String header, String message) {
+    public void notifyInfo(String header, Object message) {
         String algorithmInfo = header.split("[.]")[0];
 
         Map<ExecutionReportListener, String> insideMap = listenersManager
@@ -141,18 +140,18 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
 
         if (insideMap.size() > 0) {
             for (ExecutionReportListener executionReportListener : insideMap.keySet()) {
-                executionReportListener.onInfoUpdate(header, message);
+                executionReportListener.onInfoUpdate(header, fromObject(message, String.class));
             }
         }
     }
 
     @Override
     public void onUpdate(ConnectorConfiguration configuration, long timestampReceived,
-                         TypeMessage typeMessage, String content) {
+                         TypeMessage typeMessage, Object content) {
         //ER read
 
         if (typeMessage.equals(TypeMessage.execution_report)) {
-            ExecutionReport executionReport = fromJsonString(content, ExecutionReport.class);
+            ExecutionReport executionReport = fromObject(content, ExecutionReport.class);
             notifyExecutionReport(executionReport, timestampReceived);
         }
         if (typeMessage.equals(TypeMessage.info)) {
@@ -205,7 +204,7 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
         }
 
         @Override
-        public boolean onInfoUpdate(String header, String message) {
+        public boolean onInfoUpdate(String header, Object message) {
             notifyInfo(header, message);
             return true;
         }
