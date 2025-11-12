@@ -3,6 +3,7 @@ package com.lambda.investing.algorithmic_trading.reinforcement_learning.state;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.lambda.investing.algorithmic_trading.pnl_calculation.PortfolioSnapshot;
+import com.lambda.investing.data_manager.FileDataUtils;
 import com.lambda.investing.data_manager.csv.CSVDataManager;
 import com.lambda.investing.model.candle.Candle;
 import com.lambda.investing.model.market_data.Depth;
@@ -668,6 +669,7 @@ import static com.lambda.investing.data_manager.csv.CSVDataManager.removeEmptyLi
 		String textToWriteTrade = dumpCache.getCsvFileContent();
 		try {
 			if (textToWriteTrade.trim().length() > 0) {
+				FileDataUtils.createFilePathIfNotExist(dataPath);
 				CSVDataManager.saveCSV(dataPath, removeEmptyLines(textToWriteTrade));
 			}
 			return true;

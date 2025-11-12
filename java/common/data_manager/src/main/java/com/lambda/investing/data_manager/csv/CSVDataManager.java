@@ -22,6 +22,7 @@ public class CSVDataManager implements DataManager {
 		return new String(Files.readAllBytes(Paths.get(filepath)));
 	}
 
+
 	public static void saveCSV(String filepath, String content) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filepath));
 		writer.write(content);
@@ -70,6 +71,7 @@ public class CSVDataManager implements DataManager {
 		stringBuffer = stringBuffer.delete(stringBuffer.lastIndexOf(System.lineSeparator()),
 				stringBuffer.length());//remove last line separator
 		try {
+			FileDataUtils.createFilePathIfNotExist(filepath);
 			saveCSV(filepath, stringBuffer.toString());
 		} catch (IOException e) {
 			logger.error("cant save into csv {} ", filepath, e);

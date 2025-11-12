@@ -268,6 +268,7 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
                     String textToWriteDepth = fileContentDepth.toString().trim();
                     try {
                         if (textToWriteDepth.length() > 0) {
+                            FileDataUtils.createFilePathIfNotExist(filename);
                             CSVDataManager.saveCSV(filename, textToWriteDepth);
                         }
                     } catch (IOException e) {
@@ -317,6 +318,7 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
                     String textToWriteTrade = fileContentTrade.toString().trim();
                     try {
                         if (textToWriteTrade.length() > 0) {
+                            FileDataUtils.createFilePathIfNotExist(filename);
                             CSVDataManager.saveCSV(filenameTrade, textToWriteTrade);
                         }
                     } catch (IOException e) {

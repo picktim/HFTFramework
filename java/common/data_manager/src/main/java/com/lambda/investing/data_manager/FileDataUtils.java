@@ -19,6 +19,8 @@ import tech.tablesaw.selection.Selection;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -194,6 +196,14 @@ public class FileDataUtils {
         }
 
         return modifiedSource;
+    }
+
+    public static void createFilePathIfNotExist(String filepath) throws IOException {
+        java.nio.file.Path pathToFile = Paths.get(filepath);
+        java.nio.file.Path parentDir = pathToFile.getParent();
+        if (parentDir != null && !Files.exists(parentDir)) {
+            Files.createDirectories(parentDir);
+        }
     }
 
     public static Table createTableMerged(Date startTime, Date endTime, List<Table> tablesInput) {
