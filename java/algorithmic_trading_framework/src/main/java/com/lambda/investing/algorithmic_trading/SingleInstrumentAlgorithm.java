@@ -152,7 +152,7 @@ public abstract class SingleInstrumentAlgorithm extends Algorithm {
     @Override
     protected void startUI() {
         super.startUI();
-        algorithmicTradingGUI = new MainMenuGUI(theme, this);
+        algorithmicTradingGUI = new MainMenuGUI(theme, isPaper, this);
         MainMenuGUI.IS_BACKTEST = isBacktest;
         algorithmicTradingGUI.start();
     }

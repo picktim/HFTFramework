@@ -16,3 +16,4 @@ SensitiveInformation.java
 !common/broker_connector_instances/metatrader_ea/**
 /executables/XChangeEngine/src/main/resources/**.properties
 /executables/InteractiveBrokersEngine/target/
+/executables/XChangeEngine/application.properties

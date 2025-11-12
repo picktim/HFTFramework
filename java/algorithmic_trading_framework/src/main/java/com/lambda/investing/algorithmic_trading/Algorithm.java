@@ -257,7 +257,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     }
 
 
-    private void configureIsPaper() {
+    public void configureIsPaper() {
         if (this.algorithmConnectorConfiguration
                 .getTradingEngineConnector() instanceof AbstractBrokerTradingEngine) {
             AbstractBrokerTradingEngine abstractBrokerTradingEngine = (AbstractBrokerTradingEngine) this.algorithmConnectorConfiguration
@@ -270,7 +270,6 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                     .getTradingEngineConnector();
             isPaper = zeroMqTradingEngineConnector.isPaperTrading();
         }
-
     }
 
     public void constructorForAbstract(AlgorithmConnectorConfiguration algorithmConnectorConfiguration,
@@ -292,7 +291,6 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         if (algorithmConnectorConfiguration != null) {
             isBacktest = false;
             this.algorithmConnectorConfiguration = algorithmConnectorConfiguration;
-            configureIsPaper();
         } else {
             if (isVerbose()) {
                 logger.info("BACKTEST detected in {} -> Backtest TimeService", algorithmInfo);
@@ -496,7 +494,9 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
             //send request
             requestInfo(this.algorithmInfo + "." + REQUESTED_PORTFOLIO_INFO);
-
+            if (!isBacktest) {
+                configureIsPaper();//now we have all connector configured
+            }
             if (uiEnabled && !uiStarted) {
                 //start UI
                 startUI();
