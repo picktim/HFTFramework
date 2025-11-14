@@ -78,7 +78,7 @@ public class LatencyStatistics implements Runnable {
 
             for (Map.Entry<String, List<Long>> entry : snapshot.entrySet()) {
                 String topic = entry.getKey();
-                List<Long> latency = entry.getValue();
+                List<Long> latency = new ArrayList<>(entry.getValue());//copy to avoud concurrent modification
                 int counter = latency.size();
                 if (counter > 0) {
                     double mean = latency.stream().mapToLong(a -> a).average().orElse(0.0);

@@ -10,7 +10,6 @@ import com.lambda.investing.market_data_connector.AbstractMarketDataConnectorPub
 import com.lambda.investing.market_data_connector.AbstractMarketDataProvider;
 import com.lambda.investing.market_data_connector.MarketDataConnectorPublisher;
 import com.lambda.investing.market_data_connector.MarketDataProvider;
-import com.lambda.investing.market_data_connector.parquet_file_reader.ParquetMarketDataConnectorPublisher;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
@@ -25,10 +24,13 @@ import com.lambda.investing.trading_engine_connector.TradingEngineConnector;
 import com.lambda.investing.trading_engine_connector.ordinary.OrdinaryTradingEngine;
 import com.lambda.investing.trading_engine_connector.paper.latency.FixedLatencyEngine;
 import com.lambda.investing.trading_engine_connector.paper.latency.LatencyEngine;
+import com.lambda.investing.trading_engine_connector.paper.latency.LatencyEngineFactory;
 import com.lambda.investing.trading_engine_connector.paper.latency.PoissonLatencyEngine;
 import com.lambda.investing.trading_engine_connector.paper.market.OrderMatchEngine;
 import com.lambda.investing.trading_engine_connector.paper.market.Orderbook;
 import com.lambda.investing.trading_engine_connector.paper.market.OrderbookManager;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.curator.shaded.com.google.common.collect.EvictingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,11 +41,10 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static com.lambda.investing.Configuration.DELAY_ORDER_BACKTEST_MS;
+import static com.lambda.investing.Configuration.RANDOM_SEED;
 import static com.lambda.investing.model.Util.toJsonString;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_PORTFOLIO_INFO;
 import static com.lambda.investing.trading_engine_connector.ZeroMqTradingEngineConnector.ALL_ALGORITHMS_SUBSCRIPTION;
-import static net.openhft.affinity.AffinityStrategies.DIFFERENT_CORE;
-import static net.openhft.affinity.AffinityStrategies.SAME_CORE;
 
 
 public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPublisher
@@ -75,7 +76,9 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
     protected LatencyEngine marketDataLatencyEngine = new FixedLatencyEngine(0);
     protected LatencyEngine executionReportLatencyEngine = new FixedLatencyEngine(0);
 
+    @Setter
     private boolean isBacktest = false;
+    private boolean isPaperTrading = false;
     private boolean rejectAllOrders = false;
 
     public List<Instrument> getInstrumentsList() {
@@ -93,6 +96,7 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
     public void setExecutionReportLatencyEngine(LatencyEngine executionReportLatencyEngine) {
         this.executionReportLatencyEngine = executionReportLatencyEngine;
     }
+
 
     @Override
     public boolean isBusy() {
@@ -128,21 +132,21 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
                 Configuration.BACKTEST_THREADS_PUBLISHING_EXECUTION_REPORTS);
 
         if (Configuration.MULTITHREADING_CORE.equals(Configuration.MULTITHREAD_CONFIGURATION.SINGLE_THREADING)) {
-            orderRequestLatencyEngine = new PoissonLatencyEngine(0);
+            orderRequestLatencyEngine = LatencyEngineFactory.getLatencyEngine(Configuration.LATENCY_ENGINE_TYPE, 0, RANDOM_SEED);
         }
     }
 
-    public void setDelayOrderRequestPoissonMs(long orderRequestMs) {
-        orderRequestLatencyEngine = new PoissonLatencyEngine(orderRequestMs);
+    public void setDelayOrderRequestMs(long orderRequestMs) {
+        orderRequestLatencyEngine = LatencyEngineFactory.getLatencyEngine(Configuration.LATENCY_ENGINE_TYPE, orderRequestMs, RANDOM_SEED);
     }
 
-    public void setDelayOrderRequestFixedMs(long orderRequestMs) {
-        orderRequestLatencyEngine = new FixedLatencyEngine(orderRequestMs);
+    public void setPaperTrading(boolean paperTrading) {
+        isPaperTrading = paperTrading;
+        orderRequestLatencyEngine.setIsPaperTrading(isPaperTrading);
+        marketDataLatencyEngine.setIsPaperTrading(isPaperTrading);
+        executionReportLatencyEngine.setIsPaperTrading(isPaperTrading);
     }
 
-    public void setBacktest(boolean backtest) {
-        isBacktest = backtest;
-    }
 
     public MarketMakerMarketBacktestDataAlgorithm getMarketMakerMarketDataExecutionReportListener() {
         return marketMakerMarketBacktestDataAlgorithm;
@@ -169,8 +173,6 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
             ZeroMqProvider orderRequestConnectorProviderZero = (ZeroMqProvider) this.orderRequestConnectorProvider;
             orderRequestConnectorProviderZero.start(false, false);//subscribed to all topics on that port
         }
-
-
     }
 
     public void setInstrumentsList(List<Instrument> instrumentsList) {

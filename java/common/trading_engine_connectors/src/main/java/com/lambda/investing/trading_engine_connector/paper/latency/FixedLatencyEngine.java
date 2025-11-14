@@ -10,110 +10,131 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FixedLatencyEngine implements LatencyEngine {
 
 
-	protected long latencyMs;
-	protected Date currentTime = new Date(0);
-	protected long nextUpdateMs = Long.MIN_VALUE;
-	protected Logger logger = LogManager.getLogger(FixedLatencyEngine.class);
-	protected AtomicInteger counterTimeSet = new AtomicInteger(0);
-	protected CountDownLatch latch;
-	protected final Object lockLatch = new Object();
+    protected long latencyMs;
+    protected Date currentTime = new Date(0);
+    protected long nextUpdateMs = Long.MIN_VALUE;
+    protected Logger logger = LogManager.getLogger(FixedLatencyEngine.class);
+    protected AtomicInteger counterTimeSet = new AtomicInteger(0);
+    protected CountDownLatch latch;
+    protected boolean isPaperTrading = false;
+    protected final Object lockLatch = new Object();
 
-	public FixedLatencyEngine(long latencyMs) {
-		this.latencyMs = latencyMs;
-	}
+    public FixedLatencyEngine(long latencyMs) {
+        this.latencyMs = latencyMs;
+    }
 
-	@Override public void setTime(Date currentDate) {
-		if (currentDate.getTime() > currentTime.getTime()) {
-			currentTime = currentDate;
-			counterTimeSet.incrementAndGet();
-			freeLock();
-		}
-	}
+    @Override
+    public void setTime(Date currentDate) {
+        if (currentDate.getTime() > currentTime.getTime()) {
+            currentTime = currentDate;
+            counterTimeSet.incrementAndGet();
+            freeLock();
+        }
+    }
 
-	public Date getCurrentTime() {
-		return currentTime;
-	}
+    @Override
+    public void setIsPaperTrading(boolean isPaperTrading) {
+        this.isPaperTrading = isPaperTrading;
+    }
 
-	@Override public void setNextUpdateMs(long nextUpdateMs) {
-		this.nextUpdateMs = nextUpdateMs;
-	}
+    public Date getCurrentTime() {
+        return currentTime;
+    }
 
-	protected void delayThread(Date currentDate, long delayMs) {
-		if (delayMs <= 0) {
-			return;
-		} else if (nextUpdateMs != Long.MIN_VALUE && delayMs < this.nextUpdateMs) {
-			return;
-		} else {
-			Date startTime = currentDate;
-			long delayIter = delayMs;
-			long lastTimeEval = 0L;
-			int initialCounter = counterTimeSet.get();
-			while (currentTime.getTime() - startTime.getTime() < delayMs) {
+    @Override
+    public void setNextUpdateMs(long nextUpdateMs) {
+        this.nextUpdateMs = nextUpdateMs;
+    }
 
-				//check next iteration when is it and discount already waited!
-				if (nextUpdateMs != Long.MIN_VALUE) {
-					if (lastTimeEval != currentTime.getTime()) {
-						if (delayIter < this.nextUpdateMs) {
-							break;
-						}
-						delayIter -= nextUpdateMs;
-						lastTimeEval = currentTime.getTime();
-					}
-				}
+    protected void delayThread(Date currentDate, long delayMs) {
+        if (delayMs <= 0) {
+            return;
+        } else if (nextUpdateMs != Long.MIN_VALUE && delayMs < this.nextUpdateMs) {
+            return;
+        } else {
+            Date startTime = currentDate;
+            long delayIter = delayMs;
+            long lastTimeEval = 0L;
+            int initialCounter = counterTimeSet.get();
+            while (currentTime.getTime() - startTime.getTime() < delayMs) {
 
-
-				synchronized (lockLatch) {
-					if (latch == null || latch.getCount() == 0) {
-						latch = new CountDownLatch(1);
-					}
-				}
-
-				try {
-					latch.await();
-				} catch (Exception e) {
-					;
-				}
+                //check next iteration when is it and discount already waited!
+                if (nextUpdateMs != Long.MIN_VALUE) {
+                    if (lastTimeEval != currentTime.getTime()) {
+                        if (delayIter < this.nextUpdateMs) {
+                            break;
+                        }
+                        delayIter -= nextUpdateMs;
+                        lastTimeEval = currentTime.getTime();
+                    }
+                }
 
 
-			}
-			//end while sleeping
-			int finalCounter = counterTimeSet.get();
-			int elapsedUpdates = finalCounter - initialCounter;
-			long elapsedSleep = (currentTime.getTime() - startTime.getTime());
-			if ((elapsedSleep > delayMs * 2 && elapsedUpdates > 2) || elapsedSleep > delayMs * 10) {
-				logger.warn("delayThread sleep on {} ms with {} updates from {} to {} ", elapsedSleep, elapsedUpdates,
-						startTime, currentTime);
-			}
+                synchronized (lockLatch) {
+                    if (latch == null || latch.getCount() == 0) {
+                        latch = new CountDownLatch(1);
+                    }
+                }
 
-		}
-	}
+                try {
+                    latch.await();
+                } catch (Exception e) {
+                    ;
+                }
 
-	@Override
-	public void delay(Date currentDate) {
-		delayThread(currentDate, latencyMs);
-	}
 
-	@Override
-	public void reset() {
-		freeLock();
+            }
+            //end while sleeping
+            int finalCounter = counterTimeSet.get();
+            int elapsedUpdates = finalCounter - initialCounter;
+            long elapsedSleep = (currentTime.getTime() - startTime.getTime());
+            if ((elapsedSleep > delayMs * 2 && elapsedUpdates > 2) || elapsedSleep > delayMs * 10) {
+                logger.warn("delayThread sleep on {} ms with {} updates from {} to {} ", elapsedSleep, elapsedUpdates,
+                        startTime, currentTime);
+            }
 
-		currentTime = new Date(0);
-		nextUpdateMs = Long.MIN_VALUE;
-		counterTimeSet = new AtomicInteger(0);
+        }
+    }
 
-		synchronized (lockLatch) {
-			latch = null;
-		}
-	}
+    private void sleepMs(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (Exception e) {
+            //
+        }
+    }
 
-	@Override
-	public void freeLock() {
-		synchronized (lockLatch) {
-			if (latch != null) {
-				latch.countDown();
-			}
-		}
-	}
+    @Override
+    public void delay(Date currentDate) {
+        if (isPaperTrading) {
+            sleepMs(latencyMs);//simulate real latency
+            return;
+        }
+
+        delayThread(currentDate, latencyMs);
+    }
+
+    @Override
+    public void reset() {
+        freeLock();
+
+        currentTime = new Date(0);
+        nextUpdateMs = Long.MIN_VALUE;
+        counterTimeSet = new AtomicInteger(0);
+
+        synchronized (lockLatch) {
+            latch = null;
+        }
+    }
+
+    @Override
+    public void freeLock() {
+        synchronized (lockLatch) {
+            if (latch != null) {
+                latch.countDown();
+            }
+        }
+    }
 
 }
 

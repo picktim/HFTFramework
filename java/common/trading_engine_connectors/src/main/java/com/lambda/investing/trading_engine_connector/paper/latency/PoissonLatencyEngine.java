@@ -83,6 +83,15 @@ public class PoissonLatencyEngine extends FixedLatencyEngine {
 
 	@Override public void delay(Date currentDate) {
 		long delay = getLatencyMs();
+		if (isPaperTrading) {
+			try {
+				Thread.sleep(delay);
+			} catch (Exception e) {
+				//
+			}
+			return;
+		}
+
 		delayThread(currentDate, delay);
 	}
 

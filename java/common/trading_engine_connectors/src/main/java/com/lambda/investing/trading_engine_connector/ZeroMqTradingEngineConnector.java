@@ -132,6 +132,8 @@ public class ZeroMqTradingEngineConnector extends AbstractTradingEngineConnector
 
 			paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, zeroMqExecutionReportProvider,
 					zeroMqConfigurationOrderRequest);
+			paperTradingEngine.setPaperTrading(true);
+			paperTradingEngine.setBacktest(false);
 
 			//Connector configuration paper
 			OrdinaryConnectorConfiguration ordinaryConnectorConfiguration = new OrdinaryConnectorConfiguration();
@@ -145,6 +147,9 @@ public class ZeroMqTradingEngineConnector extends AbstractTradingEngineConnector
 			OrdinaryMarketDataProvider ordinaryMarketDataProvider = (OrdinaryMarketDataProvider) marketDataProvider;
 			paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, zeroMqExecutionReportProvider,
 					zeroMqConfigurationOrderRequest);
+			paperTradingEngine.setPaperTrading(true);
+			paperTradingEngine.setBacktest(false);
+
 			PaperConnectorPublisher paperConnectorPublisher = new PaperConnectorPublisher(
 					ordinaryMarketDataProvider.getConnectorConfiguration(), this.zeroMqPublisher);
 			paperTradingEngine.setPaperConnectorMarketDataAndExecutionReportPublisher(paperConnectorPublisher);

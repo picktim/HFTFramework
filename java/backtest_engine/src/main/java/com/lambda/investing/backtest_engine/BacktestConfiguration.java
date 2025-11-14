@@ -33,6 +33,7 @@ public class BacktestConfiguration {
     private long initialSleepSeconds = 5;
     private String multithreadConfiguration;
     private long delayOrderMs;
+    private String latencyEngineType = Configuration.LATENCY_ENGINE_TYPE.toString();
     private boolean searchMatchMarketTrades = false;
     private boolean feesCommissionsIncluded = true;
     private long seed;
@@ -52,6 +53,8 @@ public class BacktestConfiguration {
         setDelayOrderMs(this.delayOrderMs);
         this.feesCommissionsIncluded = Configuration.FEES_COMMISSIONS_INCLUDED;
         setFeesCommissionsIncluded(this.feesCommissionsIncluded);
+        this.latencyEngineType = LATENCY_ENGINE_TYPE.toString();
+        setLatencyEngineType(latencyEngineType);
     }
 
     /**
@@ -114,6 +117,13 @@ public class BacktestConfiguration {
         if (delayOrderMs != this.delayOrderMs) {
             SET_DELAY_ORDER_BACKTEST_MS(delayOrderMs);
             this.delayOrderMs = delayOrderMs;
+        }
+    }
+
+    public void setLatencyEngineType(String latencyEngineType) {
+        if (latencyEngineType != null && !latencyEngineType.equals(this.latencyEngineType)) {
+            SET_LATENCY_ENGINE_TYPE(latencyEngineType);
+            this.latencyEngineType = LATENCY_ENGINE_TYPE.toString();
         }
     }
 

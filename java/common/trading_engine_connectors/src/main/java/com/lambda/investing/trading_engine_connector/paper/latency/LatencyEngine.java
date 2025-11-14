@@ -4,6 +4,8 @@ import java.util.Date;
 
 public interface LatencyEngine {
 
+    void setIsPaperTrading(boolean isPaperTrading);
+
     Date getCurrentTime();
 
     void setTime(Date currentDate);

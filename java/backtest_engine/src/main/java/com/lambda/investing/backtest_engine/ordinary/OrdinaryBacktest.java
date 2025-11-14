@@ -103,8 +103,9 @@ public class OrdinaryBacktest extends AbstractBacktest {
     protected void constructPaperExecutionReportConnectorPublisher() {
         paperTradingEngine = new PaperTradingEngine(paperTradingEngineConnector, ordinaryMarketDataConnectorProvider,
                 backtestOrderRequestProvider, tradingEngineConnectorConfiguration);
-        paperTradingEngine.setDelayOrderRequestPoissonMs(Configuration.DELAY_ORDER_BACKTEST_MS);//setting delay 65 ms
+        paperTradingEngine.setDelayOrderRequestMs(Configuration.DELAY_ORDER_BACKTEST_MS);//setting delay 65 ms
         paperTradingEngine.setBacktest(true);
+        paperTradingEngine.setPaperTrading(false);
 
         paperTradingEngineConnector = getPaperTradingEngineConnector();
 

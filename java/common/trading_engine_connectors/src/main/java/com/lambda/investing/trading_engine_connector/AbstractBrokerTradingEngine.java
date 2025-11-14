@@ -97,6 +97,8 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 
 			this.paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, orderRequestConnectorProvider,
 					orderRequestConnectorConfiguration);
+			paperTradingEngine.setPaperTrading(true);
+			paperTradingEngine.setBacktest(false);
 
 			//Connector configuration paper
 			OrdinaryConnectorConfiguration ordinaryConnectorConfiguration = new OrdinaryConnectorConfiguration();
@@ -111,6 +113,9 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 			OrdinaryMarketDataProvider ordinaryMarketDataProvider = (OrdinaryMarketDataProvider) marketDataProvider;
 			this.paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, orderRequestConnectorProvider,
 					orderRequestConnectorConfiguration);
+			paperTradingEngine.setPaperTrading(true);
+			paperTradingEngine.setBacktest(false);
+
 			PaperConnectorPublisher paperConnectorPublisher = new PaperConnectorPublisher(
 					ordinaryMarketDataProvider.getConnectorConfiguration(), this.executionReportConnectorPublisher);
 			this.paperTradingEngine.setPaperConnectorMarketDataAndExecutionReportPublisher(paperConnectorPublisher);

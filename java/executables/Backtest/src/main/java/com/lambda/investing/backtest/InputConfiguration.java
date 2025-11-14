@@ -1,5 +1,6 @@
 package com.lambda.investing.backtest;
 
+import com.lambda.investing.Configuration;
 import com.lambda.investing.algorithmic_trading.provider.AlgorithmCreationUtils;
 import com.lambda.investing.algorithmic_trading.utils.AlgorithmUtils;
 import com.lambda.investing.algorithmic_trading.SingleInstrumentAlgorithm;
@@ -76,6 +77,7 @@ public class InputConfiguration implements Cloneable {
         private String startDate;//20201208
         private String endDate;//20201210
         private long delayOrderMs;//65
+        private String latencyEngineType = Configuration.LATENCY_ENGINE_TYPE.toString();//fixed, poisson
         private boolean feesCommissionsIncluded = true;
         private long seed = 0;
         private String instrument;
@@ -147,6 +149,7 @@ public class InputConfiguration implements Cloneable {
             backtestConfiguration.setEndTime(endDate);
             backtestConfiguration.setDelayOrderMs(delayOrderMs);
             backtestConfiguration.setInitialSleepSeconds(initialSleepSeconds);
+            backtestConfiguration.setLatencyEngineType(latencyEngineType);
 
             backtestConfiguration.setFeesCommissionsIncluded(feesCommissionsIncluded);
             if (seed != 0) {

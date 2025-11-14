@@ -15,12 +15,16 @@ public class Configuration {
         SINGLE_THREADING, MULTITHREADING
     }
 
+    public enum LatencyEngineType {
+        FIXED,
+        POISSON
+    }
 
     public static String BACKTEST_MESSAGE_PRINT = null;
     public static MULTITHREAD_CONFIGURATION MULTITHREADING_CORE = MULTITHREAD_CONFIGURATION.MULTITHREADING;//by default multithreading
     public static boolean FEES_COMMISSIONS_INCLUDED = true;//by default we have commissions set by instruments.xmls
     public static long DELAY_ORDER_BACKTEST_MS = 65;
-
+    public static LatencyEngineType LATENCY_ENGINE_TYPE = LatencyEngineType.FIXED;
 
     //backtest engine
     public static int BACKTEST_THREADS_PUBLISHING_MARKETDATA = 0;//used to publish from parquet and csv file!
@@ -108,6 +112,12 @@ public class Configuration {
         System.out.println("SET_FEES_COMMISSIONS_INCLUDED to " + feesCommissionsIncluded);
         logger.info("SET_FEES_COMMISSIONS_INCLUDED to {}", feesCommissionsIncluded);
         FEES_COMMISSIONS_INCLUDED = feesCommissionsIncluded;
+    }
+
+    public static void SET_LATENCY_ENGINE_TYPE(String latencyEngineType) {
+        LATENCY_ENGINE_TYPE = LatencyEngineType.valueOf(latencyEngineType);
+        System.out.println("SET_LATENCY_ENGINE_TYPE to " + LATENCY_ENGINE_TYPE);
+        logger.info("SET_LATENCY_ENGINE_TYPE to {}", LATENCY_ENGINE_TYPE);
     }
 
     public static void SET_RANDOM_SEED(long seed) {
