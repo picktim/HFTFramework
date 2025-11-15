@@ -47,16 +47,9 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 
 	protected Map<String, Map<ExecutionReportListener, String>> listenersManager;
 
-	private boolean isPaperTrading = false;
-	private boolean isDemoTrading = false;
-	private PaperTradingEngine paperTradingEngine = null;
 	protected Portfolio portfolio;
 	protected Queue<String> lastOrderRequestClOrdId;
 	protected Queue<String> CfERNotified;
-
-	public PaperTradingEngine getPaperTradingEngine() {
-		return paperTradingEngine;
-	}
 
 	public AbstractBrokerTradingEngine(ConnectorConfiguration orderRequestConnectorConfiguration,
 									   ConnectorProvider orderRequestConnectorProvider,
@@ -77,58 +70,12 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 		return false;
 	}
 
-	public void setInstrumentList(List<Instrument> instrumentList) {
-		this.paperTradingEngine.setInstrumentsList(instrumentList);
-		this.paperTradingEngine.init();
-	}
+
 
 	public void reset() {
-		this.paperTradingEngine.reset();
 	}
 
 	public abstract void setDemoTrading();
-
-	public void setPaperTrading(MarketDataProvider marketDataProvider) {
-		logger.info("starting BrokerTrading engine as paper trading");
-		PaperTradingEngineConfiguration paperTradingEngineConfiguration = new PaperTradingEngineConfiguration();
-		//create instance
-		if (marketDataProvider instanceof ZeroMqMarketDataConnector) {
-			ZeroMqMarketDataConnector zeroMqMarketDataConnector = (ZeroMqMarketDataConnector) marketDataProvider;
-
-			this.paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, orderRequestConnectorProvider,
-					orderRequestConnectorConfiguration);
-			paperTradingEngine.setPaperTrading(true);
-			paperTradingEngine.setBacktest(false);
-
-			//Connector configuration paper
-			OrdinaryConnectorConfiguration ordinaryConnectorConfiguration = new OrdinaryConnectorConfiguration();
-
-			PaperConnectorPublisher paperConnectorPublisher = new PaperConnectorPublisher(
-					ordinaryConnectorConfiguration, this.executionReportConnectorPublisher);
-			this.paperTradingEngine.setPaperConnectorMarketDataAndExecutionReportPublisher(paperConnectorPublisher);
-			//			this.paperTradingEngine.init();//TODO enable it?
-
-			//override this onUpdate
-		} else if (marketDataProvider instanceof OrdinaryMarketDataProvider) {
-			OrdinaryMarketDataProvider ordinaryMarketDataProvider = (OrdinaryMarketDataProvider) marketDataProvider;
-			this.paperTradingEngine = new PaperTradingEngine(this, marketDataProvider, orderRequestConnectorProvider,
-					orderRequestConnectorConfiguration);
-			paperTradingEngine.setPaperTrading(true);
-			paperTradingEngine.setBacktest(false);
-
-			PaperConnectorPublisher paperConnectorPublisher = new PaperConnectorPublisher(
-					ordinaryMarketDataProvider.getConnectorConfiguration(), this.executionReportConnectorPublisher);
-			this.paperTradingEngine.setPaperConnectorMarketDataAndExecutionReportPublisher(paperConnectorPublisher);
-			this.paperTradingEngine.init();
-
-		} else {
-			logger.error(
-					"cant be paper trading on other type of MarketDataProvider as ZeroMqMarketDataConnector or OrdinaryMarketDataProvider");
-		}
-		this.isPaperTrading = true;
-		this.portfolio.clear();//clean on startup
-
-	}
 
 	public void start() {
 		//listening orderRequest
@@ -194,17 +141,9 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 				lastOrderRequestClOrdId.offer(orderRequest.getClientOrderId());
 			}
 
-			System.out.println(Configuration.formatLog("onUpdate.orderRequest paperTrading:{} : {}", isPaperTrading, orderRequest));
-			logger.info("onUpdate.orderRequest paperTrading:{} : {}", isPaperTrading, orderRequest);
-
-			if (isPaperTrading && paperTradingEngine != null) {
-				//paper trading engine
-				this.paperTradingEngine.orderRequest(orderRequest);
-			} else {
-				//directly
-
-				orderRequest(orderRequest);
-			}
+			System.out.println(Configuration.formatLog("onUpdate.orderRequest : {}", orderRequest));
+			logger.info("onUpdate.orderRequest : {}", orderRequest);
+			orderRequest(orderRequest);
 		}
 
 		if (typeMessage.equals(TypeMessage.execution_report)) {
