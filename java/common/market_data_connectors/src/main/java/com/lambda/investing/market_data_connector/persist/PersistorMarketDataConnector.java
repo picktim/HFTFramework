@@ -218,9 +218,6 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
         return instrumentCacheMapCopyKeys;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
 
     @Override
     public void run() {
