@@ -68,15 +68,22 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
 
     private String name;
     private Map<String, Long> fileToErrorCounter;
-    @Setter
+
     private boolean persistParquet = true;
 
     private final Object lockSynchCache = new Object();
     //	private String persistSuffix = null;
 
-    @Setter
+
     private boolean enable = true;
 
+    public void setPersistParquet(boolean persistParquet) {
+        this.persistParquet = persistParquet;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
     public void setPeriodCheck(long periodCheck) {
         this.periodCheck = periodCheck;
