@@ -52,6 +52,7 @@
 
         <property name="periodCheck" value="${persist.temp_cache.ms}"/>
         <property name="persistParquet" value="${persist.parquet}"/>
+        <property name="enable" value="${persist:true}"/>
     </bean>
 
     <!--trading engine-->

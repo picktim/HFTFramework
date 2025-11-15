@@ -14,6 +14,7 @@ import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.*;
 import com.lambda.investing.model.messaging.TypeMessage;
 import com.lambda.investing.model.time.Period;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.Row;
@@ -29,7 +30,6 @@ import java.util.zip.ZipOutputStream;
 
 import static com.lambda.investing.Configuration.FILE_CSV_DATE_FORMAT;
 import static com.lambda.investing.data_manager.FileDataUtils.TIMESTAMP_COL;
-import static com.lambda.investing.model.Util.fromJsonString;
 import static com.lambda.investing.model.Util.fromObject;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -68,10 +68,14 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
 
     private String name;
     private Map<String, Long> fileToErrorCounter;
+    @Setter
     private boolean persistParquet = true;
 
     private final Object lockSynchCache = new Object();
     //	private String persistSuffix = null;
+
+    @Setter
+    private boolean enable = true;
 
 
     public void setPeriodCheck(long periodCheck) {
@@ -85,10 +89,6 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
         this.connectorProvider = connectorProvider;
         this.connectorConfiguration = connectorConfiguration;
         constructor(Period.day, DEFAULT_PERIOD_CHECK_MS);
-    }
-
-    public void setPersistParquet(boolean persistParquet) {
-        this.persistParquet = persistParquet;
     }
 
     //	public void setPersistSuffix(String persistSuffix) {
@@ -218,10 +218,14 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
         return instrumentCacheMapCopyKeys;
     }
 
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
     @Override
     public void run() {
         logger.info("start thread {} ms ", this.periodCheck);
-        while (true) {
+        while (enable) {
             //depth iteration
 
             try {
