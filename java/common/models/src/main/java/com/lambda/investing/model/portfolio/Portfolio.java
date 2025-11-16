@@ -27,7 +27,7 @@ public class Portfolio implements Runnable {
     public static String REQUESTED_PORTFOLIO_INFO = "portfolio";
     public static String REQUESTED_POSITION_INFO = "position";
     protected static Logger logger = LogManager.getLogger(Portfolio.class);
-    private transient Map<String, PortfolioInstrument> portfolioInstruments;
+    private Map<String, PortfolioInstrument> portfolioInstruments;
     private transient String path;// portfolio.json in a file path to persist
     private transient String tradesPath;// portfolio.trades.csv in a file path to persist
     //	private double openPnl=0.;
@@ -97,6 +97,7 @@ public class Portfolio implements Runnable {
     private Portfolio(String path) {
         //calling directly here will not save into path
         portfolioInstruments = new HashMap<>();
+        executionReportsTrades = new TreeSet<>(Comparator.comparingLong(ExecutionReport::getTimestampCreation));
         setPath(path);
         //call autosave
         if (this.path != null) {
