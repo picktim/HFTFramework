@@ -285,7 +285,7 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
             portfolio = portfolioMap.get(executionReport.getAlgorithmInfo());
         } else {
             portfolio = Portfolio
-                    .getPortfolio(String.format(FORMAT_PORTFOLIO, executionReport.getAlgorithmInfo()), isBacktest);
+                    .getPortfolio(String.format(FORMAT_PORTFOLIO, executionReport.getAlgorithmInfo()), isBacktest, isPaperTrading);
         }
         portfolio.updateTrade(executionReport);
         portfolioMap.put(executionReport.getAlgorithmInfo(), portfolio);
@@ -335,7 +335,7 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
             //return portfolio on execution Report
             String algorithmInfo = info.split("[.]")[0];
             Portfolio portfolio = portfolioMap.getOrDefault(algorithmInfo,
-                    Portfolio.getPortfolio(String.format(FORMAT_PORTFOLIO, algorithmInfo), isBacktest));
+                    Portfolio.getPortfolio(String.format(FORMAT_PORTFOLIO, algorithmInfo), isBacktest, isPaperTrading));
 
             portfolioMap.put(algorithmInfo, portfolio);
             this.marketDataProviderIn.notifyInfo(info, toJsonString(portfolio));

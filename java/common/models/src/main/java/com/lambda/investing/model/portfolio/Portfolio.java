@@ -27,9 +27,9 @@ public class Portfolio implements Runnable {
     public static String REQUESTED_PORTFOLIO_INFO = "portfolio";
     public static String REQUESTED_POSITION_INFO = "position";
     protected static Logger logger = LogManager.getLogger(Portfolio.class);
-    private Map<String, PortfolioInstrument> portfolioInstruments;
-    private String path;// portfolio.json in a file path to persist
-    private String tradesPath;// portfolio.trades.csv in a file path to persist
+    private transient Map<String, PortfolioInstrument> portfolioInstruments;
+    private transient String path;// portfolio.json in a file path to persist
+    private transient String tradesPath;// portfolio.trades.csv in a file path to persist
     //	private double openPnl=0.;
     //	private double closePnl=0.;
     //	private double totalPnl=0.;
@@ -37,19 +37,21 @@ public class Portfolio implements Runnable {
     private boolean autosave = false;
     private long lastSaveTimestamp = 0;
 
+
     @com.fasterxml.jackson.annotation.JsonIgnore
     @com.alibaba.fastjson2.annotation.JSONField(serialize = false, deserialize = false)
     private transient SortedSet<ExecutionReport> executionReportsTrades;
 
-    public static Portfolio getPortfolio(String path, boolean isBacktest) {
+    public static Portfolio getPortfolio(String path, boolean isBacktest, boolean isPaperTrading) {
         if (pathToInstance.containsKey(path)) {
             return pathToInstance.get(path);
         }
         Portfolio portfolio = new Portfolio();//backtest is not persisting it
         File portfolioFile = new File(path);
+        boolean isLiveTrading = !isBacktest && !isPaperTrading;
         if (!isBacktest) {
-            //live or paper trading
-            if (portfolioFile.exists()) {
+            //load existing position if live trading
+            if (isLiveTrading && portfolioFile.exists()) {
                 //read it
                 try {
                     String fileContent = new String(Files.readAllBytes(Paths.get(path)));
@@ -76,7 +78,7 @@ public class Portfolio implements Runnable {
     }
 
     public static Portfolio getPortfolio(String path) {
-        return getPortfolio(path, false);
+        return getPortfolio(path, false, false);
     }
 
     public Portfolio() {
