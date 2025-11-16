@@ -387,7 +387,7 @@ public class DefaultAlgorithmGui implements AlgorithmGui {
         }
         try {
             String output = Configuration.formatLog("" +
-                    "[{}] {} {}@{}", new Date(trade.getTimestamp()), trade.getVerb(), trade.getQuantity(), trade.getPrice());
+                    "[{}] {} {} {}@{}", new Date(trade.getTimestamp()), trade.getVerb(), trade.getInstrument(), trade.getQuantity(), trade.getPrice());
             if (!trade.getAlgorithmInfo().equals(MARKET_MAKER_ALGORITHM_INFO)) {
                 output += " [algo]";
             }
