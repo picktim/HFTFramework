@@ -47,11 +47,23 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-core</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -59,6 +71,12 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-service-netty</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--        coinbase-->
@@ -66,12 +84,24 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-coinbasepro</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--        kraken-->
@@ -79,30 +109,60 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kraken</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-kraken</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--        bitmex-->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-bitmex</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-bitmex</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--        binance-->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-binance</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--        bybit-->
@@ -110,17 +170,35 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-bybit</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-bybit</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-stream-binance</artifactId>
             <version>${xchange.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

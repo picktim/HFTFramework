@@ -148,6 +148,12 @@
                 <groupId>io.github.javifalces</groupId>
                 <artifactId>machine_learning</artifactId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!--       -->
 
@@ -195,6 +201,12 @@
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-core</artifactId>
                 <version>${table-saw.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
@@ -202,6 +214,12 @@
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-excel</artifactId>
                 <version>${table-saw.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!--<dependency>-->
             <!--<groupId>tech.tablesaw</groupId>-->
@@ -212,11 +230,23 @@
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-json</artifactId>
                 <version>${table-saw.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-jsplot</artifactId>
                 <version>${table-saw.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
@@ -233,18 +263,36 @@
                 <groupId>net.tlabs-data</groupId>
                 <artifactId>tablesaw_${table-saw.version}-parquet</artifactId>
                 <version>${table-saw-parquet.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.parquet</groupId>
                 <artifactId>parquet-avro</artifactId>
                 <version>1.10.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
                 <version>1.9.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
@@ -252,23 +300,47 @@
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-core</artifactId>
                 <version>1.1.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-common</artifactId>
                 <version>3.3.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client-core</artifactId>
                 <version>3.3.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.parquet</groupId>
                 <artifactId>parquet-hadoop</artifactId>
                 <version>1.13.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
@@ -308,6 +380,12 @@
                 <groupId>org.springframework.plugin</groupId>
                 <artifactId>spring-plugin-core</artifactId>
                 <version>${spring.plugin.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -562,6 +640,12 @@
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>7.11.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
