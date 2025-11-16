@@ -43,12 +43,18 @@ public class Portfolio implements Runnable {
     private transient SortedSet<ExecutionReport> executionReportsTrades;
 
     public static Portfolio getPortfolio(String path, boolean isBacktest, boolean isPaperTrading) {
+        boolean isLiveTrading = !isBacktest && !isPaperTrading;
+
+        if (isPaperTrading) {
+            path = path.replace(".json", "_paper.json");
+        }
+
         if (pathToInstance.containsKey(path)) {
             return pathToInstance.get(path);
         }
         Portfolio portfolio = new Portfolio();//backtest is not persisting it
         File portfolioFile = new File(path);
-        boolean isLiveTrading = !isBacktest && !isPaperTrading;
+
         if (!isBacktest) {
             //load existing position if live trading
             if (isLiveTrading && portfolioFile.exists()) {
@@ -142,11 +148,12 @@ public class Portfolio implements Runnable {
             return;
         }
         try {
-            List<ExecutionReport> allExecutionReports = new ArrayList<>(executionReportsTrades);
-            if (allExecutionReports.isEmpty()) {
+
+            if (executionReportsTrades.isEmpty()) {
                 return;
             }
 
+            List<ExecutionReport> allExecutionReports = new ArrayList<>(executionReportsTrades);//copy to avoid concurrency issues
             BufferedWriter writer = new BufferedWriter(new FileWriter(tradesPath));
             writer.write(ExecutionReport.getCSVHeader() + "\n");
             for (ExecutionReport executionReport : allExecutionReports) {
