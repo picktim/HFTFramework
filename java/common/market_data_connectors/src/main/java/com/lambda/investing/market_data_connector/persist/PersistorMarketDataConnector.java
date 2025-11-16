@@ -356,7 +356,7 @@ public class PersistorMarketDataConnector implements Runnable, ConnectorListener
             InstrumentCache caches = entrySet.getValue();
             Instrument instrument = entrySet.getKey();
             double ratio = Math.round(caches.getTradesSyncRatio() * 100.0) / 100.0;
-            logger.info("{} TradesSyncRatio: {} ", instrument.getPrimaryKey(), ratio);
+//            logger.info("{} TradesSyncRatio: {} ", instrument.getPrimaryKey(), ratio);
             caches.clearSyncRatio();
         }
     }

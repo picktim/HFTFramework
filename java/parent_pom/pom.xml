@@ -682,6 +682,12 @@
 
     <dependencies>
 
+        <!-- default SLF4J provider  -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+        </dependency>
+
         <!--Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
