@@ -51,8 +51,8 @@
         <mockito.version>1.10.19</mockito.version>
         <!--<powermockito.version>1.5.6</powermockito.version>-->
         <lombok.version>1.18.20</lombok.version>
-        <log4j2.version>2.18.0</log4j2.version>
-        <slf4j.version>2.0.0-alpha7</slf4j.version>
+        <log4j2.version>2.25.2</log4j2.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <spring.version>5.2.22.RELEASE</spring.version>
         <spring.plugin.version>3.0.0</spring.plugin.version>
         <junit4.version>4.13.1</junit4.version>
@@ -75,8 +75,8 @@
         <intellij.version>232.9921.82</intellij.version>
         <flatlaf.version>3.2.5</flatlaf.version>
         <maven.profiler.version>3.13</maven.profiler.version>
-        <openhft.affinity.version>3.23.3</openhft.affinity.version>
-        <openhft.chroniclequeue.version>5.27ea3</openhft.chroniclequeue.version>
+        <openhft.affinity.version>3.27ea1</openhft.affinity.version>
+        <openhft.chroniclequeue.version>5.27ea11</openhft.chroniclequeue.version>
         <maven.artifact.checksumPolicy>warn</maven.artifact.checksumPolicy>
     </properties>
 
@@ -570,6 +570,12 @@
                 <groupId>net.openhft</groupId>
                 <artifactId>affinity</artifactId>
                 <version>${openhft.affinity.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
