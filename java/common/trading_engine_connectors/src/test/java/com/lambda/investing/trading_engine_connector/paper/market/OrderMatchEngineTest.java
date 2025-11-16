@@ -7,7 +7,6 @@ import com.lambda.investing.model.trading.*;
 import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -96,7 +95,7 @@ import static org.mockito.Mockito.doAnswer;
 		ExecutionReport executionReport = new ExecutionReport(orderRequest);
 		executionReport.setLastQuantity(quantity);
 		executionReport.setTimestampCreation(System.currentTimeMillis());
-		executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+        executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
 		return executionReport;
 	}
 
@@ -310,7 +309,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastTradeListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastTradeListen.getQuantity(), 0.0001);
 		Assert.assertNotNull(lastExecutionReportListen);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertNotNull(lastDepthListen);
 		Assert.assertEquals(0.0, lastExecutionReportListen.getQuantity() - lastExecutionReportListen.getQuantityFill(),
@@ -408,7 +407,7 @@ import static org.mockito.Mockito.doAnswer;
 		Assert.assertEquals(orderRequest.getPrice(), lastTradeListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastTradeListen.getQuantity(), 0.0001);
 		Assert.assertNotNull(lastExecutionReportListen);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertNotNull(lastDepthListen);
 		Assert.assertEquals(0.0, lastExecutionReportListen.getQuantity() - lastExecutionReportListen.getQuantityFill(),
@@ -486,7 +485,7 @@ import static org.mockito.Mockito.doAnswer;
 
 		trade = createTrade(85.0, 1.0, Verb.Sell);
 		orderMatchEngine.refreshFillMarketTrade(trade);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
@@ -547,7 +546,7 @@ import static org.mockito.Mockito.doAnswer;
 
 		trade = createTrade(95.0, 1.0, Verb.Buy);
 		orderMatchEngine.refreshFillMarketTrade(trade);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(trade.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.0001);
@@ -581,7 +580,7 @@ import static org.mockito.Mockito.doAnswer;
 		lastDepthListen = null;
 		OrderRequest orderRequest = createOrderRequest(99, 6, Verb.Buy);
 		orderMatchEngine.orderRequest(orderRequest);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertEquals(95, lastExecutionReportListen.getPrice(), 0.001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getLastQuantity(), 0.001);
@@ -636,7 +635,7 @@ import static org.mockito.Mockito.doAnswer;
 		orderMatchEngine.refreshMarketMakerDepth(depth);
 
 		//check ER
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
@@ -670,7 +669,7 @@ import static org.mockito.Mockito.doAnswer;
 		orderMatchEngine.refreshMarketMakerDepth(depth);
 
 		//check ER
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled,
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled,
 				lastExecutionReportListen.getExecutionReportStatus());
 		Assert.assertEquals(orderRequest.getPrice(), lastExecutionReportListen.getPrice(), 0.0001);
 		Assert.assertEquals(orderRequest.getQuantity(), lastExecutionReportListen.getQuantityFill(), 0.0001);
@@ -999,7 +998,7 @@ import static org.mockito.Mockito.doAnswer;
 
 		Trade trade1 = createTrade(85, 3, Verb.Sell);
 		orderMatchEngine.refreshFillMarketTrade(trade1);
-		Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReportListen.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReportListen.getExecutionReportStatus());
 
 	}
 

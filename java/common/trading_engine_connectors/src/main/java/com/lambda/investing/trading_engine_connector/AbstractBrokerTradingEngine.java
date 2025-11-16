@@ -5,33 +5,22 @@ import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.ConnectorProvider;
 import com.lambda.investing.connector.ConnectorPublisher;
-import com.lambda.investing.connector.ordinary.OrdinaryConnectorConfiguration;
-import com.lambda.investing.market_data_connector.MarketDataProvider;
-import com.lambda.investing.market_data_connector.ZeroMqMarketDataConnector;
-import com.lambda.investing.market_data_connector.ordinary.OrdinaryMarketDataProvider;
-import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.messaging.TypeMessage;
 import com.lambda.investing.model.portfolio.Portfolio;
 import com.lambda.investing.model.trading.ExecutionReport;
 import com.lambda.investing.model.trading.ExecutionReportStatus;
 import com.lambda.investing.model.trading.OrderRequest;
 import com.lambda.investing.model.trading.OrderRequestAction;
-import com.lambda.investing.trading_engine_connector.paper.PaperConnectorPublisher;
-import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
-import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngineConfiguration;
 import org.apache.curator.shaded.com.google.common.collect.EvictingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.lambda.investing.model.Util.*;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_PORTFOLIO_INFO;
-import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
 
 
 public abstract class AbstractBrokerTradingEngine implements TradingEngineConnector, ConnectorListener {
@@ -103,9 +92,11 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 		return executionReport;
 	}
 
+
 	//called by extension when filled /partial filled
-	protected void notifyExecutionReportById(ExecutionReport executionReport) {
-		boolean isKindOfFilled = executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletellyFilled || executionReport.getExecutionReportStatus() == ExecutionReportStatus.PartialFilled;
+	@Override
+	public void notifyExecutionReport(ExecutionReport executionReport) {
+		boolean isKindOfFilled = executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletelyFilled || executionReport.getExecutionReportStatus() == ExecutionReportStatus.PartialFilled;
 		if (isKindOfFilled && CfERNotified.contains(executionReport.getClientOrderId())) {
 			//already notified!
 			logger.info("already notify Cf {} -> skip it", executionReport.getClientOrderId());
@@ -114,7 +105,7 @@ public abstract class AbstractBrokerTradingEngine implements TradingEngineConnec
 
 		String id = executionReport.getAlgorithmInfo() + "." + TypeMessage.execution_report;
 
-		if (executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletellyFilled) {
+		if (executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletelyFilled) {
 			CfERNotified.offer(executionReport.getClientOrderId());
 		}
 

@@ -954,7 +954,7 @@ public class AvellanedaStoikov extends MarketMakingAlgorithm {
         boolean output = super.onExecutionReportUpdate(executionReport);
         if (executionReport.getInstrument().equalsIgnoreCase(this.instrument.getPrimaryKey())) {
             //no logic for hedging
-            if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+            if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
                     || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled)) {
                 logger.debug("trade arrived");
                 try {

@@ -100,7 +100,7 @@ class JsonUtilTest {
         ExecutionReport executionReport = new ExecutionReport(orderRequest);
         executionReport.setLastQuantity(quantity);
         executionReport.setTimestampCreation(System.currentTimeMillis());
-        executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+        executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
         return executionReport;
     }
 

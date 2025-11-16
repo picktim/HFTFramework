@@ -21,9 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 import static com.lambda.investing.model.Util.*;
@@ -478,7 +476,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             executionReport.setExecutionReportStatus(ExecutionReportStatus.Rejected);
             executionReport.setRejectReason(response + ":" + mtMessageER.get_response_value());
             System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return ImmutablePair.of(false, executionReport);
         } else {
             String lastQty = mtMessageER.get_close_lots();
@@ -503,7 +501,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             updatePosition(executionReport);
             System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
 
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return ImmutablePair.of(true, executionReport);
         }
 
@@ -550,7 +548,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             }
             this.executionReportConnectorConfiguration = this.zeroMqConfigurationER;//overwrite
             System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
         }
         for (String id : idsRemove) {
             pendingExecutionReport.remove(id);
@@ -584,7 +582,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             return;
         }
         System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-        notifyExecutionReportById(executionReport);
+        notifyExecutionReport(executionReport);
 
     }
 
@@ -625,7 +623,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
 
         activeOrders.put(pendingOrderRequest.getClientOrderId(), pendingOrderRequest);
         System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-        notifyExecutionReportById(executionReport);
+        notifyExecutionReport(executionReport);
 
     }
 
@@ -654,7 +652,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
         executionReportMap.remove(magic);
         //notify
         System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReportDeleted));
-        notifyExecutionReportById(executionReportDeleted);
+        notifyExecutionReport(executionReportDeleted);
     }
 
     private void treatTrade(MTMessageER mtMessageER) {
@@ -711,7 +709,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
 
         boolean isCF = executionReportExecuted.getQuantity() == executionReportExecuted.getQuantityFill();
         if (isCF) {
-            executionReportExecuted.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+            executionReportExecuted.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
         }
 
         //update active orders map
@@ -737,7 +735,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
 
         //notify it
         System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReportExecuted));
-        notifyExecutionReportById(executionReportExecuted);
+        notifyExecutionReport(executionReportExecuted);
         if (isCF) {
             completelyFilledOrdersNotified.offer(executionReportExecuted.getClientOrderId());
         }
@@ -863,7 +861,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
 
             boolean isCF = executionReport.getQuantity() == executionReport.getQuantityFill();
             if (isCF) {
-                executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+                executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
             } else {
                 //should never be here...
                 logger.warn("what is happening here?¿ partialFilled closing position? {}", mtMessageER);
@@ -880,7 +878,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             executionReport.setPrice(Double.valueOf(closePriceER));
             executionReportMap.remove(origClientOrderId);
             System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             completelyFilledOrdersNotified.offer(executionReport.getClientOrderId());
 
             if (executionReport.getOrigClientOrderId() != null) {
@@ -891,7 +889,7 @@ public class MetatraderTradingEngine extends AbstractBrokerTradingEngine {
             if (executionReport.getExecutionReportStatus() == ExecutionReportStatus.Rejected) {
                 //notify rejection at least
                 System.out.println(Configuration.formatLog("notifyExecutionReportById : {} ", executionReport));
-                notifyExecutionReportById(executionReport);
+                notifyExecutionReport(executionReport);
             } else {
                 logger.warn("notActive and not rejected detected {}", executionReport);
             }

@@ -367,7 +367,7 @@ public class OrderbookManager {
         long timestampTrade = Math.max(orderbookTime, trade.getTimestamp());
         executionReport.setTimestampCreation(timestampTrade);//get current orderbook time
         if (executionReport.getQuantityFill() == executionReport.getQuantity()) {
-            executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+            executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
         }
         if (executionReport.getPrice() == 0) {
             //for market orders
@@ -454,7 +454,7 @@ public class OrderbookManager {
                         boolean isExecuted = (
                                 executionReport1.getExecutionReportStatus() == (ExecutionReportStatus.PartialFilled)
                                         || executionReport1.getExecutionReportStatus()
-                                        == (ExecutionReportStatus.CompletellyFilled));
+                                        == (ExecutionReportStatus.CompletelyFilled));
 
                         if (isExecuted) {
                             //// fix error wrong timestamp!!
@@ -491,7 +491,7 @@ public class OrderbookManager {
             paperTradingEngineConnector.notifyExecutionReport(executionReport);
         }
 
-        boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+        boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
                 || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled);
 
         if (isTrade) {

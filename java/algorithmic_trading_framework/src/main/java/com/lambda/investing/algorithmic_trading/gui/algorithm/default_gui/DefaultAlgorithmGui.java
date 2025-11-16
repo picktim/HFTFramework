@@ -36,8 +36,6 @@ import java.util.concurrent.*;
 import static com.lambda.investing.algorithmic_trading.gui.main.MainMenuGUI.IS_BACKTEST;
 import static com.lambda.investing.model.Util.toJsonString;
 import static com.lambda.investing.model.asset.Instrument.round;
-import static com.lambda.investing.model.trading.ExecutionReport.liveStatus;
-import static com.lambda.investing.model.trading.ExecutionReport.removedStatus;
 import static com.lambda.investing.trading_engine_connector.paper.market.OrderbookManager.MARKET_MAKER_ALGORITHM_INFO;
 
 /**
@@ -231,8 +229,8 @@ public class DefaultAlgorithmGui implements AlgorithmGui {
 
         try {
 
-            boolean updateTimeSeries = liveStatus.contains(executionReport.getExecutionReportStatus()) || removedStatus.contains(executionReport.getExecutionReportStatus());
-            boolean isTrade = executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletellyFilled || executionReport.getExecutionReportStatus() == ExecutionReportStatus.PartialFilled;
+            boolean updateTimeSeries = ExecutionReport.isLiveStatus(executionReport) || ExecutionReport.isRemovedStatus(executionReport);
+            boolean isTrade = ExecutionReport.isTradeStatus(executionReport);
 
             if (updateTimeSeries) {
 

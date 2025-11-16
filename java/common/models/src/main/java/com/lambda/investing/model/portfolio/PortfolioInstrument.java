@@ -1,11 +1,12 @@
 package com.lambda.investing.model.portfolio;
 
-import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.trading.ExecutionReport;
 import com.lambda.investing.model.trading.ExecutionReportStatus;
 import com.lambda.investing.model.trading.Verb;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter @Setter public class PortfolioInstrument {
 
@@ -20,13 +21,13 @@ import lombok.Setter;
 	//	private double totalPnl;
 	private double numberTrades;
 
+
 	public PortfolioInstrument(String instrumentPK) {
 		this.instrumentPK = instrumentPK;
 	}
 
 	public void updateTrade(ExecutionReport executionReport) {
-		if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled) || executionReport
-				.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+		if (ExecutionReport.isTradeStatus(executionReport)) {
 			//only in trades
 			timestampLastUpdate = executionReport.getTimestampCreation();
 			numberTrades++;
@@ -37,7 +38,6 @@ import lombok.Setter;
 			if (executionReport.getVerb().equals(Verb.Sell)) {
 				position -= executionReport.getLastQuantity();
 			}
-
 		}
 	}
 }

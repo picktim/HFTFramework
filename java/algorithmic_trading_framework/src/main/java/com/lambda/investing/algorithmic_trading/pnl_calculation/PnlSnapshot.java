@@ -320,7 +320,7 @@ public class PnlSnapshot {
             logger.warn("execution report received of the past {}", executionReport);
         }
         if (processedClOrdId.containsKey(executionReport.getClientOrderId()) && processedClOrdId
-                .get(executionReport.getClientOrderId()).equals(ExecutionReportStatus.CompletellyFilled)) {
+                .get(executionReport.getClientOrderId()).equals(ExecutionReportStatus.CompletelyFilled)) {
             logger.warn("cant update trade in portfolio manager {} already processed with status {} received {} ",
                     executionReport.getClientOrderId(), processedClOrdId.get(executionReport.getClientOrderId()),
                     executionReport.getExecutionReportStatus());

@@ -1,7 +1,6 @@
 package com.lambda.investing.market_data_connector;
 
 
-import com.lambda.investing.Configuration;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
@@ -184,7 +183,7 @@ public class ZeroMqMarketDataConnector extends AbstractMarketDataProvider implem
 					return false;
 				}
 
-			case CompletellyFilled:
+			case CompletelyFilled:
 				if (FinishedOrderIdNotified.contains(clordId)) {
 					return true;
 				} else {

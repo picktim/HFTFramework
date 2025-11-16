@@ -210,7 +210,7 @@ public class AlgorithmNotifier {
         }
     }
 
-    public void notifyObserversonExecutionReportUpdate(ExecutionReport executionReport) {
+    public void notifyObserversOnExecutionReportUpdate(ExecutionReport executionReport) {
         if (algorithm.getAlgorithmObservers().size() > 0) {
             if (isMultithreaded()) {
                 notifierPool.submit(() -> {

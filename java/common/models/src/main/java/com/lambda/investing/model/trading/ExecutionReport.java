@@ -2,27 +2,39 @@ package com.lambda.investing.model.trading;
 
 import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.model.Util;
-import com.lambda.investing.model.asset.Instrument;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
+import java.util.Date;
 import java.util.List;
+
+import static com.lambda.investing.PrintUtils.PrintDate;
 
 @Getter
 @Setter
 //@ToString
 public class ExecutionReport {
 
-    public static List<ExecutionReportStatus> tradeStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.PartialFilled});
+    public static List<ExecutionReportStatus> tradeStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletelyFilled, ExecutionReportStatus.PartialFilled});
     public static List<ExecutionReportStatus> liveStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.Active, ExecutionReportStatus.PartialFilled});
-    public static List<ExecutionReportStatus> removedStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletellyFilled, ExecutionReportStatus.Cancelled});
+    public static List<ExecutionReportStatus> removedStatus = ArrayUtils.ArrayToList(new ExecutionReportStatus[]{ExecutionReportStatus.CompletelyFilled, ExecutionReportStatus.Cancelled});
 
+    public static boolean isTradeStatus(ExecutionReport er) {
+        return tradeStatus.contains(er.getExecutionReportStatus());
+    }
+
+    public static boolean isLiveStatus(ExecutionReport er) {
+        return liveStatus.contains(er.getExecutionReportStatus());
+    }
+
+    public static boolean isRemovedStatus(ExecutionReport er) {
+        return removedStatus.contains(er.getExecutionReportStatus());
+    }
 
     private String algorithmInfo, freeText;
     private String instrument;
     private String clientOrderId, origClientOrderId, rejectReason;
-    private double price, quantity, lastQuantity, quantityFill;//todo change to bigdecimal or integer
+    private double price, quantity, lastQuantity, quantityFill;
     private ExecutionReportStatus executionReportStatus;
     private Verb verb;
     private boolean isAggressor = false;//for backtesting purposes, to be used in the future
@@ -73,7 +85,7 @@ public class ExecutionReport {
 
         }
         if (executionReportStatus.equals(ExecutionReportStatus.PartialFilled) || executionReportStatus
-                .equals(ExecutionReportStatus.CompletellyFilled)) {
+                .equals(ExecutionReportStatus.CompletelyFilled)) {
             return "ExecutionReport{" + "executionReportStatus='" + executionReportStatus + '\'' + ", instrument='"
                     + instrument + '\'' + ", verb=" + verb + '\'' + ", price=" + price + ", quantity=" + quantity
                     + ", lastQuantity=" + lastQuantity + ", quantityFill=" + quantityFill + '\''
@@ -88,5 +100,13 @@ public class ExecutionReport {
                 + algorithmInfo + '\'' + ", clientOrderId='" + clientOrderId + '\'' + ", origClientOrderId='"
                 + origClientOrderId + '\'' + ", rejectReason='" + rejectReason + '\'' + ", verb=" + verb
                 + ", timestampCreation=" + timestampCreation + ", freeText='" + freeText + '}';
+    }
+
+    public String toCSVString() {
+        return timestampCreation + "," + PrintDate(new Date(timestampCreation)) + "," + instrument + "," + verb + "," + executionReportStatus + "," + price + "," + quantity + "," + lastQuantity + "," + quantityFill + "," + clientOrderId + "," + algorithmInfo;
+    }
+
+    public static String getCSVHeader() {
+        return "timestampCreation,date,instrument,verb,executionReportStatus,price,quantity,lastQuantity,quantityFill,clientOrderId,algorithmInfo";
     }
 }

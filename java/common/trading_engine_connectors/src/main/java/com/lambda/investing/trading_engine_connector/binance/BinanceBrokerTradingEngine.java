@@ -137,7 +137,7 @@ public class BinanceBrokerTradingEngine extends AbstractBrokerTradingEngine
 					//not found
 					String reason = String.format(REJECT_ORIG_NOT_FOUND_FORMAT, orderRequest.getOrigClientOrderId(),
 							orderRequest.getOrderRequestAction(), orderRequest.getInstrument());
-					notifyExecutionReportById(createRejectionExecutionReport(orderRequest, reason));
+					notifyExecutionReport(createRejectionExecutionReport(orderRequest, reason));
 					return false;
 				}
 
@@ -180,7 +180,7 @@ public class BinanceBrokerTradingEngine extends AbstractBrokerTradingEngine
 					//not found
 					String reason = String.format(REJECT_ORIG_NOT_FOUND_FORMAT, orderRequest.getOrigClientOrderId(),
 							orderRequest.getOrderRequestAction(), orderRequest.getInstrument());
-					notifyExecutionReportById(createRejectionExecutionReport(orderRequest, reason));
+					notifyExecutionReport(createRejectionExecutionReport(orderRequest, reason));
 					return false;
 				}
 				Instrument instrument = Instrument.getInstrument(orderRequest.getInstrument());
@@ -202,7 +202,7 @@ public class BinanceBrokerTradingEngine extends AbstractBrokerTradingEngine
 			}
 			executionReport.setRejectReason(e.getMessage());
 			logger.error("order rejected in binance", e);
-			notifyExecutionReportById(executionReport);
+			notifyExecutionReport(executionReport);
 		}
 		return false;
 	}
@@ -228,7 +228,7 @@ public class BinanceBrokerTradingEngine extends AbstractBrokerTradingEngine
 			}
 			ExecutionReport executionReport = new ExecutionReport(orderRequestSent);
 			executionReport = setExecutionReportStatus(orderTradeUpdateEvent, orderRequestSent, executionReport);
-			notifyExecutionReportById(executionReport);
+			notifyExecutionReport(executionReport);
 
 		}
 	}
@@ -265,7 +265,7 @@ public class BinanceBrokerTradingEngine extends AbstractBrokerTradingEngine
 				executionReport.setQuantityFill(Math.abs(qtyFilled));
 
 				if (Math.abs(qtyFilled) >= orderRequestSent.getQuantity()) {
-					executionReportStatus = ExecutionReportStatus.CompletellyFilled;
+					executionReportStatus = ExecutionReportStatus.CompletelyFilled;
 				} else {
 					executionReportStatus = ExecutionReportStatus.PartialFilled;
 				}

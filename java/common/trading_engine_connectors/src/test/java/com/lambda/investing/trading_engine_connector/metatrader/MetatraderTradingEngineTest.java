@@ -8,18 +8,11 @@ import com.lambda.investing.connector.ordinary.OrdinaryConnectorConfiguration;
 import com.lambda.investing.connector.ordinary.OrdinaryConnectorPublisherProvider;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
 import com.lambda.investing.connector.zero_mq.ZeroMqProvider;
-import com.lambda.investing.connector.zero_mq.ZeroMqPublisher;
-import com.lambda.investing.market_data_connector.MarketDataListener;
 import com.lambda.investing.market_data_connector.metatrader.MetatraderMarketDataPublisher;
 import com.lambda.investing.metatrader.MetatraderZeroBrokerConnector;
-import com.lambda.investing.model.asset.Instrument;
-import com.lambda.investing.model.market_data.Depth;
-import com.lambda.investing.model.market_data.Trade;
-import com.lambda.investing.model.messaging.Command;
 import com.lambda.investing.model.messaging.TypeMessage;
 import com.lambda.investing.model.trading.*;
 import com.lambda.investing.trading_engine_connector.AbstractBrokerTradingEngine;
-import com.lambda.investing.trading_engine_connector.ExecutionReportListener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,7 +20,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -270,7 +262,7 @@ public class MetatraderTradingEngineTest {
         ExecutionReport last = lastExecutionReport.get(lastExecutionReport.size() - 1);
         Assert.assertNotNull(last);
         Assert.assertEquals(last.getVerb(), verb);
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last.getExecutionReportStatus());
 
         ExecutionReport first = lastExecutionReport.get(0);
         Assert.assertNotNull(first);
@@ -293,7 +285,7 @@ public class MetatraderTradingEngineTest {
         ExecutionReport last1 = lastExecutionReport.get(lastExecutionReport.size() - 1);
         Assert.assertNotNull(last1);
         Assert.assertEquals(last1.getVerb(), Verb.OtherSideVerb(verb));
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last1.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last1.getExecutionReportStatus());
 
         ExecutionReport first1 = lastExecutionReport.get(0);
         Assert.assertNotNull(first1);
@@ -449,14 +441,14 @@ public class MetatraderTradingEngineTest {
         ExecutionReport last = lastExecutionReport.get(lastExecutionReport.size() - 1);
         Assert.assertNotNull(last);
         Assert.assertEquals(last.getVerb(), Verb.Sell);
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last.getExecutionReportStatus());
         Assert.assertEquals(0.02, last.getLastQuantity(), 0.0001);
         Assert.assertEquals(INSTRUMENT_PK, last.getInstrument());
 
         ExecutionReport last2 = lastExecutionReport2.get(lastExecutionReport2.size() - 1);
         Assert.assertNotNull(last2);
         Assert.assertEquals(last2.getVerb(), Verb.Sell);
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last2.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last2.getExecutionReportStatus());
         Assert.assertEquals(0.01, last2.getLastQuantity(), 0.0001);
         Assert.assertEquals(INSTRUMENT_PK2, last2.getInstrument());
 
@@ -464,7 +456,7 @@ public class MetatraderTradingEngineTest {
         Assert.assertNotNull(last3);
         Assert.assertEquals(last3.getVerb(), Verb.Sell);
         Assert.assertEquals(INSTRUMENT_PK, last3.getInstrument());
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last3.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last3.getExecutionReportStatus());
         Assert.assertEquals(0.01, last3.getLastQuantity(), 0.0001);
 
 
@@ -472,7 +464,7 @@ public class MetatraderTradingEngineTest {
         Assert.assertNotNull(last4);
         Assert.assertEquals(last4.getVerb(), Verb.Sell);
         Assert.assertEquals(INSTRUMENT_PK2, last4.getInstrument());
-        Assert.assertEquals(ExecutionReportStatus.CompletellyFilled, last4.getExecutionReportStatus());
+        Assert.assertEquals(ExecutionReportStatus.CompletelyFilled, last4.getExecutionReportStatus());
         Assert.assertEquals(0.02, last4.getLastQuantity(), 0.0001);
 
 

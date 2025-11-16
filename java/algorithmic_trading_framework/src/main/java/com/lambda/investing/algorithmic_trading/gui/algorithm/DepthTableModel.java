@@ -261,7 +261,7 @@ public class DepthTableModel extends AbstractTableModel {
     public void updateExecutionReport(ExecutionReport executionReport) {
         //in reality is updated next depth -> happens inmediatelly
         synchronized (depthLock) {
-            if (liveStatus.contains(executionReport.getExecutionReportStatus())) {
+            if (ExecutionReport.isLiveStatus(executionReport)) {
                 if (executionReport.getVerb() == Verb.Buy) {
                     lastQuoteBidVol = executionReport.getQuantity() / VOLUME_FACTOR;
                     lastQuoteBid = executionReport.getPrice();

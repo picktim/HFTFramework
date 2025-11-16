@@ -17,6 +17,9 @@ public interface TradingEngineConnector {
 
     boolean orderRequest(OrderRequest orderRequest);
 
+    void notifyExecutionReport(ExecutionReport executionReport);
+
+
     void requestInfo(String info);
 
     void reset();

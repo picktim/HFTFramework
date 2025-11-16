@@ -333,12 +333,12 @@ public class QuoteSideManager {
 
         boolean isInactive =
                 executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Cancelled) || newOrderRejected || executionReport
-                        .getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled);
+                        .getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled);
 
         boolean isCancelRej = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CancelRejected);
 
         boolean isFilled = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled)
-                || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled);
+                || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled);
 
         String clientOrderIdRecevied = executionReport.getClientOrderId();
 

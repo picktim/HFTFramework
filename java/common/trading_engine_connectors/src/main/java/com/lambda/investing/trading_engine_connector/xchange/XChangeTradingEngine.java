@@ -1,24 +1,15 @@
 package com.lambda.investing.trading_engine_connector.xchange;
 
-import com.lambda.investing.binance.BinanceBrokerConnector;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorProvider;
 import com.lambda.investing.connector.ConnectorPublisher;
-import com.lambda.investing.market_data_connector.xchange.BybitMarketDataConfiguration;
-import com.lambda.investing.market_data_connector.xchange.CoinbaseMarketDataConfiguration;
-import com.lambda.investing.model.asset.Currency;
-import com.lambda.investing.model.Market;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.trading.*;
 import com.lambda.investing.trading_engine_connector.AbstractBrokerTradingEngine;
 import com.lambda.investing.trading_engine_connector.ExecutionReportListener;
 import com.lambda.investing.trading_engine_connector.TradingEngineConfiguration;
-import com.lambda.investing.trading_engine_connector.binance.BinanceBrokerTradingEngine;
-import com.lambda.investing.trading_engine_connector.binance.BinanceTradingEngineConfiguration;
 import com.lambda.investing.xchange.*;
-import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
-import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +19,6 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 
 import org.knowm.xchange.dto.trade.UserTrade;
-import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
 
 import java.io.IOException;
@@ -148,17 +138,17 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 			case NEW:
 			case REPLACED:
 				executionReport.setExecutionReportStatus(ExecutionReportStatus.Active);
-				notifyExecutionReportById(executionReport);
+				notifyExecutionReport(executionReport);
 				break;
 			case CANCELED:
 				executionReport.setExecutionReportStatus(ExecutionReportStatus.Cancelled);
-				notifyExecutionReportById(executionReport);
+				notifyExecutionReport(executionReport);
 				break;
 			case FILLED:
-				executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+				executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
 				executionReport.setLastQuantity(executionReport.getQuantity() - executionReport.getQuantityFill());
 				executionReport.setQuantityFill(order.getCumulativeAmount().doubleValue());//should be equal to qty
-				notifyExecutionReportById(executionReport);
+				notifyExecutionReport(executionReport);
 				break;
 			case PARTIALLY_FILLED:
 				executionReport.setExecutionReportStatus(ExecutionReportStatus.PartialFilled);
@@ -167,7 +157,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 				double lastQty = newCumQty - previousCumQty;
 				executionReport.setLastQuantity(lastQty);
 				executionReport.setQuantityFill(order.getCumulativeAmount().doubleValue());//ess than qty
-				notifyExecutionReportById(executionReport);
+				notifyExecutionReport(executionReport);
 				break;
 		}
 		marketOrderIdToER.put(orderId, executionReport);
@@ -243,7 +233,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 							e);
 					ExecutionReport executionReport = createRejectionExecutionReport(orderRequest,
 							e.getMessage() + " " + e);
-					notifyExecutionReportById(executionReport);
+					notifyExecutionReport(executionReport);
 					return false;
 				}
 			}
@@ -271,7 +261,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 							e);
 					ExecutionReport executionReport = createRejectionExecutionReport(orderRequest,
 							e.getMessage() + " " + e);
-					notifyExecutionReportById(executionReport);
+					notifyExecutionReport(executionReport);
 					return false;
 				}
 
@@ -289,7 +279,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 			} catch (IOException e) {
 				logger.error("cant get order {} for {}", marketOrderId, orderRequest.getOrigClientOrderId(), e);
 				ExecutionReport executionReportRej = createRejectionExecutionReport(orderRequest, e.getMessage());
-				notifyExecutionReportById(executionReportRej);
+				notifyExecutionReport(executionReportRej);
 				return false;
 			}
 
@@ -306,7 +296,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 					logger.error("cant get order {} for {}", marketOrderId, orderRequest.getOrigClientOrderId(), e);
 					ExecutionReport executionReportRej = createRejectionExecutionReport(orderRequest, e.getMessage());
 					executionReportRej.setExecutionReportStatus(ExecutionReportStatus.CancelRejected);
-					notifyExecutionReportById(executionReportRej);
+					notifyExecutionReport(executionReportRej);
 					return false;
 				}
 			}
@@ -334,7 +324,7 @@ public class XChangeTradingEngine extends AbstractBrokerTradingEngine {
 					logger.error("cant get order {} for {}", marketOrderId, orderRequest.getOrigClientOrderId(), e);
 					ExecutionReport executionReportRej = createRejectionExecutionReport(orderRequest, e.getMessage());
 					executionReportRej.setExecutionReportStatus(ExecutionReportStatus.Rejected);
-					notifyExecutionReportById(executionReportRej);
+					notifyExecutionReport(executionReportRej);
 					return false;
 				}
 			}

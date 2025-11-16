@@ -112,7 +112,7 @@ public class SniperExecutor extends AbstractExecutor {
         }
 
         boolean isRejected = executionReport.getExecutionReportStatus() == ExecutionReportStatus.Rejected;
-        boolean isCF = executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletellyFilled;
+        boolean isCF = executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletelyFilled;
         boolean isFinished = isCF || isRejected;
         if (isFinished) {
             if (isCF) {

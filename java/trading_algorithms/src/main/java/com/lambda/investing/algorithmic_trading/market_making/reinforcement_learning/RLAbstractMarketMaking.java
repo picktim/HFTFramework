@@ -342,7 +342,7 @@ public abstract class RLAbstractMarketMaking extends SingleInstrumentRLAlgorithm
         //treat rejections before super!!
         boolean isRejected = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Rejected);
 
-        boolean isFilled = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+        boolean isFilled = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
                 || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled);
 
         if (isFilled) {

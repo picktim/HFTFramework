@@ -4,26 +4,17 @@ import com.lambda.investing.LatencyStatistics;
 import com.lambda.investing.Statistics;
 import com.lambda.investing.connector.ConnectorConfiguration;
 import com.lambda.investing.connector.ConnectorListener;
-import com.lambda.investing.connector.ordinary.OrdinaryConnectorConfiguration;
 import com.lambda.investing.connector.zero_mq.ZeroMqConfiguration;
-import com.lambda.investing.connector.zero_mq.ZeroMqProvider;
-import com.lambda.investing.connector.zero_mq.ZeroMqPublisher;
 import com.lambda.investing.market_data_connector.MarketDataListener;
 import com.lambda.investing.market_data_connector.MarketDataProvider;
-import com.lambda.investing.market_data_connector.ZeroMqMarketDataConnector;
-import com.lambda.investing.market_data_connector.ordinary.OrdinaryMarketDataProvider;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.market_data.Trade;
 import com.lambda.investing.model.messaging.Command;
-import com.lambda.investing.model.messaging.TopicUtils;
 import com.lambda.investing.model.messaging.TypeMessage;
 import com.lambda.investing.model.trading.ExecutionReport;
 import com.lambda.investing.model.trading.ExecutionReportStatus;
-import com.lambda.investing.model.trading.OrderRequest;
-import com.lambda.investing.trading_engine_connector.paper.PaperConnectorPublisher;
 import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
-import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngineConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.lambda.investing.model.Util.*;
 import static com.lambda.investing.model.portfolio.Portfolio.REQUESTED_POSITION_INFO;
 
-//TODO: Think how to add paper trading here!
 public abstract class AbstractTradingEngineConnector implements TradingEngineConnector, ConnectorListener {
 
 
@@ -70,6 +60,10 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
         cfTradesNotified = new ArrayList<>();
     }
 
+    public PaperTradingEngine getPaperTradingEngine() {
+        return paperTradingEngine;
+    }
+
     @Override
     public boolean isBusy() {
         return false;
@@ -89,9 +83,19 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
         this.paperTradingEngine.reset();
     }
 
+    @Override
+    public void notifyExecutionReport(ExecutionReport executionReport) {
+        if (isPaperTrading) {
+            notifyExecutionReport(executionReport, System.currentTimeMillis());
+        } else {
+            notifyExecutionReport(executionReport, 0);//not using timestamp received latencyStatistics
+        }
+
+    }
+
     public void notifyExecutionReport(ExecutionReport executionReport, long timestampReceived) {
         boolean isCfTrade = executionReport.getExecutionReportStatus().name()
-                .equalsIgnoreCase(ExecutionReportStatus.CompletellyFilled.name());
+                .equalsIgnoreCase(ExecutionReportStatus.CompletelyFilled.name());
         if (isCfTrade) {
             logger.info("Cf ER on {}  {}@{} {} ", executionReport.getInstrument(), executionReport.getLastQuantity(),
                     executionReport.getPrice(), executionReport.getClientOrderId());
@@ -118,7 +122,7 @@ public abstract class AbstractTradingEngineConnector implements TradingEngineCon
             cfTradesNotified.add(executionReport.getClientOrderId());
         }
 
-        if (latencyStatistics != null) {
+        if (latencyStatistics != null && timestampReceived > 0) {
             latencyStatistics.addLatencyStatistics(executionReport.getExecutionReportStatus() + ".executionReport.AbstractTradingEngineConnector", timestampReceived - executionReport.getTimestampCreation());
         }
 

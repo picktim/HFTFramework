@@ -259,16 +259,10 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
     public void configureIsPaper() {
         if (this.algorithmConnectorConfiguration
-                .getTradingEngineConnector() instanceof AbstractBrokerTradingEngine) {
-            AbstractBrokerTradingEngine abstractBrokerTradingEngine = (AbstractBrokerTradingEngine) this.algorithmConnectorConfiguration
+                .getTradingEngineConnector() instanceof AbstractTradingEngineConnector) {
+            AbstractTradingEngineConnector abstractBrokerTradingEngine = (AbstractTradingEngineConnector) this.algorithmConnectorConfiguration
                     .getTradingEngineConnector();
             isPaper = abstractBrokerTradingEngine.getPaperTradingEngine() != null;
-        }
-        if (this.algorithmConnectorConfiguration
-                .getTradingEngineConnector() instanceof ZeroMqTradingEngineConnector) {
-            ZeroMqTradingEngineConnector zeroMqTradingEngineConnector = (ZeroMqTradingEngineConnector) this.algorithmConnectorConfiguration
-                    .getTradingEngineConnector();
-            isPaper = zeroMqTradingEngineConnector.isPaperTrading();
         }
     }
 
@@ -836,13 +830,13 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         boolean isNewRejected = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Rejected) && orderRequestNew;
         boolean isInactive =
                 executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Cancelled) || isNewRejected || executionReport
-                        .getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled);
+                        .getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled);
 
         boolean isCancelRejected = executionReport.getExecutionReportStatus()
                 .equals(ExecutionReportStatus.CancelRejected);
         //todo search on active to delete in case
         boolean isFilled = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled)
-                || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled);
+                || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled);
 
         //remove from requestOrders
         //		if (!instrumentSendOrders.containsKey(executionReport.getClientOrderId())) {
@@ -893,7 +887,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
         }
 
         if (isInactive) {
-            if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+            if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                 tradesInstrument.offer(executionReport.getClientOrderId());
                 instrumentManager.setCfTradesReceived(tradesInstrument);
             }
@@ -1491,7 +1485,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
             updateAllActiveOrders(executionReport);
 
-            boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+            boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
                     || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled);
             if (isTrade) {
 
@@ -1500,7 +1494,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 }
 
                 erTradesProcessed.offer(executionReport);
-                if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+                if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                     if (cfTradesProcessed.contains(executionReport.getClientOrderId())) {
                         //already processed
                         return false;
@@ -1510,7 +1504,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
 
                 addToPersist(executionReport);
                 addPosition(executionReport);
-                if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+                if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                     clientOrderIdLastCompletelyFillReceived.put(executionReport.getClientOrderId(), executionReport);
                 }
             }
@@ -1520,7 +1514,7 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
                 addStatistics(RECEIVE_STATS + " executionReport." + executionReport.getExecutionReportStatus().name() + "." + executionReport.getInstrument());
             }
 
-            algorithmNotifier.notifyObserversonExecutionReportUpdate(executionReport);
+            algorithmNotifier.notifyObserversOnExecutionReportUpdate(executionReport);
 
             hedgeManager.onExecutionReportUpdate(executionReport);
 

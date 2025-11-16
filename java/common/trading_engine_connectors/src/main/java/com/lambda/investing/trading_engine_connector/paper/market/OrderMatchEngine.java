@@ -1,6 +1,5 @@
 package com.lambda.investing.trading_engine_connector.paper.market;
 
-import com.ib.client.Order;
 import com.lambda.investing.ArrayUtils;
 import com.lambda.investing.Configuration;
 import com.lambda.investing.model.market_data.Depth;
@@ -405,7 +404,7 @@ public class OrderMatchEngine extends OrderbookManager {
                             executionReport.setLastQuantity(qtyFill);
                             executionReport.setExecutionReportStatus(ExecutionReportStatus.PartialFilled);
                             if (executionReport.getQuantityFill() >= orderSent.getQuantity()) {
-                                executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+                                executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
                             }
                             executionReport.setTimestampCreation(lastTimestamp);
 
@@ -691,7 +690,7 @@ public class OrderMatchEngine extends OrderbookManager {
                                 //notify counterparty
                                 if (!fastOrder.algorithm.equalsIgnoreCase(MARKET_MAKER_ALGORITHM_INFO)) {
                                     ExecutionReport otherExecutionReport = getExecutionReport(fastOrder.orderRequest);
-                                    if (otherExecutionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+                                    if (otherExecutionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                                         continue;
                                     }
                                     if (otherExecutionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Rejected)) {
@@ -714,7 +713,7 @@ public class OrderMatchEngine extends OrderbookManager {
 
                                     if (otherExecutionReport.getQuantityFill() >= otherExecutionReport.getQuantity()) {
                                         otherExecutionReport
-                                                .setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+                                                .setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
                                     }
                                     changeOrderbook = true;
                                     executionReportMap.put(otherExecutionReport.getClientOrderId(), otherExecutionReport);
@@ -725,7 +724,7 @@ public class OrderMatchEngine extends OrderbookManager {
                                 ExecutionReport orderER = getExecutionReport(orderRequest);
                                 orderER.setAggressor(true);
 
-                                if (orderER.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+                                if (orderER.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                                     continue;
                                 }
                                 if (orderER.getExecutionReportStatus().equals(ExecutionReportStatus.Rejected)) {
@@ -753,7 +752,7 @@ public class OrderMatchEngine extends OrderbookManager {
                                 }
 
                                 if (orderER.getQuantityFill() >= orderER.getQuantity()) {
-                                    orderER.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+                                    orderER.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
                                 }
                                 changeOrderbook = true;
                                 executionReportMap.put(orderER.getClientOrderId(), orderER);
@@ -903,7 +902,7 @@ public class OrderMatchEngine extends OrderbookManager {
 
 
             if (executionReport.getExecutionReportStatus()
-                    .equals(ExecutionReportStatus.CompletellyFilled)) {
+                    .equals(ExecutionReportStatus.CompletelyFilled)) {
                 return null;
             }
             if (executionReport.getExecutionReportStatus()
@@ -933,7 +932,7 @@ public class OrderMatchEngine extends OrderbookManager {
 
             if (executionReport.getQuantityFill() >= executionReport.getQuantity()) {
                 executionReport
-                        .setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+                        .setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
             }
             return executionReport;
         } finally {

@@ -241,7 +241,7 @@ public class LookForwardBiasAlgorithm extends Algorithm {
         boolean output = super.onExecutionReportUpdate(executionReport);
         logger.info("[{}]Execution report update: {}", getCurrentTime(), executionReport);
         // log current pnl position
-        if (executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletellyFilled
+        if (executionReport.getExecutionReportStatus() == ExecutionReportStatus.CompletelyFilled
                 || executionReport.getExecutionReportStatus() == ExecutionReportStatus.PartialFilled) {
             PnlSnapshot pnlSnapshot = portfolioManager.getLastPnlSnapshot(instrument.getPrimaryKey());
             if (pnlSnapshot != null) {

@@ -1,9 +1,7 @@
 package com.lambda.investing.algorithmic_trading;
 
-import com.lambda.investing.Configuration;
 import com.lambda.investing.algorithmic_trading.gui.main.MainMenuGUI;
 import com.lambda.investing.algorithmic_trading.hedging.LinearRegressionHedgeManager;
-import com.lambda.investing.algorithmic_trading.hedging.synthetic_portfolio.SyntheticInstrument;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.model.market_data.Depth;
 import com.lambda.investing.model.trading.ExecutionReport;
@@ -11,9 +9,7 @@ import com.lambda.investing.model.trading.ExecutionReportStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Date;
 import java.util.Map;
 
 @Getter
@@ -136,7 +132,7 @@ public abstract class SingleInstrumentAlgorithm extends Algorithm {
         boolean output = super.onExecutionReportUpdate(executionReport);
         if (enableAutoHedger && hedgeManager != null) {
             if (instrument.getPrimaryKey().equalsIgnoreCase(executionReport.getInstrument())) {
-                boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+                boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
                         || executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled);
 
                 if (isTrade) {

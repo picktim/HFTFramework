@@ -6,6 +6,7 @@ import com.lambda.investing.algorithmic_trading.SingleInstrumentAlgorithm;
 import com.lambda.investing.market_data_connector.MarketDataProvider;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.trading_engine_connector.AbstractBrokerTradingEngine;
+import com.lambda.investing.trading_engine_connector.AbstractTradingEngineConnector;
 import com.lambda.investing.trading_engine_connector.TradingEngineConnector;
 import com.lambda.investing.trading_engine_connector.paper.PaperTradingEngine;
 import org.apache.logging.log4j.LogManager;
@@ -53,17 +54,18 @@ public class LiveTrading {
 			if (instrumentList == null || instrumentList.size() == 0) {
 				throw new Exception("if you want paperTrading set a instrumentList before!");
 			}
-			if (tradingEngineConnector instanceof AbstractBrokerTradingEngine) {
-				AbstractBrokerTradingEngine tradingEngine = (AbstractBrokerTradingEngine) tradingEngineConnector;
-				tradingEngine.setPaperTrading(this.marketDataProvider);
+			if (tradingEngineConnector instanceof AbstractTradingEngineConnector) {
+				AbstractTradingEngineConnector tradingEngine = (AbstractTradingEngineConnector) tradingEngineConnector;
 				tradingEngine.setInstrumentList(instrumentList);
-				//set algorithm trading engine to paper trading
 				PaperTradingEngine paperTradingEngine = tradingEngine.getPaperTradingEngine();
-				this.algorithmConnectorConfiguration.setTradingEngineConnector(paperTradingEngine);
+				paperTradingEngine.setInstrumentsList(instrumentList);
 
-				//marketDataProvider
-				this.algorithmConnectorConfiguration.setMarketDataProvider(paperTradingEngine.getMarketDataProviderIn());
-				this.algorithm.setAlgorithmConnectorConfiguration(this.algorithmConnectorConfiguration);
+				this.algorithmConnectorConfiguration.setTradingEngineConnector(paperTradingEngine);
+				//set algorithm trading engine to paper trading
+
+				//marketDataProvider - remove previous subscription and set paper trading one
+				MarketDataProvider paperMarketDataProvider = paperTradingEngine.getMarketDataProviderIn();
+				this.algorithmConnectorConfiguration.setMarketDataProvider(paperMarketDataProvider);
 			} else {
 				logger.error("can't set paper trader on tradingEngine is not instanceof AbstractBrokerTradingEngine");
 				this.paperTrading = false;

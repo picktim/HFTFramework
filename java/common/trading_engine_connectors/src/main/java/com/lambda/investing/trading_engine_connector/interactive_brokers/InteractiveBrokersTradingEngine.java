@@ -11,16 +11,12 @@ import com.lambda.investing.interactive_brokers.ContractFactory;
 import com.lambda.investing.interactive_brokers.InteractiveBrokersBrokerConnector;
 import com.lambda.investing.model.trading.*;
 import com.lambda.investing.model.trading.OrderType;
-import com.lambda.investing.trading_engine_connector.ExecutionReportListener;
-import com.lambda.investing.trading_engine_connector.interactive_brokers.EWrapperListener;
 import com.lambda.investing.model.asset.Instrument;
 import com.lambda.investing.trading_engine_connector.AbstractBrokerTradingEngine;
-import com.lambda.investing.trading_engine_connector.TradingEngineConfiguration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +92,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
             logger.error("Order {} not found to cancel it", orderRequest.getOrigClientOrderId());
             ExecutionReport executionReport = this.createRejectionExecutionReport(orderRequest, Configuration.formatLog("Order {} not found to cancel it", orderRequest.getOrigClientOrderId()));
             executionReport.setExecutionReportStatus(ExecutionReportStatus.CancelRejected);
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return false;
         }
 
@@ -126,7 +122,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
             if (!orderIdToClOrdId.inverse().containsKey(orderRequest.getOrigClientOrderId())) {
                 logger.error("Order {} not found to modify it", orderRequest.getOrigClientOrderId());
                 ExecutionReport executionReport = this.createRejectionExecutionReport(orderRequest, Configuration.formatLog("Order {} not found to modify it", orderRequest.getOrigClientOrderId()));
-                notifyExecutionReportById(executionReport);
+                notifyExecutionReport(executionReport);
                 return false;
             }
 
@@ -222,7 +218,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
                 executionReport.setQuantityFill(qtyFilled);
                 ExecutionReportStatus status = ExecutionReportStatus.PartialFilled;
                 if (qtyFilled == orderRequestSent.getQuantity()) {
-                    status = ExecutionReportStatus.CompletellyFilled;
+                    status = ExecutionReportStatus.CompletelyFilled;
                 }
                 executionReport.setExecutionReportStatus(status);
                 break;
@@ -245,7 +241,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
         }
 
         if (statusRecognized) {
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
         }
 
 
@@ -280,7 +276,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
             ExecutionReport executionReport = new ExecutionReport(request);
             executionReport.setExecutionReportStatus(ExecutionReportStatus.Active);
             lastExecutionReport.put(request.getClientOrderId(), executionReport);
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return;
         }
 
@@ -293,7 +289,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
             ExecutionReport executionReport = lastExecutionReport.getOrDefault(request.getClientOrderId(), new ExecutionReport(request));
             executionReport.setExecutionReportStatus(ExecutionReportStatus.Cancelled);
             lastExecutionReport.put(request.getClientOrderId(), executionReport);
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return;
         }
 
@@ -309,7 +305,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
                 executionReport.setExecutionReportStatus(ExecutionReportStatus.Active);
                 executionReport.setPrice(lastFillPrice);
                 lastExecutionReport.put(request.getClientOrderId(), executionReport);
-                notifyExecutionReportById(executionReport);
+                notifyExecutionReport(executionReport);
             }
 
             ExecutionReport executionReport = lastExecutionReport.getOrDefault(request.getClientOrderId(), new ExecutionReport(request));
@@ -327,11 +323,11 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
             if (remainingCalc != brokerRemaining) {
                 logger.warn("Remaining quantity mismatch: calculated {} vs broker {}", remainingCalc, brokerRemaining);
             }
-            executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletellyFilled);
+            executionReport.setExecutionReportStatus(ExecutionReportStatus.CompletelyFilled);
             if (remainingCalc > 0) {
                 executionReport.setExecutionReportStatus(ExecutionReportStatus.PartialFilled);
             }
-            notifyExecutionReportById(executionReport);
+            notifyExecutionReport(executionReport);
             return;
         }
 
@@ -365,7 +361,7 @@ public class InteractiveBrokersTradingEngine extends AbstractBrokerTradingEngine
 
         executionReport.setExecutionReportStatus(ExecutionReportStatus.Rejected);
         executionReport.setRejectReason(Configuration.formatLog("{}: {}", errorCode, errorMsg));
-        notifyExecutionReportById(executionReport);
+        notifyExecutionReport(executionReport);
     }
 
     @Override

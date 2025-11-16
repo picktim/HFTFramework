@@ -21,7 +21,7 @@ public class ExecutionReportManager {
         put(ExecutionReportStatus.Cancelled, 1);
         put(ExecutionReportStatus.PartialFilled, 1);
 
-        put(ExecutionReportStatus.CompletellyFilled, 2);
+        put(ExecutionReportStatus.CompletelyFilled, 2);
 
     }};
 

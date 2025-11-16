@@ -1,5 +1,6 @@
 package com.lambda.investing.model.portfolio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lambda.investing.model.trading.ExecutionReport;
 import com.lambda.investing.model.trading.ExecutionReportStatus;
 import lombok.Getter;
@@ -11,127 +12,169 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.lambda.investing.model.Util.fromJsonString;
 import static com.lambda.investing.model.Util.toJsonString;
 
-@Getter @Setter public class Portfolio implements Runnable {
+@Getter
+@Setter
+public class Portfolio implements Runnable {
 
-	private static Map<String, Portfolio> pathToInstance = new HashMap<>();
-	public static String REQUESTED_PORTFOLIO_INFO = "portfolio";
+    private static Map<String, Portfolio> pathToInstance = new HashMap<>();
+    public static String REQUESTED_PORTFOLIO_INFO = "portfolio";
     public static String REQUESTED_POSITION_INFO = "position";
     protected static Logger logger = LogManager.getLogger(Portfolio.class);
-	private Map<String, PortfolioInstrument> portfolioInstruments;
-	private String path;
-	//	private double openPnl=0.;
-	//	private double closePnl=0.;
-	//	private double totalPnl=0.;
-	private long timestampLastUpdate = 0;
-	private boolean autosave = false;
-	private long lastSaveTimestamp = 0;
+    private Map<String, PortfolioInstrument> portfolioInstruments;
+    private String path;// portfolio.json in a file path to persist
+    private String tradesPath;// portfolio.trades.csv in a file path to persist
+    //	private double openPnl=0.;
+    //	private double closePnl=0.;
+    //	private double totalPnl=0.;
+    private long timestampLastUpdate = 0;
+    private boolean autosave = false;
+    private long lastSaveTimestamp = 0;
 
-	public static Portfolio getPortfolio(String path, boolean isBacktest) {
-		if (pathToInstance.containsKey(path)) {
-			return pathToInstance.get(path);
-		}
-		Portfolio portfolio = new Portfolio();
-		File portfolioFile = new File(path);
-		if (!isBacktest) {
-			portfolio = new Portfolio(path);
-		}
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @com.alibaba.fastjson2.annotation.JSONField(serialize = false, deserialize = false)
+    private transient SortedSet<ExecutionReport> executionReportsTrades;
 
-		if (!isBacktest && portfolioFile.exists()) {
-			///read it
-			try {
-				String fileContent = new String(Files.readAllBytes(Paths.get(path)));
-				portfolio = fromJsonString(fileContent, Portfolio.class);
-				new Thread(portfolio, "portfolio_autosave").start();
+    public static Portfolio getPortfolio(String path, boolean isBacktest) {
+        if (pathToInstance.containsKey(path)) {
+            return pathToInstance.get(path);
+        }
+        Portfolio portfolio = new Portfolio();//backtest is not persisting it
+        File portfolioFile = new File(path);
+        if (!isBacktest) {
+            //live or paper trading
+            if (portfolioFile.exists()) {
+                //read it
+                try {
+                    String fileContent = new String(Files.readAllBytes(Paths.get(path)));
+                    portfolio = fromJsonString(fileContent, Portfolio.class);
+                    portfolio.setPath(path);
 
-			} catch (IOException e) {
-				logger.error("error reading portfolio json from {}-> close app to not override anything", path, e);
-				System.exit(-1);
-			}
+                    new Thread(portfolio, "portfolio_autosave").start();
 
-		}
+                } catch (IOException e) {
+                    logger.error("error reading portfolio json from {}-> close app to not override anything", path, e);
+                    System.exit(-1);
+                }
 
-		pathToInstance.put(path, portfolio);
-		return portfolio;
-	}
+            } else {
+                //create new instance
+                portfolio = new Portfolio(path);
+            }
 
-	public static Portfolio getPortfolio(String path) {
-		return getPortfolio(path, false);
-	}
-
-
-	public void clear() {
-		portfolioInstruments.clear();
-		long timestampLastUpdate = 0;
-		lastSaveTimestamp = 0;
-	}
-
-	private void savePortfolio() {
-		String content = toJsonString(this);
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-			writer.write(content);
-			writer.close();
-		} catch (IOException e) {
-			logger.error("error saving portfolio json {} in {}", content, path, e);
-		}
-	}
-
-	public Portfolio() {
-		//calling directly here will not save into path
-		portfolioInstruments = new HashMap<>();
-		this.autosave = false;
-	}
-
-	private Portfolio(String path) {
-		//calling directly here will not save into path
-		portfolioInstruments = new HashMap<>();
-		this.path = path;
-		//call autosave
-		if (this.path != null) {
-			this.autosave = true;
-			new Thread(this, "portfolio_autosave").start();
-		}
-	}
+        }
 
 
+        pathToInstance.put(path, portfolio);
+        return portfolio;
+    }
 
-	public void updateTrade(ExecutionReport executionReport) {
-		if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled) || executionReport
-				.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
-			//only in trades
-			PortfolioInstrument portfolioInstrument = portfolioInstruments.getOrDefault(executionReport.getInstrument(),
-					new PortfolioInstrument(executionReport.getInstrument()));
-			portfolioInstrument.updateTrade(executionReport);
-			portfolioInstruments.put(executionReport.getInstrument(), portfolioInstrument);
-			timestampLastUpdate = executionReport.getTimestampCreation();
-		}
-	}
+    public static Portfolio getPortfolio(String path) {
+        return getPortfolio(path, false);
+    }
 
-	@Override public void run() {
-		while (this.autosave) {
+    public Portfolio() {
+        //calling directly here will not save into path
+        portfolioInstruments = new HashMap<>();
+        executionReportsTrades = new TreeSet<>(Comparator.comparingLong(ExecutionReport::getTimestampCreation));
+        this.autosave = false;
+    }
 
-			//saving if updates
-			if (lastSaveTimestamp != timestampLastUpdate) {
-				savePortfolio();
-				lastSaveTimestamp = timestampLastUpdate;
-			}
+    private Portfolio(String path) {
+        //calling directly here will not save into path
+        portfolioInstruments = new HashMap<>();
+        setPath(path);
+        //call autosave
+        if (this.path != null) {
+            this.autosave = true;
+            new Thread(this, "portfolio_autosave").start();
+        }
+    }
 
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public void setPath(String path) {
+        this.path = path;
+        if (path != null) {
+            this.tradesPath = this.path.replace(".json", ".trades.csv");
+            logger.info("Portfolio autosave portfolio to {} and trades to {}", this.path, this.tradesPath);
+        }
+    }
+
+    public void clear() {
+        portfolioInstruments.clear();
+        executionReportsTrades.clear();
+        timestampLastUpdate = 0;
+        lastSaveTimestamp = 0;
+    }
+
+    public void updateTrade(ExecutionReport executionReport) {
+        if (ExecutionReport.isTradeStatus(executionReport)) {
+            //only in trades
+            PortfolioInstrument portfolioInstrument = portfolioInstruments.getOrDefault(executionReport.getInstrument(),
+                    new PortfolioInstrument(executionReport.getInstrument()));
+            portfolioInstrument.updateTrade(executionReport);
+            portfolioInstruments.put(executionReport.getInstrument(), portfolioInstrument);
+            executionReportsTrades.add(executionReport);
+            timestampLastUpdate = executionReport.getTimestampCreation();
+        }
+    }
+
+    private void savePortfolio() {
+        String content = toJsonString(this);
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+            writer.write(content);
+            writer.close();
+        } catch (IOException e) {
+            logger.error("error saving portfolio json {} in {}", content, path, e);
+        }
+    }
+
+    private void saveTrades() {
+        if (tradesPath == null) {
+            return;
+        }
+        try {
+            List<ExecutionReport> allExecutionReports = new ArrayList<>(executionReportsTrades);
+            if (allExecutionReports.isEmpty()) {
+                return;
+            }
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tradesPath));
+            writer.write(ExecutionReport.getCSVHeader() + "\n");
+            for (ExecutionReport executionReport : allExecutionReports) {
+                writer.write(executionReport.toCSVString() + "\n");
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            logger.error("error saving trades csv in {}", tradesPath, e);
+        }
+    }
+
+    @Override
+    public void run() {
+        while (this.autosave) {
+
+            //saving if updates
+            if (lastSaveTimestamp != timestampLastUpdate) {
+                savePortfolio();
+                saveTrades();
+                lastSaveTimestamp = timestampLastUpdate;
+            }
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

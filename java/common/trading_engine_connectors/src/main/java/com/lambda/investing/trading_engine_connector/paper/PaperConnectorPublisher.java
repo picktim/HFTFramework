@@ -38,7 +38,7 @@ public class PaperConnectorPublisher extends AbstractMarketDataConnectorPublishe
 		String executionReportJson = toJsonString(executionReport);
 		topic = topic + "." + TypeMessage.execution_report.name();
 		//		logger.debug("notify ER {}",executionReport);
-		boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)
+		boolean isTrade = executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)
 				|| executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.PartialFilled);
 		if (isTrade) {
 			logger.debug("trace");

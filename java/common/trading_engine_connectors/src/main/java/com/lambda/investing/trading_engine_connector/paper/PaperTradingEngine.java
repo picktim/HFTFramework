@@ -21,15 +21,12 @@ import com.lambda.investing.model.trading.OrderRequest;
 import com.lambda.investing.trading_engine_connector.AbstractPaperExecutionReportConnectorPublisher;
 import com.lambda.investing.trading_engine_connector.ExecutionReportListener;
 import com.lambda.investing.trading_engine_connector.TradingEngineConnector;
-import com.lambda.investing.trading_engine_connector.ordinary.OrdinaryTradingEngine;
 import com.lambda.investing.trading_engine_connector.paper.latency.FixedLatencyEngine;
 import com.lambda.investing.trading_engine_connector.paper.latency.LatencyEngine;
 import com.lambda.investing.trading_engine_connector.paper.latency.LatencyEngineFactory;
-import com.lambda.investing.trading_engine_connector.paper.latency.PoissonLatencyEngine;
 import com.lambda.investing.trading_engine_connector.paper.market.OrderMatchEngine;
 import com.lambda.investing.trading_engine_connector.paper.market.Orderbook;
 import com.lambda.investing.trading_engine_connector.paper.market.OrderbookManager;
-import lombok.Getter;
 import lombok.Setter;
 import org.apache.curator.shaded.com.google.common.collect.EvictingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -488,7 +485,7 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
             Queue<String> checkList = lastActiveClOrdId;
             if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Active)) {
                 checkList = lastActiveClOrdId;
-            } else if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletellyFilled)) {
+            } else if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.CompletelyFilled)) {
                 checkList = lastCfClOrdId;
             } else if (executionReport.getExecutionReportStatus().equals(ExecutionReportStatus.Rejected) || executionReport
                     .getExecutionReportStatus().equals(ExecutionReportStatus.CancelRejected)) {
@@ -518,21 +515,14 @@ public class PaperTradingEngine extends AbstractPaperExecutionReportConnectorPub
 //            if(checkER(executionReport)) {
             TradingEngineConnector tradingEngineConnector = getTradingEngineConnector();
             if (threadsPublishingER == 0) {
-                if (tradingEngineConnector instanceof OrdinaryTradingEngine) {
-                    OrdinaryTradingEngine ordinaryTradingEngine = (OrdinaryTradingEngine) tradingEngineConnector;
-                    ordinaryTradingEngine.notifyExecutionReport(executionReport);
-                }
-
+                tradingEngineConnector.notifyExecutionReport(executionReport);
             } else {
                 executionReportPool.submit(() -> {
                     if (killExecutionReportPool) {
                         return;
                     }
                     marketDataLatencyEngine.delay(new Date(executionReport.getTimestampCreation()));
-                    if (tradingEngineConnector instanceof OrdinaryTradingEngine) {
-                        OrdinaryTradingEngine ordinaryTradingEngine = (OrdinaryTradingEngine) tradingEngineConnector;
-                        ordinaryTradingEngine.notifyExecutionReport(executionReport);
-                    }
+                    tradingEngineConnector.notifyExecutionReport(executionReport);
                 });
             }
 //            }

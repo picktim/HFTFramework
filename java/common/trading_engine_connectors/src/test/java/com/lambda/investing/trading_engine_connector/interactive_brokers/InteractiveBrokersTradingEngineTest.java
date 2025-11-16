@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import static com.lambda.investing.model.Util.fromJsonString;
 import static com.lambda.investing.model.Util.fromObject;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -167,7 +166,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
@@ -190,7 +189,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest1.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest1.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest1.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest1.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
@@ -219,7 +218,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
@@ -242,7 +241,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest1.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest1.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest1.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest1.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
@@ -271,7 +270,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
@@ -294,7 +293,7 @@ public class InteractiveBrokersTradingEngineTest {
         assertEquals(orderRequest1.getInstrument(), lastExecutionReport.get(0).getInstrument());
         assertEquals(orderRequest1.getAlgorithmInfo(), lastExecutionReport.get(0).getAlgorithmInfo());
 
-        assertEquals(ExecutionReportStatus.CompletellyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
+        assertEquals(ExecutionReportStatus.CompletelyFilled, lastExecutionReport.get(1).getExecutionReportStatus());
         assertEquals(orderRequest1.getClientOrderId(), lastExecutionReport.get(1).getClientOrderId());
         assertEquals(orderRequest1.getQuantity(), lastExecutionReport.get(1).getQuantity());
         assertNotEquals(0.0, lastExecutionReport.get(1).getPrice());
