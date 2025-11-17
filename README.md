@@ -52,9 +52,9 @@ associated risks.**
 
 ### 1. Create algorithm and backtest
 
-[ALGORITHM_DOCUMENTATION.md](java/docs/ALGORITHM_DOCUMENTATION.md)
-[BACKTEST_DOCUMENTATION.md](java/docs/BACKTEST_DOCUMENTATION.md)
-[MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md](java/docs/MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md)
+* [ALGORITHM_DOCUMENTATION.md](java/docs/ALGORITHM_DOCUMENTATION.md)
+* [BACKTEST_DOCUMENTATION.md](java/docs/BACKTEST_DOCUMENTATION.md)
+* [MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md](java/docs/MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md)
 
 In this instance, we execute a backtest for the Java
 strategies [ConstantSpread](java/trading_algorithms/src/main/java/com/lambda/investing/algorithmic_trading/market_making/constant_spread/ConstantSpreadAlgorithm.java)
@@ -204,8 +204,6 @@ metatrader.pull.port=32768
 * ...and so on
 
 ## TODO
-* Live Trading testing
-* Paper trading with live connector
 * Reduce/Measure live latency
     * [Chronicle](https://github.com/OpenHFT)
     * [LMAX Disruptor](https://lmax-exchange.github.io/disruptor/)
