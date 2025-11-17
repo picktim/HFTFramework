@@ -108,10 +108,11 @@ class BacktestConfiguration:
             end_date=end_date,
             instrument_pk=json_dict['instrument'],
             delay_order_ms=json_dict['delayOrderMs'],
-            multithread_configuration=json_dict['multithreadConfiguration'],
-            fees_commissions_included=json_dict['feesCommissionsIncluded'],
+            multithread_configuration=json_dict.get('multithreadConfiguration',MultiThreadConfiguration.singlethread),
+            search_match_market_trades=json_dict.get('searchMatchMarketTrades',False),
+            fees_commissions_included=json_dict.get('feesCommissionsIncluded',False),
             bucle_run=json_dict['bucleRun'],
-            latency_engine_type=json_dict['latencyEngineType'],
+            latency_engine_type=json_dict.get('latencyEngineType',LatencyEngineType.fixed),
         )
 
     def get_json(self) -> str:
