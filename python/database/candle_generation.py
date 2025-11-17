@@ -8,7 +8,7 @@ import numpy as np
 from utils.pandas_utils.dataframe_utils import reduce_memory_usage
 
 
-def generate_candle_time(
+def generate_candle_time_legacy(
         df, resolution='MIN', num_units=1, batch_size: int = int(os.getenv("CANDLES_BATCH_SIZE", 10000))
 ) -> pd.DataFrame:
     '''
@@ -44,7 +44,6 @@ def generate_candle_time(
     # if resolution == 'D':
     #     output_df['datetime'] = output_df['datetime'] - datetime.timedelta(days=num_units)
 
-
     output_df.set_index('datetime', inplace=True)
     output_df.sort_index(inplace=True)
     return output_df
@@ -75,6 +74,79 @@ def generate_candle_dollar_value(df, dollar_value=5000):
     )
     output_df.set_index('date_time', inplace=True)
     return output_df
+
+
+def generate_candle_time(
+        df, resolution='MIN', num_units=1
+) -> pd.DataFrame:
+    """
+    Generate time candles using polars library.
+
+    :param df: Input DataFrame with columns ['date_time', 'midprice', askQuantity0-4, bidQuantity0-4]
+    :param resolution: (str) Resolution type ('D', 'H', 'MIN', 'S')
+    :param num_units: (int) Number of resolution units
+    :return: DataFrame of candles with datetime as index
+    """
+    import polars as pl
+
+    # Convert to polars DataFrame
+    pdf = df.reset_index()
+    if 'date_time' not in pdf.columns:
+        pdf = pdf.rename(columns={pdf.columns[0]: 'date_time'})
+    pl_df = pl.from_pandas(pdf)
+    pl_df = pl_df.with_columns([
+        pl.col('date_time').cast(pl.Datetime('ns'))
+    ])
+
+    # Create volume column as sum of askQuantity0-4 and bidQuantity0-4
+    ask_cols = [f"askQuantity{i}" for i in range(5)]
+    bid_cols = [f"bidQuantity{i}" for i in range(5)]
+    volume_cols = ask_cols + bid_cols
+    # volume_series = pl_df[volume_cols].sum_horizontal().alias("volume")
+    volume_series = pl_df.select([
+        pl.sum_horizontal([pl.col(c).fill_null(0).cast(pl.Float64).fill_nan(0) for c in volume_cols])
+        .alias("volume")
+    ])
+    # volume_series = pl_df.select([         pl.sum_horizontal([pl.col(c) for c in volume_cols])         .alias("volume")     ])
+    # set in pl_df
+    pl_df = pl_df.with_columns(volume_series)
+
+    # Build rule string for resample
+    rule_map = {'D': 'd', 'H': 'h', 'MIN': 'm', 'S': 's'}
+    rule = f"{num_units}{rule_map[resolution]}"
+
+    # Resample and aggregate
+    agg_df = (
+        pl_df.group_by_dynamic('date_time', every=rule, closed='right', label='right').agg(
+            pl.col('midprice').first().alias('open'),
+            pl.col('midprice').max().alias('high'),
+            pl.col('midprice').min().alias('low'),
+            pl.col('midprice').last().alias('close'),
+            pl.col('volume').sum().alias('volume'),
+            (pl.col('midprice') * pl.col('volume')).sum().alias('cum_dollar_value'),
+            pl.count().alias('cum_ticks')
+        )
+        .sort('date_time')
+    )
+
+    # Fill NaNs as in generate_candle_time
+    out_df = agg_df.to_pandas()
+    last_close = out_df['close'].ffill().shift(1)
+    for column in ['open', 'high', 'low', 'close']:
+        out_df[column] = out_df[column].fillna(last_close)
+    out_df['volume'] = out_df['volume'].fillna(0.0)
+    out_df['cum_dollar_value'] = out_df['cum_dollar_value'].fillna(0.0)
+    out_df['cum_buy_volume'] = 0.0
+    out_df['tick_num'] = out_df['cum_ticks'].fillna(0.0)
+    out_df['tick_num'] = out_df['tick_num'].cumsum()
+
+    out_df['datetime'] = pd.to_datetime(out_df['date_time'])
+    out_df.set_index('datetime', inplace=True)
+    out_df.sort_index(inplace=True)
+    out_df['date_time'] = pd.to_numeric(out_df['date_time']) / 1E9
+    out_df['date_time'] = out_df['date_time'].astype('int64', copy=False, errors='ignore')
+    out_df = reduce_memory_usage(out_df)  # reduce memory size before processing
+    return out_df
 
 
 if __name__ == '__main__':

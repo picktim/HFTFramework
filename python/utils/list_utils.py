@@ -29,5 +29,5 @@ def create_zeros_list(size: int) -> list:
 
 
 def list_to_numpy(input_list: list) -> numpy.array:
-    numeric_list = [float(num) for num in input_list]
+    numeric_list = [float(num) if num is not None else 0.0 for num in input_list]
     return np.array(numeric_list)

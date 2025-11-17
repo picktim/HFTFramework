@@ -125,7 +125,7 @@ class TickDB:
     #     type_data = 'depth'
     #     return pd.read_parquet(rf"{self.base_path}/type={type_data}/instrument={instrument_pk}")
 
-    def get_all_instruments(self, type_str: str = 'depth', modified_since=None) -> list:
+    def get_all_instruments(self, type_str: str = 'depth', modified_since=None, currency=None) -> list:
         source_path = rf"{self.base_path}/type={type_str}"
         # source_path = os.path.normpath(source_path)
         all_folders = glob(source_path + "/*")
@@ -135,6 +135,9 @@ class TickDB:
         for folder in all_folders:
             instrument = folder.split("instrument=")[-1]
             instruments.append(instrument)
+        if currency is not None:
+            instruments = [inst for inst in instruments if currency.lower() in inst.lower()]
+
         return instruments
 
     def get_all_dates(self, type_str: str, instrument_pk: str) -> list:
@@ -556,7 +559,7 @@ class TickDB:
                     first_hour=None,
                     last_hour=None, ) -> pd.DataFrame:
         '''
-        
+
         Parameters
         ----------
         instrument_pk
@@ -885,14 +888,14 @@ class TickDB:
             trades_df = self.get_trades(
                 instrument_pk=instrument_pk, start_date=start_date, end_date=end_date
             )
-            from database.candle_generation import generate_candle_time
+            from database.candle_generation import generate_candle_time_legacy
 
             if resolution == 'D' and first_hour is not None and last_hour is not None:
                 trades_df = trades_df.between_time(
                     start_time=rf"{first_hour}:00", end_time=rf"{last_hour}:00"
                 )
 
-            df = generate_candle_time(
+            df = generate_candle_time_legacy(
                 df=trades_df, resolution=resolution, num_units=num_units
             )
             df = df[~df.index.duplicated()]

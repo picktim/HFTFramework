@@ -47,6 +47,8 @@ DEFAULT_PARAMETERS = {
     # rewards
     RlAlgorithmParameters.score: ScoreEnum.asymmetric_dampened_pnl,
     RlAlgorithmParameters.step_seconds: (5),
+    ConstantSpreadParameters.allowed_price_tick_improve_best: 0x7fffffff,  # no limit
+
 }
 DEFAULT_PARAMETERS.update(rl_algorithm.DEFAULT_PARAMETERS)
 DEFAULT_PARAMETERS.update(constant_spread.DEFAULT_PARAMETERS)
@@ -94,18 +96,18 @@ class AlphaConstantSpread(RLAlgorithm):
         return actions
 
     def parameter_tuning(
-        self,
-        start_date: datetime.datetime,
-        end_date: datetime,
-        instrument_pk: str,
-        parameters_min: dict,
-        parameters_max: dict,
-        max_simultaneous: int,
-        generations: int,
-        ga_configuration: GAConfiguration,
-        parameters_base: dict = DEFAULT_PARAMETERS,
-        clean_initial_generation_experience: bool = True,
-        algorithm_enum=AlgorithmEnum.alpha_constant_spread,
+            self,
+            start_date: datetime.datetime,
+            end_date: datetime,
+            instrument_pk: str,
+            parameters_min: dict,
+            parameters_max: dict,
+            max_simultaneous: int,
+            generations: int,
+            ga_configuration: GAConfiguration,
+            parameters_base: dict = DEFAULT_PARAMETERS,
+            clean_initial_generation_experience: bool = True,
+            algorithm_enum=AlgorithmEnum.alpha_constant_spread,
     ) -> (dict, pd.DataFrame):
 
         return super().parameter_tuning(
@@ -123,7 +125,7 @@ class AlphaConstantSpread(RLAlgorithm):
         )
 
     def plot_params(
-        self, raw_trade_pnl_df: pd.DataFrame, figsize=None, title: str = None
+            self, raw_trade_pnl_df: pd.DataFrame, figsize=None, title: str = None
     ):
         import seaborn as sns
 

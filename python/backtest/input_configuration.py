@@ -34,10 +34,14 @@ import pandas as pd
 
 JAR_PATH = BACKTEST_JAR_PATH
 
-
 class MultiThreadConfiguration:
     multithread = "multi_thread"
     singlethread = "single_thread"
+
+
+class LatencyEngineType:
+    fixed = "FIXED"
+    poisson = "POISSON"
 
 
 class BacktestConfiguration:
@@ -52,6 +56,7 @@ class BacktestConfiguration:
             search_match_market_trades: bool = False,
             bucle_run: bool = False,
             seed: int = None,
+            latency_engine_type: str = LatencyEngineType.fixed
     ):
         '''
 
@@ -65,6 +70,7 @@ class BacktestConfiguration:
         search_match_market_trades: if true, search for market trades in the database, if false, using market time
         fees_commissions_included
         bucle_run: if true , backtest in java is going to bucle running ,for training gym
+        latency_engine_type : if delays are static or some random component with poisson
         seed:
         '''
         self.delay_order_ms = delay_order_ms
@@ -77,6 +83,7 @@ class BacktestConfiguration:
         self.initial_sleep_seconds = -1
         self.search_match_market_trades = search_match_market_trades
         self.seed = seed
+        self.latency_engine_type = latency_engine_type
 
     @staticmethod
     def read_json(json_input: str):
@@ -104,6 +111,7 @@ class BacktestConfiguration:
             multithread_configuration=json_dict['multithreadConfiguration'],
             fees_commissions_included=json_dict['feesCommissionsIncluded'],
             bucle_run=json_dict['bucleRun'],
+            latency_engine_type=json_dict['latencyEngineType'],
         )
 
     def get_json(self) -> str:
@@ -125,6 +133,7 @@ class BacktestConfiguration:
         output_dict['multithreadConfiguration'] = self.multithread_configuration
         output_dict['feesCommissionsIncluded'] = self.fees_commissions_included
         output_dict['searchMatchMarketTrades'] = self.search_match_market_trades
+        output_dict['latencyEngineType'] = self.latency_engine_type
         json_object = json.dumps(output_dict)
         return json_object
 

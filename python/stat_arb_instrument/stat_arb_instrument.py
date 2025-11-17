@@ -61,9 +61,17 @@ class StatArbInstrument:
     def half_life(series):
         """
         Calculates the half life of a mean reversion
+        half-life is about the expected magnitude decaying, not the first time the process actually crosses the mean
+        So the time to shrink to a fraction 0.5 of the initial deviation
+        Half-life of 3 seconds means that every 3 seconds the expected deviation of the process is reduced by half.
+        If we are in 2 std it takes 3 seconds to go std 1 , 6 seconds to go to 0.5 and 9 to 0.25
+
         """
         import statsmodels.api as sm
-        ts = series.values[:, 0]
+        if len(series.shape) == 2:
+            ts = series.values[:, 0]
+        if len(series.shape) == 1:
+            ts = series.values[:]
         ts = np.asarray(ts)
 
         # # make sure we are working with an array, convert if necessary

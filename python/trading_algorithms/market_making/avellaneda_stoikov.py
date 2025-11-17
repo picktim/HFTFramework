@@ -43,6 +43,7 @@ class AvellanedaStoikovParameters:
     spread_multiplier = 'spreadMultiplier'
     calculate_Tt = 'calculateTt'
     sigma_default = 'sigmaDefault'
+    allowed_price_tick_improve_best = "allowedPriceTickImproveBest"
 
 
 DEFAULT_PARAMETERS = {
@@ -71,6 +72,7 @@ DEFAULT_PARAMETERS = {
         1.0
     ),  # not modify original results  1/quantity
     AvellanedaStoikovParameters.spread_multiplier: (1.0),
+    AvellanedaStoikovParameters.allowed_price_tick_improve_best: 0x7fffffff,
 }
 
 
@@ -111,6 +113,7 @@ class AvellanedaStoikov(Algorithm):
             instrument_pk=instrument_pk,
             delay_order_ms=self.DELAY_MS,
             multithread_configuration=self.MULTITHREAD_CONFIGURATION,
+            latency_engine_type=self.LATENCY_ENGINE_TYPE,
             fees_commissions_included=self.FEES_COMMISSIONS_INCLUDED,
             search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES
         )
@@ -168,6 +171,7 @@ class AvellanedaStoikov(Algorithm):
             instrument_pk=instrument_pk,
             delay_order_ms=self.DELAY_MS,
             multithread_configuration=self.MULTITHREAD_CONFIGURATION,
+            latency_engine_type=self.LATENCY_ENGINE_TYPE,
             fees_commissions_included=self.FEES_COMMISSIONS_INCLUDED,
             search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES
         )
@@ -276,7 +280,7 @@ if __name__ == '__main__':
                      datetime.datetime(year=2024, day=10, month=11, hour=7)],
         end_dates=[datetime.datetime(year=2024, day=9, month=11, hour=15),
                    datetime.datetime(year=2024, day=10, month=11, hour=15)],
-        max_simultaneous=2,
+        max_simultaneous=1,
     )
 
     avellaneda_stoikov.send_backtest_results_email(output_tests)

@@ -61,6 +61,7 @@ DEFAULT_PARAMETERS = {
     # reward
     RlAlgorithmParameters.score_enum: ScoreEnum.asymmetric_dampened_pnl,
     RlAlgorithmParameters.step_seconds: 5,
+    AvellanedaStoikovParameters.allowed_price_tick_improve_best: 0x7fffffff,  # no limit
 }
 DEFAULT_PARAMETERS.update(rl_algorithm.DEFAULT_PARAMETERS)
 DEFAULT_PARAMETERS.update(avellaneda_stoikov.DEFAULT_PARAMETERS)

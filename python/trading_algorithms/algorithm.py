@@ -11,7 +11,7 @@ from backtest.input_configuration import (
     AlgorithmConfiguration,
     InputConfiguration,
     JAR_PATH,
-    MultiThreadConfiguration,
+    MultiThreadConfiguration, LatencyEngineType,
 )
 from backtest.parameter_tuning.ga_configuration import GAConfiguration
 from backtest.parameter_tuning.ga_parameter_tuning import GAParameterTuning
@@ -39,7 +39,7 @@ class Algorithm:
     FEES_COMMISSIONS_INCLUDED = False
     SEARCH_MATCH_MARKET_TRADES = False
     MULTITHREAD_CONFIGURATION = MultiThreadConfiguration.multithread
-
+    LATENCY_ENGINE_TYPE = LatencyEngineType.fixed
 
     @staticmethod
     def set_defaults_parameters(parameters: dict, DEFAULT_PARAMETERS: dict) -> dict:
@@ -72,7 +72,8 @@ class Algorithm:
             'DELAY_MS': Algorithm.DELAY_MS,
             'FEES_COMMISSIONS_INCLUDED': Algorithm.FEES_COMMISSIONS_INCLUDED,
             'SEARCH_MATCH_MARKET_TRADES': Algorithm.SEARCH_MATCH_MARKET_TRADES,
-            'MULTITHREAD_CONFIGURATION': Algorithm.MULTITHREAD_CONFIGURATION
+            'MULTITHREAD_CONFIGURATION': Algorithm.MULTITHREAD_CONFIGURATION,
+            'LATENCY_ENGINE_TYPE': Algorithm.LATENCY_ENGINE_TYPE,
         }
         # Return tuple with class, constructor args, and state information
         return (self.__class__,
@@ -185,7 +186,8 @@ class Algorithm:
             delay_order_ms=self.DELAY_MS,
             multithread_configuration=self.MULTITHREAD_CONFIGURATION,
             fees_commissions_included=self.FEES_COMMISSIONS_INCLUDED,
-            search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES
+            search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES,
+            latency_engine_type=self.LATENCY_ENGINE_TYPE
         )
 
         # exponential reducing sigma
@@ -800,6 +802,7 @@ class Algorithm:
                         "instrument_pk": instrument_pk,
                         "output_dict": output_test,
                         "multithread_configuration": Algorithm.MULTITHREAD_CONFIGURATION,
+                        'latency_engine_type': Algorithm.LATENCY_ENGINE_TYPE,
                         "delay_ms": Algorithm.DELAY_MS,
                         "fees_commissions_included": Algorithm.FEES_COMMISSIONS_INCLUDED,
                         "algorithm_number": algorithm_number + i,
@@ -863,7 +866,8 @@ class Algorithm:
             delay_order_ms=self.DELAY_MS,
             multithread_configuration=self.MULTITHREAD_CONFIGURATION,
             fees_commissions_included=self.FEES_COMMISSIONS_INCLUDED,
-            search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES
+            search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES,
+            latency_engine_type=self.LATENCY_ENGINE_TYPE
         )
         parameters = self.get_parameters()
 

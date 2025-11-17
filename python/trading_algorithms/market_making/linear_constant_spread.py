@@ -20,6 +20,7 @@ from backtest.parameter_tuning.ga_configuration import GAConfiguration
 class LinearConstantSpreadParameters:
     quantity_limit = 'quantityLimit'
     level = 'level'  # 0 - 4
+    allowed_price_tick_improve_best = "allowedPriceTickImproveBest"
 
 
 DEFAULT_PARAMETERS = {
@@ -29,6 +30,7 @@ DEFAULT_PARAMETERS = {
     AlgorithmParameters.ui: 0,
     LinearConstantSpreadParameters.level: (0),
     LinearConstantSpreadParameters.quantity_limit: (0.001),  # x10
+    LinearConstantSpreadParameters.allowed_price_tick_improve_best: 0x7fffffff,
 }
 
 
@@ -61,6 +63,7 @@ class LinearConstantSpread(Algorithm):
             instrument_pk=instrument_pk,
             delay_order_ms=self.DELAY_MS,
             multithread_configuration=self.MULTITHREAD_CONFIGURATION,
+            latency_engine_type=self.LATENCY_ENGINE_TYPE,
             fees_commissions_included=self.FEES_COMMISSIONS_INCLUDED,
             search_match_market_trades=self.SEARCH_MATCH_MARKET_TRADES
         )
