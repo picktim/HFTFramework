@@ -533,15 +533,39 @@ class TickDB:
         )
 
         if df is None:
-            df = self._generate_from_depth(
-                instrument_pk=instrument_pk,
-                start_date=start_date,
-                end_date=end_date,
-                resolution=resolution,
-                num_units=num_units,
-                first_hour=first_hour,
-                last_hour=last_hour,
-            )
+            # Split into 3-month brackets
+            candle_dfs = []
+            current_start = start_date
+            brackets_days_split = 90  # reduce if still found memory issues
+            while current_start < end_date:
+                # Calculate the end of current 3-month bracket
+                current_end = min(current_start + datetime.timedelta(days=brackets_days_split), end_date)
+
+                # Generate candles for this bracket
+                df_bracket = self._generate_from_depth(
+                    instrument_pk=instrument_pk,
+                    start_date=current_start,
+                    end_date=current_end,
+                    resolution=resolution,
+                    num_units=num_units,
+                    first_hour=first_hour,
+                    last_hour=last_hour,
+                )
+
+                if df_bracket is not None and len(df_bracket) > 0:
+                    candle_dfs.append(df_bracket)
+
+                # Move to next bracket
+                current_start = current_end
+
+            # Join all candle dataframes
+            if not candle_dfs:
+                raise Exception(f"No candles generated for {instrument_pk} between {start_date} and {end_date}")
+
+            df = pd.concat(candle_dfs, axis=0)
+            df = df[~df.index.duplicated(keep='first')].sort_index()
+            candle_dfs = []
+
         df = df[~df.index.duplicated()].sort_index()
         self._persist_candles(
             df=df, start_date=start_date, end_date=end_date, source_path=source_path
