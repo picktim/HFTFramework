@@ -149,9 +149,9 @@ public class BacktestFactorProvider extends AbstractFactorProvider implements Ma
         for (int i = lastNotifyIndex + 1; i < factorHistoricalData.size(); i++) {
             Long timestampMap = factorHistoricalDataKeys[i];
             if (timestampMap >= timestamp) {
-                if (timestampMap - timestamp > TRESHOLD_WARNING_MS) {
-                    logger.warn("notify Factor too far in dates {} searching {} > {} ms ", new Date(timestampMap), new Date(timestamp), TRESHOLD_WARNING_MS);
-                }
+//                if (timestampMap - timestamp > TRESHOLD_WARNING_MS) {
+//                    logger.warn("notify Factor too far in dates {} searching {} > {} ms ", new Date(timestampMap), new Date(timestamp), TRESHOLD_WARNING_MS);
+//                }
                 return Math.max(i - 1, -1);
             }
         }

@@ -284,9 +284,13 @@ public abstract class AbstractFactorInvestingAlgorithm extends Algorithm impleme
             if (!Double.isNaN(bestBid) && !Double.isNaN(bestAsk)) {
                 lastMarketDataSnapshot = new LastMarketDataSnapshot(depth.getInstrument(), bestBid, bestAsk, bestBidQty, bestAskQty);
             }
+            //maybe we dont have both sides
         }
 
-        instrumentsPkToLastMarketDataSnapshot.put(depth.getInstrument(), lastMarketDataSnapshot);
+        if (lastMarketDataSnapshot != null) {
+            instrumentsPkToLastMarketDataSnapshot.put(depth.getInstrument(), lastMarketDataSnapshot);
+        }
+
         return super.onDepthUpdate(depth);
     }
 
