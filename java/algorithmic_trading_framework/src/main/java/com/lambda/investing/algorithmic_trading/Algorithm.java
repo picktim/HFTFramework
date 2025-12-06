@@ -709,6 +709,10 @@ public abstract class Algorithm extends AlgorithmParameters implements MarketDat
     }
 
     public boolean inOperationalTime() {
+        if (firstHourOperatingIncluded < 0 && lastHourOperatingIncluded < 0) {
+            //all day
+            return true;
+        }
         int hour = getCurrentTimeHour();
         if (hour >= firstHourOperatingIncluded && hour <= lastHourOperatingIncluded) {
             return true;
