@@ -93,12 +93,6 @@
         </dependency>
 
 
-        <!--ML models-->
-        <dependency>
-            <groupId>io.github.javifalces</groupId>
-            <artifactId>machine_learning</artifactId>
-        </dependency>
-
         <!--        Intellij GUI-->
         <dependency>
             <groupId>com.jetbrains.intellij.java</groupId>

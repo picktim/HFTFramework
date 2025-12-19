@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.IterationsPeriodTime;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.MemoryReplayModel;
+//import com.lambda.investing.algorithmic_trading.reinforcement_learning.TrainNNUtils;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.TrainNNUtils;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.action.AbstractAction;
 import com.lambda.investing.algorithmic_trading.reinforcement_learning.q_learn.exploration_policy.EpsilonGreedyExploration;
