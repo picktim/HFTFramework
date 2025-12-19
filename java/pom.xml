@@ -16,25 +16,6 @@
         <module>trading_algorithms</module>
     </modules>
 
-    <profiles>
-        <profile>
-            <id>private-trading-algorithms</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <modules>
-                <module>parent_pom</module>
-                <module>common</module>
-                <module>algorithmic_trading_framework</module>
-                <module>backtest_engine</module>
-                <module>executables</module>
-                <module>trading_algorithms</module>
-                <module>../../market_making_fw/java/private_trading_algorithms</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <!-- Releases with GitHub Actions and Maven Release Plugin https://medium.com/p/0a6fce46a2d7  -->
     <build>
         <plugins>

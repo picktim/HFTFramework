@@ -108,21 +108,4 @@
 
     </build>
 
-    <profiles>
-        <profile>
-            <id>private-trading-algorithms</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>io.github.javifalces</groupId>
-                    <artifactId>private_trading_algorithms</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
-
 </project>
