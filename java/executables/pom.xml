@@ -29,6 +29,8 @@
         <module>AlgoTradingZeroMq</module>
         <module>XChangeEngine</module>
         <module>InteractiveBrokersEngine</module>
+        <module>PrivateTradingExecutables</module>
+
     </modules>
 
 

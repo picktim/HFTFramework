@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>PrivateAlgorithmsExecutables</artifactId>
+        <groupId>io.github.javifalces</groupId>
+        <version>1.0.6-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>CoreAlgoTradingZeroMq</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.github.javifalces</groupId>
+            <artifactId>trading_engine_connectors</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.javifalces</groupId>
+            <artifactId>market_data_connectors</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.javifalces</groupId>
+            <artifactId>broker_connector_instances</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.javifalces</groupId>
+            <artifactId>trading_algorithms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.javifalces</groupId>
+            <artifactId>backtest_engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+        </dependency>
+
+
+    </dependencies>
+
+
+</project>
