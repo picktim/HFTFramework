@@ -2,6 +2,8 @@ package com.lambda.investing.backtest;
 
 
 import com.lambda.investing.algorithmic_trading.Algorithm;
+import com.lambda.investing.algorithmic_trading.provider.AlgorithmProvider;
+import com.lambda.investing.algorithmic_trading.provider.TradingAlgorithmsProvider;
 import com.lambda.investing.backtest_engine.BacktestConfiguration;
 import com.lambda.investing.backtest_engine.ordinary.OrdinaryBacktest;
 import com.lambda.investing.market_data_connector.MarketDataConnectorPublisherListener;
@@ -63,6 +65,10 @@ public class UtilsTest {
         env.put("LAMBDA_LOGS_PATH", logPath);//has to be before!
         env.put("LAMBDA_TEMP_PATH", tempPath);
         setEnv(env);
+
+        //to instance algos
+        TradingAlgorithmsProvider provider = new TradingAlgorithmsProvider();
+        provider.init();
     }
 
 

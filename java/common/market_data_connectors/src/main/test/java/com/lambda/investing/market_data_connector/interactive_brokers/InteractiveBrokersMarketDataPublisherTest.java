@@ -47,12 +47,12 @@ public class InteractiveBrokersMarketDataPublisherTest {
 
 
         @Override
-        public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, String content) {
+        public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, Object content) {
             if (typeMessage == TypeMessage.depth) {
-                Depth depth = fromJsonString(content, Depth.class);
+                Depth depth = (Depth) content;
                 lastDepth = depth;
             } else if (typeMessage == TypeMessage.trade) {
-                Trade trade = fromJsonString(content, Trade.class);
+                Trade trade = (Trade) content;
                 lastTrade = trade;
             }
         }

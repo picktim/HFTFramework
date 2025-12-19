@@ -26,23 +26,23 @@ public class OrdinaryConnectorPublisherProviderTest implements ConnectorListener
     List<ReceivedItem> lastItemsUpdate = new ArrayList();
     CountDownLatch waiter;
 
+    @Override
+    public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, Object content) {
+        lastItemsUpdate.add(new ReceivedItem(configuration, timestampReceived, typeMessage, content));
+        if (waiter != null) {
+            waiter.countDown();
+        }
+    }
+
     @AllArgsConstructor
     @Getter
     private class ReceivedItem {
         ConnectorConfiguration configuration;
         long timestampReceived;
         TypeMessage typeMessage;
-        String content;
+        Object content;
     }
 
-    @Override
-    public void onUpdate(ConnectorConfiguration configuration, long timestampReceived, TypeMessage typeMessage, String content) {
-        lastItemsUpdate.add(new ReceivedItem(configuration, timestampReceived, typeMessage, content));
-        if (waiter != null) {
-            waiter.countDown();
-        }
-
-    }
 
     @Test
     @RepeatedTest(25)
