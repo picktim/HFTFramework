@@ -78,6 +78,14 @@
             <version>0.4.0</version>
         </dependency>
 
+        <!--  JavaFX Pair      -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>11</version>
+        </dependency>
+
+
         <!--combination /permutation https://github.com/dpaukov/combinatoricslib3-->
         <dependency>
             <groupId>com.github.dpaukov</groupId>
