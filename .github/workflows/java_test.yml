@@ -13,7 +13,7 @@ on:
       
 jobs:
   build-and-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Clean cache
@@ -53,4 +53,6 @@ jobs:
     - name: PrintIfSucceeded
       if: success()
       run: echo "Success"
+
+
 

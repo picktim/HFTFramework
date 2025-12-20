@@ -9,7 +9,7 @@ on:
       - master
 jobs:
   build-and-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Clean cache
         run: rm -rf /opt/hostedtoolcache
@@ -87,3 +87,6 @@ jobs:
       - name: PrintIfSucceeded
         if: success()
         run: echo "Success"
+
+      - name: Clean cache after build
+        run: rm -rf ~/.cache/bin
