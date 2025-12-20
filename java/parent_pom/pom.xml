@@ -71,6 +71,7 @@
         <springboot-maven-build.version>2.4.1</springboot-maven-build.version>
         <table-saw.version>0.43.1</table-saw.version>
         <table-saw-parquet.version>0.11.0</table-saw-parquet.version>
+        <guava.version>33.5.0-jre</guava.version>
         <jmh.version>1.36</jmh.version>
         <intellij.version>232.9921.82</intellij.version>
         <flatlaf.version>3.2.5</flatlaf.version>
@@ -356,17 +357,10 @@
                 </exclusions>
             </dependency>
 
-
-            <!--google guava dependencies-->
-            <!--            <dependency>-->
-            <!--                <groupId>com.google.guava</groupId>-->
-            <!--                <artifactId>guava</artifactId>-->
-            <!--                <version>11.0.2</version>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.0.1-jre</version>
+                <version>${guava.version}</version>
             </dependency>
 
             <!--GCP Google cloud-->
@@ -718,6 +712,11 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
         </dependency>
 
         <!--Apache commons-->
