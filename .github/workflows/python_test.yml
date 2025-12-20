@@ -89,4 +89,4 @@ jobs:
         run: echo "Success"
 
       - name: Clean cache after build
-        run: rm -rf ~/.cache/bin
+        run: rm -rf ~/.cache
