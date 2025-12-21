@@ -5,6 +5,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -20,12 +23,11 @@ jobs:
         with:
           servers: |
             [{
-              "id": "central",
-              "username": "${{ secrets.OSSRH_USERNAME }}",
-              "password": "${{ secrets.OSSRH_TOKEN }}"
-            }
-            ]
+              "id": "github",
+              "username": "${{ github.actor }}",
+              "password": "${{ secrets.GITHUB_TOKEN }}"
+            }]
 
-      - name: Deploy with Maven
+      - name: Deploy with Maven (GitHub Packages)
         working-directory: ./java
-        run: mvn --batch-mode clean deploy -DskipTests=true -Dmaven.javadoc.skip=true
+        run: mvn --batch-mode clean deploy -Pgithub-release -DskipTests=true -Dgithub.repository=${{ github.repository }}
