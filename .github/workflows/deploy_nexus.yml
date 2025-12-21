@@ -26,8 +26,13 @@ jobs:
               "id": "github",
               "username": "${{ github.actor }}",
               "password": "${{ secrets.GITHUB_TOKEN }}"
+            },
+            {
+              "id": "central",
+              "username": "${{ secrets.OSSRH_USERNAME }}",
+              "password": "${{ secrets.OSSRH_TOKEN }}"
             }]
 
-      - name: Deploy with Maven (GitHub Packages)
+      - name: Deploy with Maven
         working-directory: ./java
         run: mvn --batch-mode clean deploy -Pgithub-release -DskipTests=true -Dgithub.repository=${{ github.repository }}
