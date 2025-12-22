@@ -7,7 +7,7 @@
     <version>1.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>HFT Framework</name>
+    <name>HFTFramework</name>
     <description>High Frequency Trading Framework for algorithmic trading</description>
     <url>https://github.com/javifalces/HFTFramework</url>
 
@@ -34,6 +34,10 @@
         <url>https://github.com/javifalces/HFTFramework</url>
         <tag>HEAD</tag>
     </scm>
+
+    <properties>
+        <gpg.skip>true</gpg.skip>
+    </properties>
 
     <modules>
         <module>parent_pom</module>
@@ -108,9 +112,11 @@
     <profiles>
         <profile>
             <id>github-release</id>
+            <properties>
+                <gpg.skip>false</gpg.skip>
+            </properties>
             <build>
                 <plugins>
-                    <!-- Disable Central Publishing plugin -->
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
@@ -145,20 +151,27 @@
                         </executions>
                     </plugin>
 
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>org.apache.maven.plugins</groupId>-->
+                    <!--                        <artifactId>maven-gpg-plugin</artifactId>-->
+                    <!--                        <version>3.1.0</version>-->
+                    <!--                        <executions>-->
+                    <!--                            <execution>-->
+                    <!--                                <id>sign-artifacts</id>-->
+                    <!--                                <phase>verify</phase>-->
+                    <!--                                <goals>-->
+                    <!--                                    <goal>sign</goal>-->
+                    <!--                                </goals>-->
+                    <!--                            </execution>-->
+                    <!--                        </executions>-->
+                    <!--                        <configuration>-->
+                    <!--                            <skip>${gpg.skip}</skip>-->
+                    <!--                            <gpgArguments>-->
+                    <!--                                <arg>&#45;&#45;pinentry-mode</arg>-->
+                    <!--                                <arg>loopback</arg>-->
+                    <!--                            </gpgArguments>-->
+                    <!--                        </configuration>-->
+                    <!--                    </plugin>-->
 
                 </plugins>
             </build>
