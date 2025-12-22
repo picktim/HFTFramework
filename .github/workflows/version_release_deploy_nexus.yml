@@ -25,15 +25,15 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-      - name: Generate Changelog
-        working-directory: ./java
-        run: mvn se.bjurr.gitchangelog:git-changelog-maven-plugin:2.1.0:git-changelog
-      - name: Commit Changelog
-        working-directory: ./java
-        run: |
-          git add CHANGELOG.md
-          git commit -m "docs: update changelog for version"
-          git push origin master
+#      - name: Generate Changelog
+#        working-directory: ./java
+#        run: mvn se.bjurr.gitchangelog:git-changelog-maven-plugin:2.1.0:git-changelog
+#      - name: Commit Changelog
+#        working-directory: ./java
+#        run: |
+#          git add CHANGELOG.md
+#          git commit -m "docs: update changelog for version"
+#          git push origin master
       - name: Setup Maven settings.xml
         uses: s4u/maven-settings-action@v3.0.0
         with:
@@ -50,12 +50,12 @@ jobs:
           set -e
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-DskipTests=true -Dmaven.javadoc.skip=true"
+          -Darguments="-Pgithub-release -DskipTests=true -Dmaven.javadoc.skip=true"
       - name: Perform Release
         working-directory: ./java
         env:
           MAVEN_OPTS: "-Xmx8096m"
-        run: mvn release:perform -DskipTests=true -Dmaven.javadoc.skip=true
+        run: mvn release:perform -Pgithub-release -DskipTests=true -Dmaven.javadoc.skip=true
       - name: Push changes
         run: |
           set -e
