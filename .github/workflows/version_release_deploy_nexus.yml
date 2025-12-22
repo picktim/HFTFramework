@@ -50,12 +50,12 @@ jobs:
           set -e
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-Pgithub-release -DskipTests=true -Dmaven.javadoc.skip=true"
+          -Darguments="-Pnexus-release -DskipTests=true -Dmaven.javadoc.skip=true"
       - name: Perform Release
         working-directory: ./java
         env:
           MAVEN_OPTS: "-Xmx8096m"
-        run: mvn release:perform -Pgithub-release -DskipTests=true -Dmaven.javadoc.skip=true
+        run: mvn release:perform -Pnexus-release -DskipTests=true -Dmaven.javadoc.skip=true
       - name: Push changes
         run: |
           set -e
