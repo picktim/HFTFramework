@@ -11,16 +11,6 @@
     <artifactId>executables</artifactId>
     <packaging>pom</packaging>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.javifalces</groupId>
-                <artifactId>private_trading_algorithms</artifactId>
-                <!-- change version if private_trading_algorithms required -->
-                <version>${private_trading_algorithms.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <modules>
         <module>BacktestBrokerEngine</module>

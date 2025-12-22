@@ -44,7 +44,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <private_trading_algorithms.version>0.0.0-SNAPSHOT</private_trading_algorithms.version>
         <!-- plugins -->
         <!-- <resources.plugin.version>3.0.2</resources.plugin.version> -->
         <copy.rename.plugin.version>1.0</copy.rename.plugin.version>
