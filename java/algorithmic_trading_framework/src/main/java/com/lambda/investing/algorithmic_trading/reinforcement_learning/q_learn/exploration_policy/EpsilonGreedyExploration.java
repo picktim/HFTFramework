@@ -31,10 +31,10 @@ import lombok.Setter;
 import java.util.Random;
 
 /**
- * <para>The class implements epsilon greedy exploration policy. Acording to the policy,
+ * <p>The class implements epsilon greedy exploration policy. Acording to the policy,
  * the best action is chosen with probability <b>1-epsilon</b>. Otherwise,
  * with probability <b>epsilon</b>, any other action, except the best one, is
- * chosen randomly.</para>
+ * chosen randomly.</p>
  * <p>
  * * The value determines the amount of exploration driven by the policy.
  * * If the value is high, then the policy drives more to exploration - choosing random
@@ -42,7 +42,7 @@ import java.util.Random;
  * * greedy - choosing the beat so far action.
  *
  *
- * <para> According to the policy, the epsilon value is known also as exploration rate. </para>
+ * <p> According to the policy, the epsilon value is known also as exploration rate. </p>
  *
  * @author Diego Catalano
  */

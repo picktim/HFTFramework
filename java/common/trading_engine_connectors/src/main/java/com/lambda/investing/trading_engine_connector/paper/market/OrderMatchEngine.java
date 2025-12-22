@@ -180,7 +180,6 @@ public class OrderMatchEngine extends OrderbookManager {
      * When a depth is read clean previous orders from MM and send the new snapshost
      *
      * @param depth new depth to refresh
-     * @return
      */
     public void refreshMarketMakerDepth(Depth depth) {
         readLock.lock();
@@ -459,7 +458,7 @@ public class OrderMatchEngine extends OrderbookManager {
     /***
      *
      * @param orderRequest
-     * @param asyncNotify if false , depth will not be notified=> for depth update in market maker algorithm
+     * @param asyncNotify if false , depth will not be notified-&gt; for depth update in market maker algorithm
      * @return
      */
     public boolean orderRequest(OrderRequest orderRequest, boolean asyncNotify, boolean fromTradeFill) {

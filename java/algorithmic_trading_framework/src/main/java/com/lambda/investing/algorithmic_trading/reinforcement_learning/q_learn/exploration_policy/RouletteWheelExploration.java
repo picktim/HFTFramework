@@ -31,18 +31,18 @@ import lombok.Setter;
 import java.util.Random;
 
 /**
- * <para>The class implements roulette whell exploration policy. Acording to the policy,
- * action <b>a</b> at state <b>s</b> is selected with the next probability:</para>
- * <code lang="none">
+ * <p>The class implements roulette whell exploration policy. Acording to the policy,
+ * action <b>a</b> at state <b>s</b> is selected with the next probability:</p>
+ * <pre>
  * Q( s, a )
  * p( s, a ) = ------------------
  * SUM( Q( s, b ) )
  * b
- * </code>
- * <para>where <b>Q(s, a)</b> is action's <b>a</b> estimation (usefulness) at state <b>s</b>.</para>
+ * </pre>
+ * <p>where <b>Q(s, a)</b> is action's <b>a</b> estimation (usefulness) at state <b>s</b>.</p>
  *
- * <para><note>The exploration policy may be applied only in cases, when action estimates (usefulness)
- * are represented with positive value greater then 0.</note></para>
+ * <p><em>Note: The exploration policy may be applied only in cases, when action estimates (usefulness)
+ * are represented with positive value greater then 0.</em></p>
  *
  * @author Diego Catalano
  */

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import static com.lambda.investing.trading_engine_connector.paper.market.OrderbookManager.MARKET_MAKER_ALGORITHM_INFO;
 
 /**
- * Listen to depth from source and fill synthetic orderbook => TRADE ENGINE can be only papertrading
+ * Listen to depth from source and fill synthetic orderbook -&gt; TRADE ENGINE can be only papertrading
  */
 public class MarketMakerMarketBacktestDataAlgorithm implements MarketDataListener, ExecutionReportListener {
 

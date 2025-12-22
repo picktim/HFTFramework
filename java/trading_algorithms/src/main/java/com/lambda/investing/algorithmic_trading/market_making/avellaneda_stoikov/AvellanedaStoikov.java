@@ -36,8 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * λ(δ) = Ae(−κδ)
  * <p>
- * reservation price -> r(s, t) = s − qγσ2*(T − t)
- * spread around reservation -> δa + δb = γσ2*(T − t) + (2/γ)*ln(1 + γ/κ)
+ * reservation price -&gt; r(s, t) = s − qγσ2*(T − t)
+ * spread around reservation -&gt; δa + δb = γσ2*(T − t) + (2/γ)*ln(1 + γ/κ)
  * <p>
  * k can be estimated
  * https://quant.stackexchange.com/questions/36073/how-does-one-calibrate-lambda-in-a-avellaneda-stoikov-market-making-problem

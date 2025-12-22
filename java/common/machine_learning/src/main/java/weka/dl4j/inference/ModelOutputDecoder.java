@@ -184,7 +184,6 @@ import java.util.*;
 	 * Parses the classmap file into a String[]
 	 *
 	 * @return String[], one item for each class
-	 * @throws Exception
 	 */
 	public String[] getClasses() {
 		List<String> classes = new ArrayList<String>();

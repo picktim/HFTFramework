@@ -49,11 +49,11 @@ public class PoissonLatencyEngine extends FixedLatencyEngine {
 	 * after k iterations the loop condition becomes
 	 * https://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables
 	 * <p>
-	 * p1 * p2 * ... * pk > L
+	 * p1 * p2 * ... * pk &gt; L
 	 * <p>
 	 * which is equivalent to
 	 * <p>
-	 * -ln(p1)/mean -ln(p2)/mean ... -ln(pk)/mean > 1
+	 * -ln(p1)/mean -ln(p2)/mean ... -ln(pk)/mean &gt; 1
 	 *
 	 * @return
 	 */

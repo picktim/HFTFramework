@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * To compile from maven
- * "Generate GUI into:" from "Binary class files" --> "Java source code" in the settings (found in Project|Settings|Editor|GUI Designer).
+ * "Generate GUI into:" from "Binary class files" -&gt; "Java source code" in the settings (found in Project|Settings|Editor|GUI Designer).
  */
 public class MainMenuGUI extends JFrame implements AlgorithmObserver {
     private JTabbedPane depthTabs;
@@ -181,7 +181,7 @@ public class MainMenuGUI extends JFrame implements AlgorithmObserver {
     }
 
     /**
-     * @noinspection ALL
+     * Returns the root component.
      */
     public JComponent $$$getRootComponent$$$() {
         return panel1;

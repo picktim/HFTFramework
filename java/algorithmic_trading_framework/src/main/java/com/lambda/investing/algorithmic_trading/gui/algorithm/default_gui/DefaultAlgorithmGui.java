@@ -40,7 +40,7 @@ import static com.lambda.investing.trading_engine_connector.paper.market.Orderbo
 
 /**
  * To compile from maven
- * "Generate GUI into:" from "Binary class files" --> "Java source code" in the settings (found in Project|Settings|Editor|GUI Designer).
+ * "Generate GUI into:" from "Binary class files" -&gt; "Java source code" in the settings (found in Project|Settings|Editor|GUI Designer).
  */
 @Getter
 public class DefaultAlgorithmGui implements AlgorithmGui {
@@ -521,7 +521,7 @@ public class DefaultAlgorithmGui implements AlgorithmGui {
     }
 
     /**
-     * @noinspection ALL
+     * Returns the root component.
      */
     public JComponent $$$getRootComponent$$$() {
         return panel;

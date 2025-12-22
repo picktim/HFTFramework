@@ -227,7 +227,7 @@ public class Reinforce extends DeepQLearning {
 	 * @param states
 	 * @param nextStates
 	 * @param rewardArr
-	 * @param multiplyProb for training target -> multiply rewards by prob
+	 * @param multiplyProb for training target -&gt; multiply rewards by prob
 	 * @return
 	 */
 	protected double[][] getTargetTrainValues(double[][] states, double[][] nextStates, double[][] rewardArr,
@@ -313,7 +313,7 @@ public class Reinforce extends DeepQLearning {
 	}
 
 	/**
-	 * Training target for predict network => best action to do stochastic output
+	 * Training target for predict network -&gt; best action to do stochastic output
 	 *
 	 * @return
 	 */

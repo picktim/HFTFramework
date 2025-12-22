@@ -248,9 +248,8 @@ public class OrderbookManager {
 
     /**
      * When a depth is read clean previous orders from MM and send the new snapshost
-     * DEPRECATED: now its using refreshMarketMakerDepth from OrderMatchEngine -> override it
+     * DEPRECATED: now its using refreshMarketMakerDepth from OrderMatchEngine -&gt; override it
      * @param depth new depth to refresh
-     * @return
      */
     @Deprecated()
     public void refreshMarketMakerDepth(Depth depth) {
@@ -559,7 +558,7 @@ public class OrderbookManager {
     /***
      *
      * @param orderRequest
-     * @param asyncNotify if false , depth will not be notified=> for depth update in market maker algorithm
+     * @param asyncNotify if false , depth will not be notified-&gt; for depth update in market maker algorithm
      * @return
      */
     public boolean orderRequest(OrderRequest orderRequest, boolean asyncNotify, boolean fromTradeFill) {

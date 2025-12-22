@@ -575,7 +575,7 @@ import static com.lambda.investing.algorithmic_trading.reinforcement_learning.Tr
 	}
 
 	/**
-	 * bellman equation -> dynamic Q_(i+1) (s,a)=Predict(s,a)*(1-α)+α[R(s,a)+γ_d (Target⁡(s^',a^' )]
+	 * bellman equation -&gt; dynamic Q_(i+1) (s,a)=Predict(s,a)*(1-α)+α[R(s,a)+γ_d (Target⁡(s^',a^' )]
 	 *
 	 * @param previousStateArr
 	 * @param reward

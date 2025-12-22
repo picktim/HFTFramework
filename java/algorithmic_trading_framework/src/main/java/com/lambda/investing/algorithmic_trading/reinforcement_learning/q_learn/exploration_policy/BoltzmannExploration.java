@@ -31,15 +31,15 @@ import lombok.Setter;
 import java.util.Random;
 
 /**
- * <para>The class implements exploration policy base on Boltzmann distribution.
- * Acording to the policy, action <b>a</b> at state <b>s</b> is selected with the next probability:</para>
- * <code lang="none">
+ * <p>The class implements exploration policy base on Boltzmann distribution.
+ * Acording to the policy, action <b>a</b> at state <b>s</b> is selected with the next probability:</p>
+ * <pre>
  * exp( Q( s, a ) / t )
  * p( s, a ) = -----------------------------
  * SUM( exp( Q( s, b ) / t ) )
  * b
- * </code>
- * <para>where <b>Q(s, a)</b> is action's <b>a</b> estimation (usefulness) at state <b>s</b> and
+ * </pre>
+ * <p>where <b>Q(s, a)</b> is action's <b>a</b> estimation (usefulness) at state <b>s</b> and
  * <b>t</b> is Temperature.
  * <p>
  * The property sets the balance between exploration and greedy actions.

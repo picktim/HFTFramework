@@ -201,7 +201,7 @@ import javax.swing.*;
    */
   protected AbstractInstanceIterator instanceIterator = new DefaultInstanceIterator();
   /**
-   * Queue size for AsyncDataSetIterator (if < 1, AsyncDataSetIterator is not used).
+   * Queue size for AsyncDataSetIterator (if &lt; 1, AsyncDataSetIterator is not used).
    */
   protected int queueSize = 0;
   /**
@@ -1190,7 +1190,6 @@ import javax.swing.*;
   /**
    * Build the Zoomodel instance
    *
-   * @return ComputationGraph instance
    * @throws WekaException Either the .init operation on the current zooModel was not supported or
    *                       the data shape does not fit the chosen zooModel
    */
@@ -1821,7 +1820,7 @@ import javax.swing.*;
 
   /**
    * Fixes nominal label indices. Dl4j sorts them during training time. A mapping from weka-labels
-   * resorted labels is stored in {@link this.labelsSortIndex}.
+   * resorted labels is stored in labelsSortIndex.
    *
    * @param j     Original index
    * @param insts Test dataset
