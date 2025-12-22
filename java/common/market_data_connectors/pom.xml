@@ -7,6 +7,9 @@
         <relativePath>../../parent_pom/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>MD for HFTFramework</description>
+    <url>https://github.com/javifalces/HFTFramework</url>
 
     <artifactId>market_data_connectors</artifactId>
 

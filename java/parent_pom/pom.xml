@@ -11,16 +11,16 @@
         <url>javifalces@gmail.com</url>
     </organization>
 
-    <name>HFTFramework</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>High Frequency Trading Framework for algorithmic trading.</description>
     <url>https://github.com/javifalces/HFTFramework</url>
 
     <licenses>
         <license>
-            <name>Apache 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
+
     </licenses>
 
     <developers>

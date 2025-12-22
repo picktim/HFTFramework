@@ -9,6 +9,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>DataManager for HFTFramework</description>
+    <url>https://github.com/javifalces/HFTFramework</url>
 
     <artifactId>data_manager</artifactId>
 
