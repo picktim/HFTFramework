@@ -5,12 +5,39 @@
     <artifactId>parent_pom</artifactId>
     <version>1.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Parent Maven POM</name>
-    <description>Parent POM used by all custom Lambda components</description>
+
     <organization>
         <name>Javier Falces</name>
         <url>javifalces@gmail.com</url>
     </organization>
+
+    <name>HFTFramework</name>
+    <description>High Frequency Trading Framework for algorithmic trading.</description>
+    <url>https://github.com/javifalces/HFTFramework</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>javifalces</id>
+            <name>Javier Falces</name>
+            <email>javifalces@gmail.com</email>
+            <url>https://github.com/javifalces</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/javifalces/HFTFramework.git</connection>
+        <developerConnection>scm:git:git@github.com:javifalces/HFTFramework.git</developerConnection>
+        <url>https://github.com/javifalces/HFTFramework</url>
+        <tag>HEAD</tag>
+    </scm>
 
 
     <repositories>
