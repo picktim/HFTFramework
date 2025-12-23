@@ -21,6 +21,19 @@ jobs:
           cache: 'maven'
           check-latest: false
 
+      # Import signing key (required for Maven GPG signing)
+      - name: Import GPG key
+        shell: bash
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # ASCII-armored private key
+          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --import
+          gpg --list-secret-keys --keyid-format=long
+
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
@@ -50,19 +63,25 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }} # key id or full fingerprint
         run: |
           set -e
+          export GPG_TTY=$(tty)
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }}"
+          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
       - name: Perform Release
         working-directory: ./java
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }}
           MAVEN_OPTS: "-Xmx8096m"
-        run: mvn release:perform -Pnexus-release -DskipTests=true
+        run: |
+          set -e
+          export GPG_TTY=$(tty)
+          mvn release:perform -Pnexus-release -DskipTests=true -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}
       - name: Push changes
         run: |
           set -e
