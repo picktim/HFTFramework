@@ -36,6 +36,7 @@
     </scm>
 
     <properties>
+        <!-- default: don't sign locally; CI release sets -Dgpg.skip=false -->
         <gpg.skip>true</gpg.skip>
     </properties>
 
@@ -113,6 +114,7 @@
         <profile>
             <id>nexus-release</id>
             <properties>
+                <!-- keep, but CI also passes -Dgpg.skip=false explicitly -->
                 <gpg.skip>false</gpg.skip>
             </properties>
             <build>
@@ -151,6 +153,7 @@
                         </executions>
                     </plugin>
 
+                    <!-- (optional) you can remove the profile-level maven-gpg-plugin to avoid duplication -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>

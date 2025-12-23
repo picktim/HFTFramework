@@ -55,21 +55,22 @@ jobs:
               "id": "central",
               "username": "${{ secrets.OSSRH_USERNAME }}",
               "password": "${{ secrets.OSSRH_TOKEN }}"
-            }
-            ]
+            }]
+
       - name: Prepare Release
         working-directory: ./java
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }} # key id or full fingerprint
+          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }}
         run: |
           set -e
           export GPG_TTY=$(tty)
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
+          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
+
       - name: Perform Release
         working-directory: ./java
         env:
@@ -81,7 +82,9 @@ jobs:
         run: |
           set -e
           export GPG_TTY=$(tty)
-          mvn release:perform -Pnexus-release -DskipTests=true -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}
+          mvn release:perform \
+            -Darguments="-Pnexus-release -DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
+
       - name: Push changes
         run: |
           set -e
