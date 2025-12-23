@@ -117,6 +117,9 @@
         <openhft.affinity.version>3.27ea1</openhft.affinity.version>
         <openhft.chroniclequeue.version>5.27ea11</openhft.chroniclequeue.version>
         <maven.artifact.checksumPolicy>warn</maven.artifact.checksumPolicy>
+
+        <!-- default off locally; CI/release enables with -Dgpg.skip=false -->
+        <gpg.skip>true</gpg.skip>
     </properties>
 
 
@@ -1211,3 +1214,4 @@
 
 
 </project>
+
