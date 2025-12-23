@@ -21,32 +21,44 @@ jobs:
           cache: 'maven'
           check-latest: false
 
-      # Import signing key (required for Maven GPG signing)
+      # Import signing key and configure gpg-agent for non-interactive use
       - name: Import GPG key
         shell: bash
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # ASCII-armored private key
+          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
           set -euo pipefail
+          
+          # Create GPG home with correct permissions
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
+          
+          # Configure gpg-agent for loopback pinentry (required for non-interactive signing)
+          cat > ~/.gnupg/gpg-agent.conf << EOF
+          allow-loopback-pinentry
+          EOF
+          
+          cat > ~/.gnupg/gpg.conf << EOF
+          use-agent
+          pinentry-mode loopback
+          EOF
+          
+          # Restart gpg-agent with new config
+          gpgconf --kill gpg-agent || true
+          gpg-agent --daemon --allow-preset-passphrase || true
+          
+          # Import the key
           printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --import
+          
+          # List keys to verify import
           gpg --list-secret-keys --keyid-format=long
 
       - name: Configure Git user
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-#      - name: Generate Changelog
-#        working-directory: ./java
-#        run: mvn se.bjurr.gitchangelog:git-changelog-maven-plugin:2.1.0:git-changelog
-#      - name: Commit Changelog
-#        working-directory: ./java
-#        run: |
-#          git add CHANGELOG.md
-#          git commit -m "docs: update changelog for version"
-#          git push origin master
+
       - name: Setup Maven settings.xml
         uses: s4u/maven-settings-action@v3.0.0
         with:
@@ -62,28 +74,28 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          # maven-gpg-plugin reads this env var for passphrase
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }}
         run: |
           set -e
-          export GPG_TTY=$(tty)
+          export GPG_TTY=$(tty) || true
           mvn release:prepare \
-          -DtagNameFormat=v@{project.version} \
-          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
+            -DtagNameFormat=v@{project.version} \
+            -Darguments="-DskipTests=true"
 
       - name: Perform Release
         working-directory: ./java
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          # maven-gpg-plugin reads this env var for passphrase
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          MAVEN_GPG_KEYID: ${{ secrets.MAVEN_GPG_KEYID }}
           MAVEN_OPTS: "-Xmx8096m"
         run: |
           set -e
-          export GPG_TTY=$(tty)
+          export GPG_TTY=$(tty) || true
           mvn release:perform \
-            -Darguments="-Pnexus-release -DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -Dgpg.keyname=${MAVEN_GPG_KEYID}"
+            -Darguments="-DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -Dgpg.keyname=${{ secrets.MAVEN_GPG_KEYID }}"
 
       - name: Push changes
         run: |
