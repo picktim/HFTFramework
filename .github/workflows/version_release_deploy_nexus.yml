@@ -44,6 +44,14 @@ jobs:
               "password": "${{ secrets.OSSRH_TOKEN }}"
             }
             ]
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+
       - name: Prepare Release
         working-directory: ./java
         env:
@@ -54,7 +62,7 @@ jobs:
           set -e
           mvn release:prepare \
           -DtagNameFormat=v@{project.version} \
-          -Darguments="-Pnexus-release -DskipTests=true"
+          -Darguments="-Pnexus-release -DskipTests=true -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }}"
       - name: Perform Release
         working-directory: ./java
         env:
