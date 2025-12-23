@@ -46,6 +46,10 @@ jobs:
             ]
       - name: Prepare Release
         working-directory: ./java
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
           set -e
           mvn release:prepare \
@@ -54,6 +58,9 @@ jobs:
       - name: Perform Release
         working-directory: ./java
         env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           MAVEN_OPTS: "-Xmx8096m"
         run: mvn release:perform -Pnexus-release -DskipTests=true
       - name: Push changes
