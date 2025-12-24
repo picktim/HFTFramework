@@ -11,6 +11,17 @@
     <description>High Frequency Trading Framework for algorithmic trading</description>
     <url>https://github.com/javifalces/HFTFramework</url>
 
+
+    <modules>
+        <module>parent_pom</module>
+        <module>common</module>
+        <module>algorithmic_trading_framework</module>
+        <module>backtest_engine</module>
+        <module>executables</module>
+        <module>trading_algorithms</module>
+    </modules>
+
+    <!-- CI deployment Information -->
     <scm>
         <connection>scm:git:git://github.com/javifalces/HFTFramework.git</connection>
         <developerConnection>scm:git:git@github.com:javifalces/HFTFramework.git</developerConnection>
@@ -26,15 +37,6 @@
             <url>https://github.com/javifalces</url>
         </developer>
     </developers>
-
-    <modules>
-        <module>parent_pom</module>
-        <module>common</module>
-        <module>algorithmic_trading_framework</module>
-        <module>backtest_engine</module>
-        <module>executables</module>
-        <module>trading_algorithms</module>
-    </modules>
 
 
     <build>
@@ -57,9 +59,25 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <checkModificationExcludes>
+                        <checkModificationExclude>pom.xml</checkModificationExclude>
+                    </checkModificationExcludes>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
-
+    <!-- CI deployment Information -->
 
 </project>
 
