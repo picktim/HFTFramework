@@ -81,7 +81,7 @@
         <surefire.plugin.version>2.19.1</surefire.plugin.version>
         <dependency.plugin.version>2.10</dependency.plugin.version>
         <release.plugin.version>2.5.3</release.plugin.version>
-        <gpg.plugin.version>3.2.4</gpg.plugin.version>
+        <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <codehaus.plugin.version>1.10</codehaus.plugin.version>
         <!-- common -->
         <mvn-assembly.version>1.0.2</mvn-assembly.version>

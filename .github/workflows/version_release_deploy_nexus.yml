@@ -81,7 +81,7 @@ jobs:
           export GPG_TTY=$(tty) || true
           mvn release:prepare \
             -DtagNameFormat=v@{project.version} \
-            -Darguments="-DskipTests=true"
+            -Darguments="-Pnexus-release -DskipTests=true"
 
       - name: Perform Release
         working-directory: ./java
@@ -95,7 +95,7 @@ jobs:
           set -e
           export GPG_TTY=$(tty) || true
           mvn release:perform \
-            -Darguments="-DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -Dgpg.keyname=${{ secrets.MAVEN_GPG_KEYID }}"
+            -Darguments="-Pnexus-release -DskipTests=true -Dgpg.skip=false -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} -Dgpg.keyname=${{ secrets.MAVEN_GPG_KEYID }}"
 
       - name: Push changes
         run: |
