@@ -3,7 +3,7 @@
     <parent>
         <artifactId>parent_pom</artifactId>
         <groupId>io.github.javifalces</groupId>
-        <version>1.0.8-SNAPSHOT</version>
+        <version>1.0.9-SNAPSHOT</version>
         <relativePath>../../parent_pom/pom.xml</relativePath>
     </parent>
 
