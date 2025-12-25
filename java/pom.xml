@@ -4,7 +4,7 @@
 
     <groupId>io.github.javifalces</groupId>
     <artifactId>parent_parent_pom</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>HFTFramework</name>
@@ -26,7 +26,7 @@
         <connection>scm:git:git://github.com/javifalces/HFTFramework.git</connection>
         <developerConnection>scm:git:git@github.com:javifalces/HFTFramework.git</developerConnection>
         <url>https://github.com/javifalces/HFTFramework</url>
-        <tag>v1.0.9</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
