@@ -100,5 +100,5 @@ jobs:
       - name: Push changes
         run: |
           set -e
-          git push origin master
+          git push origin main
           git push origin --tags
