@@ -22,28 +22,23 @@ associated risks.**
 <br>
 <br>
 <!-- TOC -->
-
-* [HFT Framework](#hft-framework-)
-    * [How-to use](#how-to-use)
-        * [1. Create algorithm and backtest](#1-create-algorithm-and-backtest)
-        * [2. Live trading](#2-live-trading)
-        * [3. Market Engine](#3-market-engine)
-            * [XChangeEngine](#xchangeengine)
-            * [MetatraderEngine](#metatraderengine)
-    * [Arquitecture](#arquitecture)
-        * [Backtest](#backtest)
-        * [Live Paper/Staging trading](#paper-trading)
-        * [Live trading](#live-trading)
-    * [Environment settings](#environment-settings)
-        * [Optional](#optional)
-    * [Java projects](docs/java_projects.md)
-    * [Reinforcement learning](docs/reinforcement_learning.md)
-    * [Configuration](docs/json_config.md)
-    * [I owe you one](#i-owe-you-one)
-    * [TODO](#todo)
-* [Alpha-Avellaneda](docs/alpha_as.md)
-* [Reference](#reference)
-
+* [HFT Framework](#hft-framework)
+  * [How-to use](#how-to-use)
+    * [1. Create algorithm and backtest](#1-create-algorithm-and-backtest)
+    * [2. Live trading](#2-live-trading)
+    * [3. Market Engine](#3-market-engine)
+      * [XChangeEngine](#xchangeengine)
+      * [MetatraderEngine](#metatraderengine)
+  * [Arquitecture](#arquitecture)
+    * [Backtest](#backtest)
+    * [Live Paper/Staging trading](#live-paperstaging-trading)
+    * [Live trading](#live-trading)
+  * [Environment settings](#environment-settings)
+      * [Optional](#optional)
+  * [I owe you one](#i-owe-you-one)
+  * [TODO](#todo)
+    * [Java documentation reference](#java-documentation-reference)
+    * [Reference](#reference)
 <!-- TOC -->
 
 ## How-to use
