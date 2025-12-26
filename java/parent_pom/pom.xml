@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.javifalces</groupId>
     <artifactId>parent_pom</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -35,7 +35,7 @@
         <connection>scm:git:git://github.com/javifalces/HFTFramework.git</connection>
         <developerConnection>scm:git:git@github.com:javifalces/HFTFramework.git</developerConnection>
         <url>https://github.com/javifalces/HFTFramework</url>
-        <tag>v1.0.10</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
