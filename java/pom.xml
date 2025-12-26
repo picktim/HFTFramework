@@ -21,6 +21,10 @@
         <module>trading_algorithms</module>
     </modules>
 
+    <properties>
+        <sonar.organization>javifalces</sonar.organization>
+    </properties>
+
     <!-- CI deployment Information -->
     <scm>
         <connection>scm:git:git://github.com/javifalces/HFTFramework.git</connection>
