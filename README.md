@@ -207,6 +207,9 @@ metatrader.pull.port=32768
 * [dwx-zeromq-connector](https://github.com/darwinex/dwx-zeromq-connector)
 * [Stable-baselines3](https://stable-baselines3.readthedocs.io/en/master)
 * [Ray](https://docs.ray.io/en/master/index.html)
+* [Onnx](https://onnxruntime.ai/) 
+* [Weka](https://ml.cms.waikato.ac.nz/weka/)
+* [Autoweka](https://www.cs.ubc.ca/labs/algorithms/Projects/autoweka/)
 * ...and so on
 
 ## TODO
