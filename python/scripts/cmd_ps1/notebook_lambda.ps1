@@ -1,7 +1,9 @@
 #$env:TERM="ansi"
 #conda init
+$currentDir = (Get-Location).Path
 git pull --force
 .\package_jar.ps1
+Set-Location -Path $currentDir
 #better to add to environment settings
 #$env:PYTHONPATH ="C:\Users\javif\Coding\market_making_fw\python_lambda"
 .\only_notebook_lambda.ps1
