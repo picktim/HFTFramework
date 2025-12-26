@@ -32,6 +32,7 @@ associated risks.**
             * [MetatraderEngine](#metatraderengine)
     * [Arquitecture](#arquitecture)
         * [Backtest](#backtest)
+        * [Live Paper/Staging trading](#paper-trading)
         * [Live trading](#live-trading)
     * [Environment settings](#environment-settings)
         * [Optional](#optional)
@@ -176,8 +177,8 @@ metatrader.pull.port=32768
 
 ![Backtest Architecture](fig/BacktestArquitecture.jpg?raw=true "Backtest")
 
-### Live Paper trading
-![LivePaper Architecture](fig/LivePaperArchitecture.jpg?raw=true "LivePaperArchitecture")
+### Live Paper/Staging trading
+![LivePaper Architecture](fig/LivePaperArchitecture.jpg?raw=true "Live Paper/Staging trading")
 
 ### Live trading
 
