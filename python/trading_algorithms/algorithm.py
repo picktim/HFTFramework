@@ -755,11 +755,12 @@ class Algorithm:
             fees_commissions_included: bool,
             algorithm_number: int = 0,
             clean_experience: bool = False,
-
+            latency_engine_type: LatencyEngineType = LatencyEngineType.fixed
     ):
         Algorithm.MULTITHREAD_CONFIGURATION = multithread_configuration
         Algorithm.DELAY_MS = delay_ms
         Algorithm.FEES_COMMISSIONS_INCLUDED = fees_commissions_included
+        Algorithm.LATENCY_ENGINE_TYPE = latency_engine_type
         backtest_result = algorithm.test(start_date=start_date, end_date=end_date,
                                          instrument_pk=instrument_pk,
                                          algorithm_number=algorithm_number,
