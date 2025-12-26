@@ -52,6 +52,8 @@ associated risks.**
 
 ### 1. Create algorithm and backtest
 
+**There is a standalone project for creation a custom algorithm in this [github repository](https://github.com/javifalces/HFTFramework_privateAlgosExample)**
+
 * [ALGORITHM_DOCUMENTATION.md](java/docs/ALGORITHM_DOCUMENTATION.md)
 * [BACKTEST_DOCUMENTATION.md](java/docs/BACKTEST_DOCUMENTATION.md)
 * [MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md](java/docs/MARKET_MAKING_ALGORITHMS_DOCUMENTATION.md)
@@ -91,6 +93,11 @@ in [TradingAlgorithmsProvider.java](java/trading_algorithms/src/main/java/com/la
     ```
 
 ### 2. Live trading
+
+If you want to stage/paper trading in a algorithm just enable in the json configuration
+```json
+"paperTrading": "True",
+```
 
 1. Execute the compilation and packaging process for the [AlgoTradingZeroMq](java/executables/AlgoTradingZeroMq) module,
    which will result in the generation of a JAR file. The target location for this file is
@@ -168,6 +175,9 @@ metatrader.pull.port=32768
 ### Backtest
 
 ![Backtest Architecture](fig/BacktestArquitecture.jpg?raw=true "Backtest")
+
+### Live Paper trading
+![LivePaper Architecture](fig/LivePaperArchitecture.jpg?raw=true "LivePaperArchitecture")
 
 ### Live trading
 
