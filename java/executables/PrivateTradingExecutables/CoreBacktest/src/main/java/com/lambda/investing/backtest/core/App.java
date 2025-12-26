@@ -101,7 +101,7 @@ public class App {
                 System.exit(-1);
             } else {
 
-                //File detected
+                //File detected0
                 if (checkFile) {
                     File file = new File(args[0]);
                     if (!file.exists()) {
@@ -129,7 +129,7 @@ public class App {
                 }
 
             }
-            ac = new ClassPathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+            ac = new ClassPathXmlApplicationContext(new String[]{"classpath:core_backtest_beans.xml"});
         } catch (BeansException be) {
             logger = LogManager.getLogger();
             logger.fatal("Unable to load Spring application context files", be);

@@ -357,7 +357,7 @@ public class App {
             configureOrderRequestConnector(zeroMqTradingConfiguration);
             configureFactorPublisherConnector(zeroMqTradingConfiguration);
             //load all beans
-            ac = new ClassPathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+            ac = new ClassPathXmlApplicationContext(new String[]{"classpath:core_zero_beans.xml"});
         } catch (BeansException be) {
             be.printStackTrace();
             logger = LogManager.getLogger();
